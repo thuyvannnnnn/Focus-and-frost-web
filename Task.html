@@ -1,0 +1,209 @@
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nhiệm vụ tích lũy 7 ngày tập trung</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background-color: #f3f4f6;
+      position: relative;
+      overflow-x: hidden;
+    }
+    #background-img {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      max-width: 600px;
+      height: 100vh;
+      object-fit: cover;
+      z-index: 0;
+      user-select: none;
+      pointer-events: none;
+    }
+    #task-container {
+      position: relative;
+      z-index: 10;
+      background: rgba(255 255 255 / 0.95);
+      backdrop-filter: saturate(180%) blur(12px);
+      box-shadow: 0 10px 25px rgb(0 0 0 / 0.1);
+      border-radius: 1rem;
+      max-width: 480px;
+      width: 90vw;
+      margin: 3rem auto;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <img
+    id="background-img"
+    src="https://i.ibb.co/Lz9nTshs/66-F84-D93-7422-4-D12-AD64-8-B3103-E20-BD3.png"
+    alt="Background image showing a soft pastel abstract pattern with light blue and purple hues"
+  />
+
+  <div id="task-container" role="main" aria-label="Nhiệm vụ tích lũy 7 ngày tập trung liên tục">
+    <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">
+      Nhiệm vụ: Tích lũy 7 ngày tập trung liên tục
+    </h1>
+
+    <div class="flex flex-col items-center mb-8">
+      <img
+        src="https://i.ibb.co/JjHyk2vX/2316-CFE1-22-EA-4632-9307-73-B7-AE643-FB8.png"
+        alt="Reward image of a cute bear-shaped cake with pink frosting and a smiling face"
+        class="w-32 h-32 object-contain mb-4"
+      />
+      <p class="text-lg text-gray-700 text-center max-w-xs leading-relaxed">
+        Hoàn thành nhiệm vụ tích lũy 7 ngày tập trung liên tục để nhận được Bánh gấu dễ thương này!
+      </p>
+    </div>
+
+    <div class="w-full mb-8">
+      <label
+        for="progress-bar"
+        class="block text-gray-700 font-semibold mb-3 text-center"
+        >Thời gian còn lại để hoàn thành nhiệm vụ</label
+      >
+      <div
+        class="relative w-full h-6 bg-gray-300 rounded-full overflow-hidden shadow-inner"
+        aria-label="Progress bar showing days of focus accumulated out of 7"
+      >
+        <div
+          id="progress-bar"
+          class="h-6 bg-gradient-to-r from-pink-500 to-yellow-400 transition-all duration-500"
+          style="width: 0%"
+        ></div>
+        <div
+          id="progress-text"
+          class="absolute inset-0 flex items-center justify-center font-semibold text-white drop-shadow-md select-none"
+        >
+          0 / 7 ngày
+        </div>
+      </div>
+    </div>
+
+    <button
+      id="back-btn"
+      class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-6 rounded-full shadow-md transition-colors"
+      aria-label="Quay lại trang chính"
+      type="button"
+    >
+      Quay lại
+    </button>
+  </div>
+
+  <script>
+    // Lấy thông tin đăng nhập người dùng từ localStorage
+    const user = JSON.parse(localStorage.getItem('userLogin')) || null;
+
+    // Lấy sessionHistory từ localStorage (giả định lưu dưới dạng mảng các ngày đã tập trung)
+    // Mỗi phần tử là một chuỗi ngày ISO (yyyy-mm-dd)
+    let sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
+
+    // Lấy rewardInventory từ localStorage hoặc khởi tạo mới
+    let rewardInventory = JSON.parse(localStorage.getItem('rewardInventory')) || [];
+
+    // Hàm kiểm tra xem có 7 ngày tập trung liên tục không
+    function checkSevenDaysContinuous(history) {
+      if (history.length < 1) return 0;
+
+      // Sắp xếp ngày tăng dần
+      const sortedDays = history
+        .map((d) => new Date(d))
+        .sort((a, b) => a - b);
+
+      // Kiểm tra chuỗi 7 ngày liên tục
+      for (let i = 0; i <= sortedDays.length - 7; i++) {
+        let continuous = true;
+        for (let j = 1; j < 7; j++) {
+          const diff =
+            (sortedDays[i + j] - sortedDays[i + j - 1]) / (1000 * 60 * 60 * 24);
+          if (diff !== 1) {
+            continuous = false;
+            break;
+          }
+        }
+        if (continuous) {
+          return 7;
+        }
+      }
+
+      // Nếu không đủ 7 ngày liên tục, tính số ngày liên tục gần nhất từ cuối
+      let count = 1;
+      for (let k = sortedDays.length - 1; k > 0; k--) {
+        const diff =
+          (sortedDays[k] - sortedDays[k - 1]) / (1000 * 60 * 60 * 24);
+        if (diff === 1) {
+          count++;
+        } else {
+          break;
+        }
+      }
+      return count;
+    }
+
+    // Cập nhật thanh tiến trình và text
+    function updateProgress() {
+      const daysFocused = checkSevenDaysContinuous(sessionHistory);
+      const progressPercent = Math.min((daysFocused / 7) * 100, 100);
+      const progressBar = document.getElementById('progress-bar');
+      const progressText = document.getElementById('progress-text');
+
+      progressBar.style.width = progressPercent + '%';
+      progressText.textContent = `${daysFocused} / 7 ngày`;
+
+      // Nếu đủ 7 ngày, thêm phần thưởng vào rewardInventory nếu chưa có
+      if (daysFocused >= 7) {
+        const rewardName = 'Bánh gấu';
+        if (!rewardInventory.includes(rewardName)) {
+          rewardInventory.push(rewardName);
+          localStorage.setItem('rewardInventory', JSON.stringify(rewardInventory));
+          alert('Chúc mừng! Bạn đã nhận được phần thưởng: Bánh gấu 🎉');
+        }
+      }
+    }
+
+    // Khởi tạo
+    updateProgress();
+
+    // Nút quay lại về trang chính
+    document.getElementById('back-btn').addEventListener('click', () => {
+      window.location.href = '/';
+    });
+
+    // Demo: Thêm ngày hôm nay vào sessionHistory khi nhấn phím "F" (focus)
+    // Để test nhanh tính năng
+    window.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'f') {
+        const today = new Date();
+        const isoToday = today.toISOString().slice(0, 10);
+        if (!sessionHistory.includes(isoToday)) {
+          sessionHistory.push(isoToday);
+          localStorage.setItem('sessionHistory', JSON.stringify(sessionHistory));
+          updateProgress();
+          alert(`Đã thêm ngày tập trung: ${isoToday}`);
+        } else {
+          alert('Ngày hôm nay đã được ghi nhận.');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
