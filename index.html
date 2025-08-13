@@ -757,15 +757,18 @@
         }
       }
     });
-document.getElementById('btn-decorate').addEventListener('click', function() {
-  window.location.href = 'decorate.html';
+<script>
+document.getElementById('btn-decorate').addEventListener('click', function(e) {
+    e.preventDefault(); // chặn submit form
+    sessionStorage.setItem('focusTime', document.getElementById('time-input').value);
+    location.href = 'decorate.html';
 });
-document.getElementById('btn-tasks').addEventListener('click', function() {
-  window.location.href = 'tasks.html';
+
+document.getElementById('btn-statistics').addEventListener('click', function(e) {
+    e.preventDefault();
+    location.href = 'statistics.html';
 });
-document.getElementById('btn-statistics').addEventListener('click', function() {
-  window.location.href = 'statistics.html';
-});
+</script>
   </script>
 </body>
 </html>
