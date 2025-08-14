@@ -502,7 +502,9 @@
         window.addEventListener("pointerup", onDecorationPointerUp);
         window.addEventListener("pointercancel", onDecorationPointerUp);
       }
-
+document.getElementById('btn-back-main').addEventListener('click', function() {
+      window.location.href = 'index.html';
+    });
       function onDecorationPointerMove(e) {
         if (!dragState.dragging) return;
         e.preventDefault();
