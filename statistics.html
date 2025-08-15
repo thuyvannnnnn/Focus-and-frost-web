@@ -12,8 +12,6 @@
     href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
     rel="stylesheet"
   />
-let rewardInventory = JSON.parse(localStorage.getItem('rewardInventory')) || [];
-let sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
 
   <style>
     
@@ -84,6 +82,8 @@ let sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
       <p id="noSessions" class="text-gray-500 italic text-center mt-6 hidden">Chưa có phiên tập trung</p>
     </div>
   </div>
+  let rewardInventory = JSON.parse(localStorage.getItem('rewardInventory')) || [];
+let sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
 
   <script>
     const sessionHistory = [
@@ -321,6 +321,8 @@ let sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
     });
 
     renderCalendar();
+    let rewardInventory = JSON.parse(localStorage.getItem('rewardInventory')) || [];
+let sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
   </script>
 </body>
 </html>
