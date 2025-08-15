@@ -136,6 +136,8 @@ let sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
         sessions: sessionDetails,
       });
     }
+    let rewardInventory = JSON.parse(localStorage.getItem('rewardInventory')) || [];
+let sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
 
     function formatDateVN(dateStr) {
       const d = new Date(dateStr + "T00:00:00");
@@ -320,9 +322,7 @@ let sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
       closeBottomSheet();
     });
 
-    renderCalendar();
-    let rewardInventory = JSON.parse(localStorage.getItem('rewardInventory')) || [];
-let sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
+  
   </script>
 </body>
 </html>
