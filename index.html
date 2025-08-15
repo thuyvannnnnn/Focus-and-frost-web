@@ -719,6 +719,7 @@
     });
 
     // On load
+    localStorage.setItem('sessionHistory', JSON.stringify(history));
     window.addEventListener("load", () => {
       updateCakeDisplay();
       updateStartButtonState();
