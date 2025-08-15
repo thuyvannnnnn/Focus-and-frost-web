@@ -71,7 +71,7 @@
         class="w-32 h-32 object-contain mb-4"
       />
       <p class="text-lg text-gray-700 text-center max-w-xs leading-relaxed">
-        Hoàn thành nhiệm vụ tích lũy 7 ngày tập trung liên tục để nhận được Bánh gấu dễ thương này!
+        tích lũy 7 ngày tập trung liên tục để nhận được Bánh gấu dễ thương này!
       </p>
     </div>
 
@@ -79,7 +79,7 @@
       <label
         for="progress-bar"
         class="block text-gray-700 font-semibold mb-3 text-center"
-        >Thời gian còn lại để hoàn thành nhiệm vụ</label
+        >Thời gian </label
       >
       <div
         class="relative w-full h-6 bg-gray-300 rounded-full overflow-hidden shadow-inner"
@@ -183,10 +183,16 @@
           updateProgress();
           alert(`Đã thêm ngày tập trung: ${isoToday}`);
         } else {
-          alert('Ngày hôm nay đã được ghi nhận.');
-        }
-      }
-    });
+          alert('Ngày hôm nay đã được ghi nhận)
+      } 
+let rewardInventory = [];
+function addReward(rewardName, quantity) {
+  rewardInventory.push({
+    name: rewardName
+  });
+}
+
+console.log("Reward inventory:", rewardInventory);
   </script>
 </body>
 </html>
