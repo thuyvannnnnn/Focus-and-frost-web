@@ -1,0 +1,322 @@
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Báo cáo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: rgba(0,0,0,0.2);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col items-center p-4 relative overflow-x-hidden">
+  <img
+    src="https://i.ibb.co/JRr5YSFS/66-F84-D93-7422-4-D12-AD64-8-B3103-E20-BD3.png"
+    alt="Ảnh nền màu xanh dương với các họa tiết hình học trừu tượng, có các đường nét và điểm sáng tạo cảm giác hiện đại và tươi mới"
+    class="fixed inset-0 w-full h-full object-cover -z-10 select-none pointer-events-none"
+  />
+  <div class="w-full max-w-4xl bg-white bg-opacity-90 rounded-xl shadow-lg backdrop-blur-sm">
+    <header class="mb-6 flex items-center justify-between p-4">
+      <button
+        id="prevMonthBtn"
+        aria-label="Tháng trước"
+        class="p-2 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500"
+      >
+        <i class="fas fa-chevron-left text-gray-700"></i>
+      </button>
+      <h1 id="headerTitle" class="text-3xl font-semibold text-gray-800 text-center flex-1">Báo cáo</h1>
+      <button
+        id="nextMonthBtn"
+        aria-label="Tháng sau"
+        class="p-2 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500"
+      >
+        <i class="fas fa-chevron-right text-gray-700"></i>
+      </button>
+    </header>
+
+    <div id="calendar" class="grid grid-cols-7 gap-2 text-center text-sm select-none px-4 pb-6"></div>
+  </div>
+
+  <div
+    id="bottomSheet"
+    class="fixed inset-x-0 bottom-0 max-h-[80vh] bg-white rounded-t-2xl shadow-xl transform translate-y-full transition-transform duration-300 ease-in-out flex flex-col"
+    style="max-width: 480px; margin: 0 auto; left: 0; right: 0;"
+    aria-modal="true"
+    role="dialog"
+    aria-labelledby="bottomSheetTitle"
+  >
+    <div class="flex justify-between items-center p-4 border-b border-gray-200">
+      <h2 id="bottomSheetTitle" class="text-lg font-semibold text-gray-900"></h2>
+      <button
+        id="closeBtn"
+        aria-label="Đóng"
+        class="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 rounded"
+      >
+        <i class="fas fa-times fa-lg"></i>
+      </button>
+    </div>
+    <div class="p-4 overflow-y-auto scrollbar-thin flex-1">
+      <p id="totalTimePomodoro" class="text-gray-700 mb-4"></p>
+      <ul id="sessionsList" class="space-y-3 text-gray-700"></ul>
+      <p id="noSessions" class="text-gray-500 italic text-center mt-6 hidden">Chưa có phiên tập trung</p>
+    </div>
+  </div>
+
+  <script>
+    const sessionHistory = [
+           { id: 27, startAt: "2024-07-20T09:30:00", endAt: "2024-07-20T09:55:00", label: "Pomodoro 2" },
+      { id: 28, startAt: "2024-07-20T10:00:00", endAt: "2024-07-20T10:25:00", label: "Pomodoro 3" },
+      { id: 29, startAt: "2024-07-20T10:30:00", endAt: "2024-07-20T10:55:00", label: "Pomodoro 4" },
+    ];
+
+    const dataMap = {};
+    sessionHistory.forEach(session => {
+      const dateKey = session.startAt.slice(0, 10);
+      const start = new Date(session.startAt);
+      const end = new Date(session.endAt);
+      const diffMinutes = (end - start) / 60000;
+      if (!dataMap[dateKey]) {
+        dataMap[dateKey] = 0;
+      }
+      dataMap[dateKey] += diffMinutes;
+    });
+
+    function getDayDetail(date) {
+      const sessions = sessionHistory.filter(s => s.startAt.startsWith(date));
+      if (sessions.length === 0) {
+        return Promise.resolve({
+          date,
+          totalMinutes: 0,
+          pomodoros: 0,
+          sessions: [],
+        });
+      }
+      let totalMinutes = 0;
+      const sessionDetails = sessions.map((s, i) => {
+        const start = new Date(s.startAt);
+        const end = new Date(s.endAt);
+        const diffMinutes = (end - start) / 60000;
+        totalMinutes += diffMinutes;
+        const startAt = s.startAt.slice(11,16);
+        const endAt = s.endAt.slice(11,16);
+        return {
+          startAt,
+          endAt,
+          label: s.label || `Pomodoro ${i + 1}`,
+        };
+      });
+      const pomodoros = sessionDetails.length;
+      return Promise.resolve({
+        date,
+        totalMinutes,
+        pomodoros,
+        sessions: sessionDetails,
+      });
+    }
+
+    function formatDateVN(dateStr) {
+      const d = new Date(dateStr + "T00:00:00");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const yyyy = d.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
+    }
+
+    function formatMonthYear(year, month) {
+      return `Tháng ${String(month + 1).padStart(2, "0")}/${year}`;
+    }
+
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth();
+
+    function buildCalendarDays(year, month) {
+      const firstDayOfMonth = new Date(year, month, 1);
+      const lastDayOfMonth = new Date(year, month + 1, 0);
+      const daysInMonth = lastDayOfMonth.getDate();
+
+      const startWeekDay = firstDayOfMonth.getDay();
+      const offset = startWeekDay === 0 ? 6 : startWeekDay - 1;
+
+      const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+      const days = [];
+
+      for (let i = offset - 1; i >= 0; i--) {
+        const dayNum = prevMonthLastDay - i;
+        const dateObj = new Date(year, month - 1, dayNum);
+        days.push({
+          dateObj,
+          inCurrentMonth: false,
+          dateStr: dateObj.toISOString().slice(0, 10),
+        });
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateObj = new Date(year, month, d);
+        days.push({
+          dateObj,
+          inCurrentMonth: true,
+          dateStr: dateObj.toISOString().slice(0, 10),
+        });
+      }
+
+      while (days.length % 7 !== 0) {
+        const nextDayNum = days.length - (offset + daysInMonth) + 1;
+        const dateObj = new Date(year, month + 1, nextDayNum);
+        days.push({
+          dateObj,
+          inCurrentMonth: false,
+          dateStr: dateObj.toISOString().slice(0, 10),
+        });
+      }
+
+      return days;
+    }
+
+    function renderCalendar() {
+      const calendarEl = document.getElementById("calendar");
+      calendarEl.innerHTML = "";
+
+      const headerTitle = document.getElementById("headerTitle");
+      headerTitle.textContent = formatMonthYear(currentYear, currentMonth);
+
+      const weekdays = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
+      weekdays.forEach((wd) => {
+        const th = document.createElement("div");
+        th.className = "font-semibold text-gray-600 py-1";
+        th.textContent = wd;
+        calendarEl.appendChild(th);
+      });
+
+      const days = buildCalendarDays(currentYear, currentMonth);
+
+      days.forEach(({ dateObj, inCurrentMonth, dateStr }) => {
+        const dayNum = dateObj.getDate();
+        const totalMinutes = dataMap[dateStr] ?? 0;
+
+        const dayCell = document.createElement("button");
+        dayCell.type = "button";
+        dayCell.className =
+          "relative w-full aspect-square rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center justify-center text-sm font-medium " +
+          (inCurrentMonth ? "text-gray-900" : "text-gray-400") +
+          " hover:bg-gray-100";
+
+        if (inCurrentMonth && totalMinutes > 0) {
+          dayCell.classList.add("border-2", "border-red-500");
+        }
+
+        dayCell.textContent = dayNum;
+        dayCell.setAttribute("aria-label", `Ngày ${formatDateVN(dateStr)}`);
+
+        if (inCurrentMonth) {
+          dayCell.addEventListener("click", () => {
+            openBottomSheet(dateStr);
+          });
+        } else {
+          dayCell.disabled = true;
+        }
+
+        calendarEl.appendChild(dayCell);
+      });
+    }
+
+    const bottomSheet = document.getElementById("bottomSheet");
+    const bottomSheetTitle = document.getElementById("bottomSheetTitle");
+    const totalTimePomodoro = document.getElementById("totalTimePomodoro");
+    const sessionsList = document.getElementById("sessionsList");
+    const noSessions = document.getElementById("noSessions");
+    const closeBtn = document.getElementById("closeBtn");
+
+    async function openBottomSheet(dateStr) {
+      bottomSheetTitle.textContent = `Ngày ${formatDateVN(dateStr)}`;
+      totalTimePomodoro.textContent = "Đang tải...";
+      sessionsList.innerHTML = "";
+      noSessions.classList.add("hidden");
+
+      bottomSheet.classList.remove("translate-y-full");
+      bottomSheet.classList.add("translate-y-0");
+      document.body.style.overflow = "hidden";
+
+      try {
+        const detail = await getDayDetail(dateStr);
+        if (detail.totalMinutes === 0) {
+          totalTimePomodoro.textContent = "";
+          noSessions.classList.remove("hidden");
+          sessionsList.innerHTML = "";
+        } else {
+          noSessions.classList.add("hidden");
+          totalTimePomodoro.textContent = `Tổng thời gian: ${detail.totalMinutes} phút · ${detail.pomodoros} Pomodoro`;
+          sessionsList.innerHTML = "";
+          detail.sessions.forEach((session) => {
+            const li = document.createElement("li");
+            li.textContent = `${session.startAt}–${session.endAt} · ${session.label}`;
+            sessionsList.appendChild(li);
+          });
+        }
+      } catch (e) {
+        totalTimePomodoro.textContent = "";
+        noSessions.classList.remove("hidden");
+        sessionsList.innerHTML = "";
+      }
+    }
+
+    function closeBottomSheet() {
+      bottomSheet.classList.remove("translate-y-0");
+      bottomSheet.classList.add("translate-y-full");
+      document.body.style.overflow = "";
+    }
+
+    closeBtn.addEventListener("click", closeBottomSheet);
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !bottomSheet.classList.contains("translate-y-full")) {
+        closeBottomSheet();
+      }
+    });
+
+    const prevMonthBtn = document.getElementById("prevMonthBtn");
+    const nextMonthBtn = document.getElementById("nextMonthBtn");
+
+    prevMonthBtn.addEventListener("click", () => {
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      renderCalendar();
+      closeBottomSheet();
+    });
+
+    nextMonthBtn.addEventListener("click", () => {
+      currentMonth++;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      renderCalendar();
+      closeBottomSheet();
+    });
+
+    renderCalendar();
+  </script>
+</body>
+</html>
