@@ -719,6 +719,19 @@
     document.getElementById('btn-statistics').addEventListener('click', function() {
       window.location.href = 'statistics.html';
     });
+    // Lưu trữ thông tin vào localStorage
+function saveSessionHistory() {
+    const sessionHistory = {
+        date: new Date().toISOString(), // Lưu ngày giờ hiện tại
+        duration: 30 // Thời gian tập trung (ví dụ: 30 phút)
+    };
+
+    localStorage.setItem('sessionHistory', JSON.stringify(sessionHistory));
+}
+
+// Gọi hàm để lưu trữ
+saveSessionHistory();
+
   </script>
 </body>
 </html>
