@@ -169,12 +169,8 @@
 
     updateProgress();
 
-    document.getElementById('back-btn').addEventListener('click', () => {
-      // Khi quay lại, reset sessionHistory về 0
-      sessionHistory = [];
-      localStorage.setItem('sessionHistory', JSON.stringify(sessionHistory));
-      updateProgress();
-      window.location.href = '/';
+    document.getElementById('back-btn').addEventListener('click', function() {
+      window.location.href = 'index.html';
     });
 
     window.addEventListener('keydown', (e) => {
