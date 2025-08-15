@@ -12,7 +12,11 @@
     href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
     rel="stylesheet"
   />
+let rewardInventory = JSON.parse(localStorage.getItem('rewardInventory')) || [];
+let sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
+
   <style>
+    
     body {
       font-family: 'Inter', sans-serif;
     }
