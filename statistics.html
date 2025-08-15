@@ -359,8 +359,40 @@
       renderCalendar();
       closeBottomSheet();
     });
+// Mảng lưu tất cả lịch sử tập trung
+let sessionHistory = [];
 
-    renderCalendar();
+// Hàm bắt đầu tập trung
+function startFocus() {
+  return {
+    startAt: new Date() // Lưu thời gian bắt đầu
+  };
+}
+
+// Hàm kết thúc tập trung và lưu vào sessionHistory
+function endFocus(session) {
+  session.endAt = new Date(); // Lưu thời gian kết thúc
+
+  // Tính số phút tập trung
+  const diffMs = session.endAt - session.startAt;
+  session.durationMinutes = Math.floor(diffMs / (1000 * 60));
+
+  // Lưu vào sessionHistory
+  sessionHistory.push(session);
+}
+
+// ----- Ví dụ sử dụng -----
+
+// Bắt đầu tập trung
+let currentSession = startFocus();
+
+// Giả sử sau 45 phút...
+setTimeout(() => {
+  // Kết thúc và lưu
+  endFocus(currentSession);
+
+  console.log("Session history:", sessionHistory);
+}, 45 * 60 * 1000); // 45 phút
   </script>
 </body>
 </html>
