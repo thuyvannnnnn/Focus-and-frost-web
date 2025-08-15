@@ -688,55 +688,54 @@
       }
       timeProgressBar.style.width = "100%";
     });
-
-    // Accessibility: close modals on Escape
+<script>
+    // Đóng modal khi nhấn phím Escape
     window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        if (!rewardModal.classList.contains("hidden")) {
-          rewardModal.classList.add("hidden");
+        if (e.key === "Escape") {
+            if (!rewardModal.classList.contains("hidden")) {
+                rewardModal.classList.add("hidden");
+            }
+            if (!menuSelectCake.classList.contains("hidden")) {
+                menuSelectCake.classList.add("hidden");
+            }
         }
-        if (!menuSelectCake.classList.contains("hidden")) {
-          menuSelectCake.classList.add("hidden");
-        }
-      }
-    });
-    
-    });
-    // Lưu trữ thông tin vào localStorage
-function saveSessionHistory() {
-    const sessionHistory = {
-        date: new Date().toISOString(), // Lưu ngày giờ hiện tại
-        duration: 30 // Thời gian tập trung (ví dụ: 30 phút)
-    };
-
-  // Lưu thêm một phiên tập trung vào lịch sử mà không ghi đè dữ liệu cũ
-function saveSessionHistory() {
-    let history = JSON.parse(localStorage.getItem('sessionHistory')) || [];
-
-    history.push({
-        date: new Date().toISOString(),
-        cake: selectedCake || null,
-        timeSeconds: elapsedSeconds || 0,
-        rewards: [], // không có phần thưởng vì chưa chạy showReward()
-        userId: user ? user.id : null
     });
 
-    localStorage.setItem('sessionHistory', JSON.stringify(history));
-};
+    // Hàm lưu lịch sử phiên tập trung vào localStorage
+    function saveSessionHistory() {
+        let history = JSON.parse(localStorage.getItem('sessionHistory')) || [];
 
-// Ví dụ gọi hàm để test lưu
-  saveSessionHistory();
-  document.getElementById('btn-decoration').addEventListener('click', function() {
-      window.location.href = 'decorate.html';
+        history.push({
+            date: new Date().toISOString(),       // Ngày giờ hiện tại
+            durationMinutes: 30,                  // Thời gian tập trung (phút) - bạn có thể thay bằng biến thật
+            cake: typeof selectedCake !== 'undefined' ? selectedCake : null,
+            timeSeconds: typeof elapsedSeconds !== 'undefined' ? elapsedSeconds : 0,
+            rewards: [],                           // Tạm chưa có phần thưởng
+            userId: typeof user !== 'undefined' ? user.id : null
+        });
+
+        localStorage.setItem('sessionHistory', JSON.stringify(history));
+        console.log("Đã lưu sessionHistory:", history);
+    }
+
+    // Gọi thử để test lưu
+    saveSessionHistory();
+
+    // Nút chuyển trang
+    document.getElementById('btn-decoration').addEventListener('click', function() {
+        window.location.href = 'decorate.html';
     });
     document.getElementById('btn-tasks').addEventListener('click', function() {
-      window.location.href = 'tasks.html';
+        window.location.href = 'tasks.html';
     });
-
     document.getElementById('btn-statistics').addEventListener('click', function() {
-      window.location.href = 'statistics.html';
+        window.location.href = 'statistics.html';
     });
 
-  </script>
+    // Xem dữ liệu đã lưu (chạy sau khi load trang)
+    window.addEventListener('load', () => {
+        let history = JSON.parse(localStorage.getItem('sessionHistory')) || [];
+        console.log("Lịch sử đã lưu:", history);
+    });
 </body>
 </html>
