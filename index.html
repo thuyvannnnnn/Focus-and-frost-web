@@ -526,17 +526,8 @@
 
       // Save rewards to inventory
       rewardInventory = rewardInventory.concat(rewards);
-      localStorage.setItem("rewardInventory", JSON.stringify(rewardInventory));
-
-      // Save session history with date and time
-      const now = new Date();
-      sessionHistory.push({
-        date: now.toISOString(),
-        cake: selectedCake,
-        timeSeconds: elapsed,
-        rewards: rewards.map((r) => r.name),
-        userId: user ? user.id : null,
-      });
+      localStorage.setItem("rewardInventory", JSON.stringify(
+    
       localStorage.setItem("sessionHistory", JSON.stringify(sessionHistory));
 
       // Show modal with rewards
