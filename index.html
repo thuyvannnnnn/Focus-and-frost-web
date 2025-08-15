@@ -709,15 +709,7 @@
         }
       }
     });
-    document.getElementById('btn-decoration').addEventListener('click', function() {
-      window.location.href = 'decorate.html';
-    });
-    document.getElementById('btn-tasks').addEventListener('click', function() {
-      window.location.href = 'tasks.html';
-    });
-
-    document.getElementById('btn-statistics').addEventListener('click', function() {
-      window.location.href = 'statistics.html';
+    
     });
     // Lưu trữ thông tin vào localStorage
 function saveSessionHistory() {
@@ -743,6 +735,15 @@ function saveSessionHistory() {
 
 // Ví dụ gọi hàm để test lưu
 saveSessionHistory();
+  document.getElementById('btn-decoration').addEventListener('click', function() {
+      window.location.href = 'decorate.html';
+    });
+    document.getElementById('btn-tasks').addEventListener('click', function() {
+      window.location.href = 'tasks.html';
+    });
+
+    document.getElementById('btn-statistics').addEventListener('click', function() {
+      window.location.href = 'statistics.html';
 
   </script>
 </body>
