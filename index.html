@@ -176,17 +176,7 @@
         </button>
       </div>
     </div>
-       // Navigation buttons
-    document.getElementById('btn-decoration').addEventListener('click', function() {
-      window.location.href = 'decorate.html';
-    });
-    document.getElementById('btn-tasks').addEventListener('click', function() {
-      window.location.href = 'tasks.html';
-    });
-
-    document.getElementById('btn-statistics').addEventListener('click', function() {
-      window.location.href = 'statistics.html';
-    });
+      
 
     <!-- Hidden feedback form for submission -->
     <form
@@ -194,7 +184,6 @@
       action="https://formspree.io/f/mzzvylbg"
       method="POST"
       target="madebythuyvan😯"
-      class="hidden"
     >
       <label>
         <input type="email" name="email" value="leh18876@gmail.com" />
@@ -720,6 +709,16 @@
           menuSelectCake.classList.add("hidden");
         }
       }
+    });
+    document.getElementById('btn-decoration').addEventListener('click', function() {
+      window.location.href = 'decorate.html';
+    });
+    document.getElementById('btn-tasks').addEventListener('click', function() {
+      window.location.href = 'tasks.html';
+    });
+
+    document.getElementById('btn-statistics').addEventListener('click', function() {
+      window.location.href = 'statistics.html';
     });
   </script>
 </body>
