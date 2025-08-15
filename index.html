@@ -644,19 +644,6 @@
       feedbackMessage.value = message.trim();
       feedbackForm.submit();
     });
-
-    // Navigation buttons
-    document.getElementById('btn-decoration').addEventListener('click', function() {
-      window.location.href = 'decorate.html';
-    });
-    document.getElementById('btn-tasks').addEventListener('click', function() {
-      window.location.href = 'tasks.html';
-    });
-
-    document.getElementById('btn-statistics').addEventListener('click', function() {
-      window.location.href = 'statistics.html';
-    });
-
     // Google Login
     googleLoginBtn.addEventListener("click", () => {
       if (user) {
@@ -736,6 +723,19 @@ function endFocus(session) {
   session.durationMinutes = Math.floor(diffMs / (1000 * 60));
   sessionHistory.push(session);
 } 
+    
+
+    // Navigation buttons
+    document.getElementById('btn-decoration').addEventListener('click', function() {
+      window.location.href = 'decorate.html';
+    });
+    document.getElementById('btn-tasks').addEventListener('click', function() {
+      window.location.href = 'tasks.html';
+    });
+
+    document.getElementById('btn-statistics').addEventListener('click', function() {
+      window.location.href = 'statistics.html';
+    });
   </script>
 </body>
 </html>
