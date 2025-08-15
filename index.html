@@ -726,10 +726,22 @@ function saveSessionHistory() {
         duration: 30 // Thời gian tập trung (ví dụ: 30 phút)
     };
 
-    localStorage.setItem('sessionHistory', JSON.stringify(sessionHistory));
+  // Lưu thêm một phiên tập trung vào lịch sử mà không ghi đè dữ liệu cũ
+function saveSessionHistory() {
+    let history = JSON.parse(localStorage.getItem('sessionHistory')) || [];
+
+    history.push({
+        date: new Date().toISOString(),
+        cake: selectedCake || null,
+        timeSeconds: elapsedSeconds || 0,
+        rewards: [], // không có phần thưởng vì chưa chạy showReward()
+        userId: user ? user.id : null
+    });
+
+    localStorage.setItem('sessionHistory', JSON.stringify(history));
 }
 
-// Gọi hàm để lưu trữ
+// Ví dụ gọi hàm để test lưu
 saveSessionHistory();
 
   </script>
