@@ -725,7 +725,7 @@ function saveSessionHistory() {
 };
 
 // Ví dụ gọi hàm để test lưu
-  {saveSessionHistory();
+  saveSessionHistory();
   document.getElementById('btn-decoration').addEventListener('click', function() {
       window.location.href = 'decorate.html';
     });
@@ -734,8 +734,8 @@ function saveSessionHistory() {
     });
 
     document.getElementById('btn-statistics').addEventListener('click', function() {
-      window.location.href = 'statistics.html'})
-  }
+      window.location.href = 'statistics.html';
+    });
 
   </script>
 </body>
