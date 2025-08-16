@@ -166,9 +166,9 @@
     /* =======================
        ĐỌC & TỔNG HỢP DỮ LIỆU
     ======================== */
-    function loadSessionHistoryRaw() {
+    function loadSessionStorageRaw() {
       try {
-        const raw = localStorage.getItem('sessionHistory');
+        const raw = localStorage.getItem('sessionStorage');
         if (!raw) return [];
         const parsed = JSON.parse(raw);
         return Array.isArray(parsed) ? parsed : [];
@@ -177,13 +177,13 @@
       }
     }
 
-    function loadSessionHistoryNormalized() {
-      const raw = loadSessionHistoryRaw();
+    function loadSessionStorageNormalized() {
+      const raw = loadSessionStorageRaw();
       return raw.map(normalizeSession).filter(s => !!s.dateStr);
     }
 
     function getDayDetail(dateStr) {
-      const norm = loadSessionHistoryNormalized().filter(s => s.dateStr === dateStr);
+      const norm = loadSessionStorageNormalized().filter(s => s.dateStr === dateStr);
       if (norm.length === 0) {
         return { date: dateStr, totalMinutes: 0, pomodoros: 0, sessions: [] };
       }
@@ -347,6 +347,10 @@
 
     // Render lần đầu
     renderCalendar(currentYear, currentMonth);
+    // Debug: In dữ liệu raw và normalized ra console
+console.log("Dữ liệu raw trong localStorage:", loadSessionHistoryRaw());
+console.log("Dữ liệu đã normalize:", loadSessionHistoryNormalized());
+
   </script>
 </body>
 </html>
