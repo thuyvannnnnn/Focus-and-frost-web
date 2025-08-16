@@ -719,18 +719,29 @@
     });
 
     // On load
-    localStorage.setItem('sessionHistory', JSON.stringify(history));
-    window.addEventListener("load", () => {
-      updateCakeDisplay();
-      updateStartButtonState();
-      renderCakeMenu();
-      if (user) {
+    // Khởi tạo sessionHistory nếu chưa có
+if (!localStorage.getItem('sessionHistory')) {
+    localStorage.setItem('sessionHistory', JSON.stringify([]));
+}
+
+// Khi load trang
+window.addEventListener("load", () => {
+    updateCakeDisplay();
+    updateStartButtonState();
+    renderCakeMenu();
+
+    if (user) {
         loginText.textContent = "Đăng xuất";
-      }
-      timeProgressBar.style.width = "100%";
-      let history = JSON.parse(localStorage.getItem('sessionHistory')) || [];
-      console.log("Lịch sử đã lưu:", history);
-    });
+    }
+
+    timeProgressBar.style.width = "100%";});
+
+// Khi lưu lịch sử mới
+function saveSessionHistory(cakeName, selectedTime) {
+    let history = JSON.parse(localStorage.getItem('sessionHistory')) || [];
+    history.push({ cakeName, selectedTime, date: new Date().toLocaleString() });
+    localStorage.setItem('sessionHistory', JSON.stringify(history));
+}
   </script>
 </body>
 </html>
