@@ -737,8 +737,25 @@
       timeProgressBar.style.width = "100%";
     });
   <script>
-    let saveduser = JSON.parse(localStorage.getItem('user'));
-    console.log(savedUser.time);
+    // Khởi tạo nếu chưa có dữ liệu
+if (!localStorage.getItem('sessionHistory')) {
+    localStorage.setItem('sessionHistory', JSON.stringify([]));
+}
+
+// Hàm lưu thời gian tập trung
+function saveSessionHistory(selectedTime) {
+    let history = JSON.parse(localStorage.getItem('sessionHistory')) || [];
+    history.push(selectedTime);
+    localStorage.setItem('sessionHistory', JSON.stringify(history));
+}
+
+// Khi load trang, có thể đọc lại
+window.addEventListener("load", () => {
+    let history = JSON.parse(localStorage.getItem('sessionHistory')) || [];
+    console.log("Thời gian đã tập trung:", history);
+});
+
+    localStorage.setItem(
   </script>
 </body>
 </html>
