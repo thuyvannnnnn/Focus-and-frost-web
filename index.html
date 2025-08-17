@@ -1,0 +1,1106 @@
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trang-chủ - Ứng dụng tập trung</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f0f3e8;
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: #9bba74;
+      border-radius: 3px;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    #cake-area {
+      transition: margin-right 0.3s ease;
+    }
+    #cake-area.shifted {
+      margin-right: 15vw;
+      min-width: 0;
+    }
+    @media (max-width: 768px) {
+      #cake-area.shifted {
+        margin-right: 132px;
+      }
+    }
+    #btn-trash-button, #trash-bin {
+      bottom: calc(68px + 10%);
+    }
+  </style>
+</head>
+<body class="relative min-h-screen flex flex-col items-center bg-[#f0f3e8]">
+  <!-- Background Image -->
+  <img
+    src="https://i.ibb.co/JRr5YSFS/66-F84-D93-7422-4-D12-AD64-8-B3103-E20-BD3.png"
+    alt="Background with soft green and beige abstract shapes, watercolor style, gentle and calming atmosphere"
+    class="fixed inset-0 w-full h-full object-cover -z-10"
+  />
+
+  <!-- Header -->
+  <header class="w-full flex justify-end p-4 max-w-screen-md z-20">
+    <button id="googleLoginBtn" class="flex items-center space-x-2 px-4 py-2 rounded bg-[#9BBA74] hover:bg-[#8aa85a] text-white font-semibold shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]">
+      <i class="fab fa-google"></i>
+      <span id="loginText">Đăng nhập</span>
+    </button>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow flex flex-col items-center justify-center px-4 pb-20 relative w-full max-w-screen-md z-10" aria-label="Màn hình chính ứng dụng tập trung">
+    <!-- Time selector -->
+    <div id="time-selector" class="mb-6 w-full max-w-xs rounded-lg border-4 border-[#9BBA74] bg-white bg-opacity-90 p-4 flex flex-col select-none" aria-label="Chọn thời gian giờ phút giây">
+      <div class="relative w-full h-10 rounded bg-gray-200 overflow-hidden mb-2" aria-hidden="true">
+        <div id="time-progress-bar" class="absolute left-0 top-0 h-10 bg-[#9BBA74] transition-all duration-500 ease-linear" style="width: 100%;"></div>
+      </div>
+      <div class="flex justify-center space-x-2 z-10 relative">
+        <input type="number" id="input-hour" min="0" max="23" placeholder="Giờ" class="w-16 text-center rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] text-lg font-semibold bg-transparent" aria-label="Giờ" />
+        <span class="text-xl font-semibold text-gray-700 select-none">:</span>
+        <input type="number" id="input-minute" min="0" max="59" placeholder="Phút" class="w-16 text-center rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] text-lg font-semibold bg-transparent" aria-label="Phút" />
+        <span class="text-xl font-semibold text-gray-700 select-none">:</span>
+        <input type="number" id="input-second" min="0" max="59" placeholder="Giây" class="w-16 text-center rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] text-lg font-semibold bg-transparent" aria-label="Giây" />
+      </div>
+    </div>
+
+    <!-- Circle with cake image -->
+    <button id="circle-cake" aria-label="Chọn món ăn" class="relative rounded-full border-8 border-[#9BBA74] w-56 h-56 flex items-center justify-center overflow-hidden shadow-lg bg-white" type="button">
+      <img id="cake-image" src="https://i.ibb.co/4nK5Z7L0/1-C4-A3268-5-EA5-49-C2-83-E5-318-CC48-C1619.png" alt="Hình ảnh Macaron màu hồng pastel, bánh ngọt tròn nhỏ xinh xắn, nền trắng" class="w-40 h-40 object-contain" draggable="false" />
+      <img id="cooking-gif" src="https://i.ibb.co/S4dcjq9g/Video.gif" alt="Hình ảnh GIF hoạt hình bánh đang được nấu, màu sắc tươi sáng, nền trong suốt" class="absolute inset-0 w-full h-full object-contain hidden" draggable="false" />
+    </button>
+
+    <!-- Selected cake name -->
+    <div id="selected-cake-name" class="mt-6 w-full max-w-xs rounded-lg border-4 border-[#9BBA74] bg-white bg-opacity-90 p-3 text-center text-xl font-semibold text-gray-800 select-none min-h-[3rem]" aria-live="polite" aria-atomic="true">Macaron</div>
+
+    <!-- Controls -->
+    <div class="mt-6 w-full max-w-xs rounded-lg border-4 border-[#9BBA74] bg-white bg-opacity-90 p-4 flex items-center justify-between" aria-label="Các nút điều khiển">
+      <div class="flex space-x-4">
+        <button id="btn-decoration" aria-label="Trang trí bánh" class="w-12 h-12 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] flex items-center justify-center text-white shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button"><i class="fas fa-paint-brush text-lg"></i></button>
+        <button id="btn-statistics" aria-label="Bảng thống kê dạng cột" class="w-12 h-12 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] flex items-center justify-center text-white shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button"><i class="fas fa-chart-bar text-lg"></i></button>
+      </div>
+      <button id="btn-start-stop" class="flex-1 mx-4 py-2 rounded-lg font-bold text-white disabled:opacity-50 disabled:cursor-not-allowed bg-[#9BBA74] hover:bg-[#8aa85a] focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button" aria-live="polite" aria-atomic="true">Bắt đầu</button>
+      <div class="flex space-x-4">
+        <button id="btn-tasks" aria-label="Nhiệm vụ" class="w-12 h-12 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] flex items-center justify-center text-white shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button"><i class="fas fa-tasks text-lg"></i></button>
+      </div>
+    </div>
+
+    <!-- Clear Data -->
+    <div class="mt-6 w-full max-w-xs flex justify-center">
+      <button id="btn-clear-data" class="px-6 py-2 rounded bg-red-600 hover:bg-red-700 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-red-700" type="button" aria-label="Xóa dữ liệu tập trung">Xóa dữ liệu tập trung</button>
+    </div>
+
+    <!-- Feedback form -->
+    <form id="feedback-form" action="https://formspree.io/f/mzzvylbg" method="POST" class="hidden">
+      <label><input type="email" name="thuyvan01012008@gmail.com" value="madebyvann" /></label>
+      <input type="hidden" name="message" id="feedback-message" />
+    </form>
+  </main>
+
+  <!-- Feedback button -->
+  <button id="btn-feedback" aria-label="Góp ý" class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] flex items-center justify-center text-white shadow-lg z-50 focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button" title="Góp ý">
+    <i class="fas fa-comment-alt text-xl"></i>
+  </button>
+
+  <!-- Menu chọn món -->
+  <div id="menu-select-cake" class="fixed bottom-32 left-1/2 transform -translate-x-1/2 w-full max-w-md max-h-60 bg-white bg-opacity-95 rounded-lg border border-gray-300 shadow-lg overflow-y-auto scrollbar-thin hidden z-40" role="list" aria-label="Menu chọn món ăn">
+    <div id="menu-cake-list" class="grid grid-cols-3 gap-4 p-4"></div>
+  </div>
+
+  <!-- Reward modal -->
+  <div id="reward-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="reward-title">
+    <div class="bg-white rounded-lg max-w-md w-full p-6 flex flex-col space-y-4 shadow-lg">
+      <h2 id="reward-title" class="text-xl font-semibold text-gray-800 text-center">Hoan hô! Bạn đã nhận được</h2>
+      <div id="reward-content" class="flex flex-col items-center space-y-4" aria-live="polite" aria-atomic="true"></div>
+      <button id="reward-confirm" class="mt-4 px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto focus:outline-none focus:ring-2 focus:ring-[#b0102a]" type="button">Xác nhận</button>
+    </div>
+  </div>
+
+  <!-- Statistics modal -->
+  <div id="statistics-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="statistics-title">
+    <div class="bg-white rounded-lg max-w-4xl w-full max-h-[95vh] p-6 flex flex-col space-y-4 shadow-lg overflow-hidden">
+      <div class="flex items-center justify-center space-x-4">
+        <button id="prev-month" aria-label="Tháng trước" class="text-2xl text-[#9BBA74] hover:text-[#8aa85a] focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded"><i class="fas fa-chevron-left"></i></button>
+        <h2 id="statistics-title" class="text-2xl font-semibold text-gray-800 text-center flex-1 select-none">Báo cáo</h2>
+        <button id="next-month" aria-label="Tháng sau" class="text-2xl text-[#9BBA74] hover:text-[#8aa85a] focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="flex flex-col md:flex-row md:space-x-6 flex-grow overflow-hidden">
+        <div class="md:w-1/2 overflow-auto max-h-[80vh] border border-gray-300 rounded p-4 bg-gray-50">
+          <div id="calendar" class="grid grid-cols-7 gap-1 text-center select-none"></div>
+        </div>
+        <div class="md:w-1/2 overflow-auto max-h-[80vh] border border-gray-300 rounded p-4 bg-white flex flex-col">
+          <h3 id="summary-date" class="text-xl font-semibold mb-4 text-center select-none">Không có ngày tập trung nào.</h3>
+          <div id="summary-content" class="space-y-4 text-gray-700 flex-grow overflow-auto"></div>
+          <div class="mt-4 flex justify-center">
+            <button id="statistics-close" class="px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#b0102a]" type="button">Đóng</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tasks modal -->
+  <div id="tasks-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="tasks-title">
+    <div class="bg-white rounded-lg max-w-md w-full p-6 flex flex-col space-y-6 shadow-lg">
+      <h2 id="tasks-title" class="text-2xl font-semibold text-gray-800 text-center">Nhiệm vụ tích lũy 7 ngày tập trung liên tục</h2>
+      <div class="flex flex-col items-center space-y-4">
+        <img src="https://i.ibb.co/JjHyk2vX/2316-CFE1-22-EA-4632-9307-73-B7-AE643-FB8.png" alt="Hình ảnh bánh gấu màu nâu vàng, bánh ngọt tròn với khuôn mặt gấu dễ thương, nền trắng" class="w-40 h-40 object-contain" draggable="false" />
+        <p class="text-center text-gray-700 text-lg max-w-xs">Hoàn thành nhiệm vụ tích lũy 7 ngày tập trung liên tục để nhận được bánh gấu!</p>
+        <div class="w-full max-w-xs bg-gray-200 rounded-full h-6 overflow-hidden">
+          <div id="task-progress-bar" class="h-6 bg-[#9BBA74] transition-all duration-500" style="width: 0%;" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" role="progressbar" aria-label="Tiến độ nhiệm vụ 7 ngày tập trung liên tục"></div>
+        </div>
+        <p id="task-progress-text" class="text-center font-semibold text-gray-800 text-lg select-none">0 / 7 ngày</p>
+      </div>
+      <button id="tasks-close" class="mt-4 px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto focus:outline-none focus:ring-2 focus:ring-[#b0102a]" type="button">Đóng</button>
+    </div>
+  </div>
+
+  <!-- Decoration app overlay -->
+  <div id="decoration-app" class="fixed inset-0 bg-white bg-opacity-95 backdrop-blur-md z-50 hidden flex flex-col items-center justify-center select-none min-h-screen">
+    <img alt="Background pastel cho app trang trí bánh, màu sắc nhẹ nhàng pha trộn hồng và xanh nhạt, tạo cảm giác ấm áp và dễ chịu" class="fixed top-0 left-0 w-full h-full object-cover -z-10" draggable="false" height="1080" src="https://storage.googleapis.com/a1aa/image/2552aaf3-446d-4a54-73c0-657adbf05da6.jpg" width="1920" />
+    <button aria-label="Quay về trang chính" class="absolute top-4 left-4 w-12 h-12 rounded-full bg-white bg-opacity-70 backdrop-blur-sm flex items-center justify-center shadow-md hover:bg-opacity-90 transition" id="btn-back-main" type="button"><i class="fas fa-home text-gray-700 text-xl"></i></button>
+    <button aria-label="Mở lịch sử bánh đã trang trí" class="absolute bottom-4 left-4 w-10 h-10 rounded-full bg-white bg-opacity-70 backdrop-blur-sm flex items-center justify-center shadow-md hover:bg-opacity-90 transition text-lg" id="btn-history" type="button">🕓</button>
+    <button aria-label="Thùng rác để vứt đồ trang trí" class="absolute left-4 w-14 h-14 bg-gray-400 rounded-full shadow-lg flex items-center justify-center text-white text-xl cursor-default select-none transition hover:bg-gray-500 opacity-0 pointer-events-none" id="btn-trash-button" tabindex="0" type="button"><i class="fas fa-trash-alt"></i></button>
+    <button aria-label="Bắt đầu chọn bánh" class="absolute bottom-4 right-4 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold rounded-full px-6 py-3 shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed" id="btn-start" type="button">Bắt đầu</button>
+    <div aria-label="Khu vực trang trí bánh" class="relative w-full max-w-md aspect-square mx-auto mt-[26%] mb-24 flex items-center justify-center" id="cake-area" style="min-height: 320px">
+      <img alt="Đĩa trang trí bánh" class="absolute top-[65%] left-[40%] -translate-x-1/2 -translate-y-1/2 w-64 h-64 object-contain pointer-events-none select-none" draggable="false" id="plate-img" src="" style="display: none" />
+      <img alt="Bánh" class="absolute top-[60%] left-[40%] -translate-x-1/2 -translate-y-1/2 w-56 h-56 object-contain pointer-events-none select-none" draggable="false" id="cake-img" src="" style="display: none" />
+      <div aria-label="Khu vực trang trí đồ trang trí trên bánh" class="absolute top-[60%] left-[40%] -translate-x-1/2 -translate-y-1/2 w-56 h-56 pointer-events-auto" id="decorations-container"></div>
+    </div>
+    <div aria-atomic="true" aria-live="polite" class="fixed top-0 right-0 h-full w-0 md:w-0 overflow-y-auto bg-white bg-opacity-90 backdrop-blur-md shadow-lg transition-all no-scrollbar flex flex-col" id="right-panel" style="max-width: 15vw; min-width: 132px"></div>
+    <div class="fixed bottom-20 right-4 left-4 flex justify-between max-w-md mx-auto px-2" id="bottom-buttons" style="max-width: 280px; display: none">
+      <button class="bg-gray-300 hover:bg-gray-400 active:bg-gray-500 text-gray-800 font-semibold rounded-full px-5 py-2 shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed" id="btn-back-step" type="button">Quay về</button>
+      <button class="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold rounded-full px-5 py-2 shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed" id="btn-confirm-step" type="button">Xác nhận</button>
+    </div>
+    <div aria-label="Thùng rác để vứt đồ trang trí" class="fixed left-4 w-14 h-14 bg-gray-400 rounded-full shadow-lg flex items-center justify-center text-white text-xl cursor-default select-none opacity-0 pointer-events-none transition-opacity" id="trash-bin" role="button" tabindex="0" style="bottom: calc(68px + 10%)"><i class="fas fa-trash-alt"></i></div>
+    <div aria-labelledby="history-title" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden" id="history-modal" role="dialog">
+      <div class="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto p-4 flex flex-col">
+        <h2 class="text-xl font-bold mb-4 text-center" id="history-title">Lịch sử bánh đã trang trí</h2>
+        <div class="flex flex-col gap-4 overflow-y-auto no-scrollbar" id="history-list"><p class="text-center text-gray-600">Chưa có bánh đã trang trí nào trong lịch sử.</p></div>
+        <button class="mt-6 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white font-semibold rounded-full px-5 py-2 shadow-md self-center w-32" id="btn-close-history" type="button">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      // Elements
+      const cakeImageEl = document.getElementById("cake-image");
+      const circleCakeBtn = document.getElementById("circle-cake");
+      const selectedCakeNameEl = document.getElementById("selected-cake-name");
+      const btnStartStop = document.getElementById("btn-start-stop");
+      const inputHour = document.getElementById("input-hour");
+      const inputMinute = document.getElementById("input-minute");
+      const inputSecond = document.getElementById("input-second");
+      const menuSelectCake = document.getElementById("menu-select-cake");
+      const menuCakeList = document.getElementById("menu-cake-list");
+      const cookingGif = document.getElementById("cooking-gif");
+      const rewardModal = document.getElementById("reward-modal");
+      const rewardContent = document.getElementById("reward-content");
+      const rewardConfirmBtn = document.getElementById("reward-confirm");
+      const feedbackBtn = document.getElementById("btn-feedback");
+      const feedbackForm = document.getElementById("feedback-form");
+      const feedbackMessage = document.getElementById("feedback-message");
+      const googleLoginBtn = document.getElementById("googleLoginBtn");
+      const loginText = document.getElementById("loginText");
+      const backgroundMusic = document.getElementById("background-music");
+      const timeProgressBar = document.getElementById("time-progress-bar");
+      const btnDecoration = document.getElementById("btn-decoration");
+      const decorationApp = document.getElementById("decoration-app");
+
+      // State
+      let selectedCake = "Macaron";
+      let selectedTime = { h: 0, m: 0, s: 0 };
+      let timerInterval = null;
+      let isRunning = false;
+      let remainingSeconds = 0;
+      let elapsedSeconds = 0;
+      let selectedTimeTotalSeconds = 0;
+
+      // Cakes data
+      const cakes = {
+        Macaron: {
+          name: "Macaron",
+          img: "https://i.ibb.co/4nK5Z7L0/1-C4-A3268-5-EA5-49-C2-83-E5-318-CC48-C1619.png",
+          alt: "Hình ảnh Macaron màu hồng pastel, bánh ngọt tròn nhỏ xinh xắn, nền trắng",
+        },
+        "Cà tím": {
+          name: "Cà tím",
+          img: "https://i.ibb.co/nN5GQxNr/IMG-7291.png",
+          alt: "Hình ảnh quả cà tím tím tươi, bóng mượt, nền trắng",
+        },
+      };
+
+      // Utility functions
+      const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+      const formatTime = (seconds) => {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        return (h > 0 ? String(h).padStart(2, "0") + ":" : "") + String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+      };
+
+      // Update cake display
+      function updateCakeDisplay() {
+        const cake = cakes[selectedCake];
+        cakeImageEl.src = cake.img;
+        cakeImageEl.alt = cake.alt;
+        selectedCakeNameEl.textContent = cake.name;
+      }
+
+      // Update start button state
+      function updateStartButtonState() {
+        const h = clamp(parseInt(inputHour.value) || 0, 0, 23);
+        const m = clamp(parseInt(inputMinute.value) || 0, 0, 59);
+        const s = clamp(parseInt(inputSecond.value) || 0, 0, 59);
+        const hasTime = h + m + s > 0 || elapsedSeconds > 0;
+        btnStartStop.disabled = !(hasTime && selectedCake);
+        btnStartStop.classList.toggle("bg-[#9BBA74]", !isRunning && !btnStartStop.disabled);
+        btnStartStop.classList.toggle("hover:bg-[#8aa85a]", !isRunning && !btnStartStop.disabled);
+        btnStartStop.classList.toggle("bg-[#DC143C]", isRunning);
+        btnStartStop.classList.toggle("hover:bg-[#b0102a]", isRunning);
+        btnStartStop.textContent = isRunning ? "Dừng lại" : (elapsedSeconds > 0 ? "Dùng lại" : "Bắt đầu");
+      }
+
+      // Parse time inputs
+      function parseTimeInputs() {
+        return {
+          h: clamp(parseInt(inputHour.value) || 0, 0, 23),
+          m: clamp(parseInt(inputMinute.value) || 0, 0, 59),
+          s: clamp(parseInt(inputSecond.value) || 0, 0, 59),
+        };
+      }
+
+      // Total seconds from time object
+      function totalSeconds(time) {
+        return time.h * 3600 + time.m * 60 + time.s;
+      }
+
+      // Update inputs from remaining seconds
+      function updateTimeInputsFromRemaining() {
+        const h = Math.floor(remainingSeconds / 3600);
+        const m = Math.floor((remainingSeconds % 3600) / 60);
+        const s = remainingSeconds % 60;
+        inputHour.value = h > 0 ? h : "";
+        inputMinute.value = m > 0 || h > 0 ? m : "";
+        inputSecond.value = s > 0 || m > 0 || h > 0 ? s : "";
+      }
+
+      // Update progress bar width
+      function updateProgressBar() {
+        if (selectedTimeTotalSeconds === 0) {
+          timeProgressBar.style.width = "0%";
+          return;
+        }
+        timeProgressBar.style.width = (remainingSeconds / selectedTimeTotalSeconds) * 100 + "%";
+      }
+
+      // Disable inputs during timer
+      function disableInputs(disable) {
+        [inputHour, inputMinute, inputSecond, circleCakeBtn, btnDecoration, btnStartStop, btnClearData, btnTasks, btnStatistics].forEach(el => {
+          if(el) el.disabled = disable;
+        });
+      }
+
+      // Timer start
+      function startTimer() {
+        if (isRunning) return;
+        if (elapsedSeconds === 0) {
+          selectedTime = parseTimeInputs();
+          selectedTimeTotalSeconds = totalSeconds(selectedTime);
+          remainingSeconds = selectedTimeTotalSeconds;
+        } else {
+          remainingSeconds = selectedTimeTotalSeconds - elapsedSeconds;
+        }
+        if (remainingSeconds <= 0) return;
+        isRunning = true;
+        updateStartButtonState();
+        cookingGif.classList.remove("hidden");
+        cakeImageEl.classList.add("hidden");
+        backgroundMusic.play().catch(() => {});
+        updateTimeInputsFromRemaining();
+        updateProgressBar();
+        disableInputs(true);
+        window.isRunning = true;
+        timerInterval = setInterval(() => {
+          remainingSeconds--;
+          elapsedSeconds++;
+          updateTimeInputsFromRemaining();
+          updateProgressBar();
+          if (remainingSeconds <= 0) stopTimer(true);
+        }, 1000);
+      }
+
+      // Timer stop
+      function stopTimer(finished = false) {
+        if (!isRunning) return;
+        isRunning = false;
+        updateStartButtonState();
+        clearInterval(timerInterval);
+        timerInterval = null;
+        cookingGif.classList.add("hidden");
+        cakeImageEl.classList.remove("hidden");
+        backgroundMusic.pause();
+        backgroundMusic.currentTime = 0;
+        disableInputs(false);
+        window.isRunning = false;
+        if (finished) {
+          saveSessionHistory(elapsedSeconds);
+          incrementTaskProgressIfFirstToday();
+          showReward(elapsedSeconds);
+          resetTimerState();
+        }
+      }
+
+      // Reset timer inputs and state
+      function resetTimerState() {
+        elapsedSeconds = 0;
+        inputHour.value = "";
+        inputMinute.value = "";
+        inputSecond.value = "";
+        selectedTimeTotalSeconds = 0;
+        timeProgressBar.style.width = "100%";
+        updateStartButtonState();
+      }
+
+      // Save session history
+      function saveSessionHistory(elapsedSeconds) {
+        let history = JSON.parse(localStorage.getItem('sessionHistory')) || [];
+        const now = new Date();
+        const durationMinutes = Math.floor(elapsedSeconds / 60);
+        const newSession = {
+          date: now.toISOString(),
+          durationMinutes,
+          cake: selectedCake,
+          timeSeconds: elapsedSeconds,
+          userId: user ? user.id : null
+        };
+        history.push(newSession);
+        localStorage.setItem('sessionHistory', JSON.stringify(history));
+      }
+
+      // Increment task progress if first session today
+      function incrementTaskProgressIfFirstToday() {
+        const todayStr = new Date().toISOString().slice(0,10);
+        let sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
+        const sessionsToday = sessionHistory.filter(s => s.date.startsWith(todayStr));
+        if (sessionsToday.length === 1) {
+          let progress = parseInt(localStorage.getItem('taskProgress')) || 0;
+          progress = Math.min(progress + 1, 7);
+          localStorage.setItem('taskProgress', progress);
+          updateTaskProgressBar(progress);
+        }
+      }
+
+      // Update task progress bar UI
+      function updateTaskProgressBar(progress) {
+        const maxDays = 7;
+        const percent = Math.min((progress / maxDays) * 100, 100);
+        const taskProgressBar = document.getElementById("task-progress-bar");
+        const taskProgressText = document.getElementById("task-progress-text");
+        if (!taskProgressBar || !taskProgressText) return;
+        taskProgressBar.style.width = percent + "%";
+        taskProgressBar.setAttribute("aria-valuenow", progress);
+        taskProgressText.textContent = `${progress} / 7 ngày`;
+      }
+
+      // Show reward modal
+      function showReward(elapsed) {
+        const timeMinutes = elapsed / 60;
+        const rewards = [{ type: "cake", name: selectedCake, img: cakes[selectedCake].img, alt: cakes[selectedCake].alt }];
+        rewardContent.innerHTML = "";
+        rewards.forEach(r => {
+          const div = document.createElement("div");
+          div.className = "flex flex-col items-center space-y-1";
+          const img = document.createElement("img");
+          img.src = r.img;
+          img.alt = r.alt;
+          img.className = "w-24 h-24 object-contain";
+          img.draggable = false;
+          const span = document.createElement("span");
+          span.className = "text-gray-800 font-semibold text-center";
+          span.textContent = r.name;
+          div.appendChild(img);
+          div.appendChild(span);
+          rewardContent.appendChild(div);
+        });
+        const textLine = document.createElement("p");
+        textLine.className = "text-center font-semibold text-lg text-gray-900 mt-2";
+        textLine.textContent = "Hoan hô! Bạn đã nhận được " + rewards.map(r => r.name).join(", ") + ".";
+        rewardContent.appendChild(textLine);
+        rewardModal.classList.remove("hidden");
+      }
+
+      // Event listeners
+      [inputHour, inputMinute, inputSecond].forEach(input => {
+        input.addEventListener("input", () => {
+          if (input.value.length > 2) input.value = input.value.slice(0, 2);
+          updateStartButtonState();
+        });
+      });
+
+      btnStartStop.addEventListener("click", () => {
+        if (isRunning) stopTimer(false);
+        else startTimer();
+      });
+
+      circleCakeBtn.addEventListener("click", () => {
+        if (isRunning) return;
+        menuSelectCake.classList.toggle("hidden");
+      });
+
+      rewardConfirmBtn.addEventListener("click", () => {
+        rewardModal.classList.add("hidden");
+      });
+
+      feedbackBtn.addEventListener("click", () => {
+        const message = prompt("Vui lòng nhập góp ý của bạn:");
+        if (message === null) return;
+        if (message.trim() === "") {
+          alert("Vui lòng nhập nội dung góp ý.");
+          return;
+        }
+        feedbackMessage.value = message.trim();
+        feedbackForm.submit();
+      });
+
+      googleLoginBtn.addEventListener("click", () => {
+        if (user) {
+          user = null;
+          localStorage.removeItem("user");
+          loginText.textContent = "Đăng nhập";
+          alert("Bạn đã đăng xuất.");
+        } else {
+          google.accounts.id.initialize({
+            client_id: "YOUR_CLIENT_ID_HERE",
+            callback: handleCredentialResponse
+          });
+          google.accounts.id.prompt();
+        }
+      });
+
+      function handleCredentialResponse(response) {
+        const data = parseJwt(response.credential);
+        user = { id: data.sub, name: data.name, email: data.email, picture: data.picture };
+        localStorage.setItem("user", JSON.stringify(user));
+        loginText.textContent = "Đăng xuất";
+        alert("Bạn đã đăng nhập thành công: " + user.name);
+      }
+
+      function parseJwt(token) {
+        let base64Url = token.split('.')[1];
+        let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        let jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+        return JSON.parse(jsonPayload);
+      }
+
+      // Initialize UI
+      function init() {
+        updateCakeDisplay();
+        updateStartButtonState();
+        renderCakeMenu();
+        if (user) loginText.textContent = "Đăng xuất";
+        timeProgressBar.style.width = "100%";
+        const progress = parseInt(localStorage.getItem('taskProgress')) || 0;
+        updateTaskProgressBar(progress);
+      }
+
+      // Render cake menu
+      function renderCakeMenu() {
+        menuCakeList.innerHTML = "";
+        Object.keys(cakes).forEach(cakeName => {
+          const cake = cakes[cakeName];
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded";
+          btn.setAttribute("data-cake", cakeName);
+          btn.setAttribute("aria-label", `Chọn món ${cakeName}`);
+
+          const img = document.createElement("img");
+          img.src = cake.img;
+          img.alt = cake.alt;
+          img.className = "w-20 h-20 object-contain";
+          img.draggable = false;
+
+          const span = document.createElement("span");
+          span.className = "text-sm font-semibold text-gray-700";
+          span.textContent = cakeName;
+
+          btn.appendChild(img);
+          btn.appendChild(span);
+
+          btn.addEventListener("click", () => {
+            if (isRunning) return;
+            selectedCake = cakeName;
+            updateCakeDisplay();
+            menuSelectCake.classList.add("hidden");
+            updateStartButtonState();
+          });
+
+          menuCakeList.appendChild(btn);
+        });
+      }
+
+      window.addEventListener("load", init);
+    })();
+
+    // Decoration app script (optimized and integrated)
+    (() => {
+      const decorationApp = document.getElementById("decoration-app");
+      const btnDecoration = document.getElementById("btn-decoration");
+      const btnStart = document.getElementById("btn-start");
+      const btnBackMain = document.getElementById("btn-back-main");
+      const btnHistory = document.getElementById("btn-history");
+      const btnCloseHistory = document.getElementById("btn-close-history");
+      const historyModal = document.getElementById("history-modal");
+      const historyList = document.getElementById("history-list");
+      const rightPanel = document.getElementById("right-panel");
+      const bottomButtons = document.getElementById("bottom-buttons");
+      const btnBackStep = document.getElementById("btn-back-step");
+      const btnConfirmStep = document.getElementById("btn-confirm-step");
+      const cakeArea = document.getElementById("cake-area");
+      const cakeImg = document.getElementById("cake-img");
+      const plateImg = document.getElementById("plate-img");
+      const decorationsContainer = document.getElementById("decorations-container");
+      const trashBin = document.getElementById("trash-bin");
+      const btnTrashButton = document.getElementById("btn-trash-button");
+
+      let rewardInventory = JSON.parse(localStorage.getItem("rewardInventory")) || [
+        {
+          id: "mousse1",
+          name: "Mousse cake ba lớp",
+          img: "https://placehold.co/256x256/png?text=Banh+mousse+ba+lop,+hinh+tron,+mau+kem+trang+va+hong+nhat,+trang+tri+don+gian",
+          alt: "Bánh mousse ba lớp, hình tròn, màu kem trắng và hồng nhạt, trang trí đơn giản",
+        },
+      ];
+      const decorations = [
+        {
+          id: "flower1",
+          name: "Hoa",
+          img: "https://placehold.co/64x64/png?text=Hoa+trang+tri+banh+mau+hong+nhat,+hinh+tron,+chi+tiet+canh+hoa+mem+mai",
+          alt: "Hoa trang trí bánh màu hồng nhạt, hình tròn, chi tiết cánh hoa mềm mại",
+        },
+      ];
+      const plates = [
+        {
+          id: "plate1",
+          name: "Bánh quy",
+          img: "https://placehold.co/256x256/png?text=Dia+banh+quy+hinh+tron,+mau+trang+sang",
+          alt: "Đĩa bánh quy hình tròn, màu trắng sáng",
+        },
+      ];
+
+      let history = [];
+      let step = "idle";
+      let selectedCake = null;
+      let selectedDecorations = [];
+      let selectedPlate = null;
+
+      const dragState = { dragging: false, target: null, startX: 0, startY: 0, origX: 0, origY: 0, origScale: 1, index: null };
+
+      function openPanel() {
+        rightPanel.style.width = "15vw";
+        rightPanel.style.minWidth = "132px";
+        cakeArea.classList.add("shifted");
+      }
+      function closePanel() {
+        rightPanel.style.width = "0";
+        rightPanel.style.minWidth = "0";
+        cakeArea.classList.remove("shifted");
+      }
+      function clearRightPanel() {
+        rightPanel.innerHTML = "";
+      }
+      function enableConfirmButton(enabled) {
+        btnConfirmStep.disabled = !enabled;
+      }
+      function showBottomButtons(show) {
+        bottomButtons.style.display = show ? "flex" : "none";
+      }
+      function updateCakeAreaDisplay() {
+        if (selectedCake) {
+          cakeImg.src = selectedCake.img;
+          cakeImg.alt = selectedCake.alt;
+          cakeImg.style.display = "block";
+        } else {
+          cakeImg.style.display = "none";
+          cakeImg.src = "";
+          cakeImg.alt = "";
+        }
+        if (selectedPlate) {
+          plateImg.src = selectedPlate.img;
+          plateImg.alt = selectedPlate.alt;
+          plateImg.style.display = "block";
+        } else {
+          plateImg.style.display = "none";
+          plateImg.src = "";
+          plateImg.alt = "";
+        }
+        renderDecorations();
+      }
+      function renderSelectCake() {
+        step = "selectCake";
+        clearRightPanel();
+        showBottomButtons(true);
+        btnBackStep.disabled = true;
+        trashBin.style.opacity = "0";
+        trashBin.style.pointerEvents = "none";
+        btnTrashButton.style.opacity = "0";
+        btnTrashButton.style.pointerEvents = "none";
+
+        const title = document.createElement("h2");
+        title.textContent = "Chọn bánh";
+        title.className = "text-xl font-bold p-4 border-b border-gray-300 sticky top-0 bg-white z-10";
+        rightPanel.appendChild(title);
+
+        const list = document.createElement("div");
+        list.className = "flex flex-col gap-3 p-4 overflow-y-auto no-scrollbar";
+        list.style.minHeight = "100%";
+
+        if (rewardInventory.length === 0) {
+          const msg = document.createElement("p");
+          msg.textContent = "Đã hết bánh! Hãy tập trung để nhận thêm bánh nhé.";
+          msg.className = "text-center text-red-600 font-semibold";
+          list.appendChild(msg);
+          enableConfirmButton(false);
+        } else {
+          rewardInventory.forEach(cake => {
+            const item = document.createElement("label");
+            item.className = "flex items-center gap-3 p-2 rounded-lg cursor-pointer border border-gray-300 hover:border-green-600 transition";
+
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = "cake-select";
+            radio.value = cake.id;
+            radio.className = "w-5 h-5 cursor-pointer";
+            radio.checked = selectedCake && selectedCake.id === cake.id;
+            radio.setAttribute("aria-label", cake.name);
+            radio.addEventListener("change", () => {
+              selectedCake = cake;
+              enableConfirmButton(true);
+              updateCakeAreaDisplay();
+            });
+
+            const img = document.createElement("img");
+            img.src = cake.img;
+            img.alt = cake.alt;
+            img.className = "w-16 h-16 object-contain select-none pointer-events-none rounded-md";
+
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = cake.name;
+            nameSpan.className = "text-gray-800 font-medium";
+
+            item.appendChild(radio);
+            item.appendChild(img);
+            item.appendChild(nameSpan);
+            list.appendChild(item);
+          });
+          enableConfirmButton(selectedCake !== null);
+        }
+        rightPanel.appendChild(list);
+        openPanel();
+
+        selectedPlate = null;
+        selectedDecorations = [];
+        decorationsContainer.innerHTML = "";
+        updateCakeAreaDisplay();
+      }
+      function renderSelectDecorations() {
+        step = "selectDecorations";
+        clearRightPanel();
+        showBottomButtons(true);
+        btnBackStep.disabled = false;
+        enableConfirmButton(true);
+        trashBin.style.opacity = "1";
+        trashBin.style.pointerEvents = "auto";
+        btnTrashButton.style.opacity = "1";
+        btnTrashButton.style.pointerEvents = "auto";
+
+        const title = document.createElement("h2");
+        title.textContent = "Chọn đồ trang trí";
+        title.className = "text-xl font-bold p-4 border-b border-gray-300 sticky top-0 bg-white z-10";
+        rightPanel.appendChild(title);
+
+        const list = document.createElement("div");
+        list.className = "flex flex-col gap-3 p-4 overflow-y-auto no-scrollbar";
+        list.style.minHeight = "100%";
+
+        decorations.forEach(dec => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "flex items-center gap-3 p-2 rounded-lg cursor-pointer border border-gray-300 hover:border-green-600 transition w-full";
+          btn.setAttribute("aria-label", `Thêm đồ trang trí: ${dec.name}`);
+
+          const img = document.createElement("img");
+          img.src = dec.img;
+          img.alt = dec.alt;
+          img.className = "w-12 h-12 object-contain select-none pointer-events-none rounded-md";
+
+          const nameSpan = document.createElement("span");
+          nameSpan.textContent = dec.name;
+          nameSpan.className = "text-gray-800 font-medium";
+
+          btn.appendChild(img);
+          btn.appendChild(nameSpan);
+          btn.addEventListener("click", () => addDecoration(dec));
+          list.appendChild(btn);
+        });
+        rightPanel.appendChild(list);
+        openPanel();
+        updateCakeAreaDisplay();
+      }
+      function renderSelectPlate() {
+        step = "selectPlate";
+        clearRightPanel();
+        showBottomButtons(true);
+        btnBackStep.disabled = false;
+        enableConfirmButton(true);
+        trashBin.style.opacity = "0";
+        trashBin.style.pointerEvents = "none";
+        btnTrashButton.style.opacity = "0";
+        btnTrashButton.style.pointerEvents = "none";
+
+        const title = document.createElement("h2");
+        title.textContent = "Chọn đĩa";
+        title.className = "text-xl font-bold p-4 border-b border-gray-300 sticky top-0 bg-white z-10";
+        rightPanel.appendChild(title);
+
+        const list = document.createElement("div");
+        list.className = "flex flex-col gap-3 p-4 overflow-y-auto no-scrollbar";
+        list.style.minHeight = "100%";
+
+        plates.forEach(plate => {
+          const item = document.createElement("label");
+          item.className = "flex items-center gap-3 p-2 rounded-lg cursor-pointer border border-gray-300 hover:border-green-600 transition";
+
+          const radio = document.createElement("input");
+          radio.type = "radio";
+          radio.name = "plate-select";
+          radio.value = plate.id;
+          radio.className = "w-5 h-5 cursor-pointer";
+          radio.checked = selectedPlate && selectedPlate.id === plate.id;
+          radio.setAttribute("aria-label", plate.name);
+          radio.addEventListener("change", () => {
+            selectedPlate = plate;
+            enableConfirmButton(true);
+            updateCakeAreaDisplay();
+          });
+
+          const img = document.createElement("img");
+          img.src = plate.img;
+          img.alt = plate.alt;
+          img.className = "w-16 h-16 object-contain select-none pointer-events-none rounded-md";
+
+          const nameSpan = document.createElement("span");
+          nameSpan.textContent = plate.name;
+          nameSpan.className = "text-gray-800 font-medium";
+
+          item.appendChild(radio);
+          item.appendChild(img);
+          item.appendChild(nameSpan);
+          list.appendChild(item);
+        });
+        rightPanel.appendChild(list);
+        openPanel();
+        updateCakeAreaDisplay();
+      }
+      function renderDecorations() {
+        decorationsContainer.innerHTML = "";
+        selectedDecorations.forEach((dec, index) => {
+          const decEl = document.createElement("img");
+          decEl.src = dec.img;
+          decEl.alt = dec.alt;
+          decEl.className = "absolute select-none";
+          decEl.style.left = dec.x + "px";
+          decEl.style.top = dec.y + "px";
+          decEl.style.width = dec.scale * 64 + "px";
+          decEl.style.height = "auto";
+          decEl.style.transformOrigin = "center center";
+          decEl.style.userSelect = "none";
+          decEl.style.touchAction = "none";
+          decEl.setAttribute("data-index", index);
+          decEl.setAttribute("aria-label", `Đồ trang trí: ${dec.name}`);
+          if (step === "selectDecorations") {
+            decEl.classList.add("cursor-move");
+            decEl.addEventListener("pointerdown", onDecorationPointerDown);
+          }
+          decorationsContainer.appendChild(decEl);
+        });
+      }
+      function addDecoration(dec) {
+        const x = decorationsContainer.clientWidth / 2 - 32;
+        const y = decorationsContainer.clientHeight / 2 - 32;
+        selectedDecorations.push({ ...dec, x, y, scale: 1 });
+        renderDecorations();
+      }
+      function isOverTrashBin(x, y) {
+        const rect = trashBin.getBoundingClientRect();
+        return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+      }
+      function onDecorationPointerDown(e) {
+        e.preventDefault();
+        if (step !== "selectDecorations") return;
+        const target = e.currentTarget;
+        const index = Number(target.getAttribute("data-index"));
+        if (isNaN(index)) return;
+        dragState.dragging = true;
+        dragState.target = target;
+        dragState.startX = e.clientX;
+        dragState.startY = e.clientY;
+        dragState.origX = selectedDecorations[index].x;
+        dragState.origY = selectedDecorations[index].y;
+        dragState.origScale = selectedDecorations[index].scale;
+        dragState.index = index;
+        target.setPointerCapture(e.pointerId);
+        target.style.transition = "none";
+        window.addEventListener("pointermove", onDecorationPointerMove);
+        window.addEventListener("pointerup", onDecorationPointerUp);
+        window.addEventListener("pointercancel", onDecorationPointerUp);
+      }
+      function onDecorationPointerMove(e) {
+        if (!dragState.dragging) return;
+        e.preventDefault();
+        const dx = e.clientX - dragState.startX;
+        const dy = e.clientY - dragState.startY;
+        let newX = dragState.origX + dx;
+        let newY = dragState.origY + dy;
+        const maxX = decorationsContainer.clientWidth - 32;
+        const maxY = decorationsContainer.clientHeight - 32;
+        const minX = -32;
+        const minY = -32;
+        newX = Math.min(Math.max(newX, minX), maxX);
+        newY = Math.min(Math.max(newY, minY), maxY);
+        selectedDecorations[dragState.index].x = newX;
+        selectedDecorations[dragState.index].y = newY;
+        let scale = dragState.origScale;
+        scale = dy < 0 ? Math.max(0.5, dragState.origScale - -dy / 200) : Math.min(1.5, dragState.origScale + dy / 200);
+        selectedDecorations[dragState.index].scale = scale;
+        renderDecorations();
+        if (isOverTrashBin(e.clientX, e.clientY)) {
+          trashBin.classList.add("bg-gray-600");
+          btnTrashButton.classList.add("bg-gray-500");
+        } else {
+          trashBin.classList.remove("bg-gray-600");
+          btnTrashButton.classList.remove("bg-gray-500");
+        }
+      }
+      function onDecorationPointerUp(e) {
+        if (!dragState.dragging) return;
+        e.preventDefault();
+        if (dragState.target) dragState.target.style.transition = "";
+        if (isOverTrashBin(e.clientX, e.clientY)) {
+          if (dragState.index !== null && dragState.index >= 0 && dragState.index < selectedDecorations.length) {
+            selectedDecorations.splice(dragState.index, 1);
+            renderDecorations();
+          }
+        }
+        trashBin.classList.remove("bg-gray-600");
+        btnTrashButton.classList.remove("bg-gray-500");
+        dragState.dragging = false;
+        dragState.target = null;
+        dragState.index = null;
+        window.removeEventListener("pointermove", onDecorationPointerMove);
+        window.removeEventListener("pointerup", onDecorationPointerUp);
+        window.removeEventListener("pointercancel", onDecorationPointerUp);
+      }
+      function resetAll() {
+        step = "idle";
+        selectedCake = null;
+        selectedDecorations = [];
+        selectedPlate = null;
+        closePanel();
+        showBottomButtons(false);
+        cakeImg.style.display = "none";
+        plateImg.style.display = "none";
+        decorationsContainer.innerHTML = "";
+        btnConfirmStep.disabled = true;
+        trashBin.style.opacity = "0";
+        trashBin.style.pointerEvents = "none";
+        btnTrashButton.style.opacity = "0";
+        btnTrashButton.style.pointerEvents = "none";
+        trashBin.classList.remove("bg-gray-600");
+        btnTrashButton.classList.remove("bg-gray-500");
+        decorationApp.classList.add("hidden");
+      }
+      function saveDecoratedCake() {
+        const decoratedCake = {
+          id: `decorated_${Date.now()}`,
+          cake: selectedCake,
+          decorations: JSON.parse(JSON.stringify(selectedDecorations)),
+          plate: selectedPlate,
+        };
+        history.push(decoratedCake);
+        rewardInventory = rewardInventory.filter(c => c.id !== selectedCake.id);
+        localStorage.setItem("rewardInventory", JSON.stringify(rewardInventory));
+        selectedCake = null;
+        selectedDecorations = [];
+        selectedPlate = null;
+        step = "finished";
+        closePanel();
+        showBottomButtons(false);
+        cakeImg.style.display = "block";
+        cakeImg.src = decoratedCake.cake.img;
+        cakeImg.alt = decoratedCake.cake.alt;
+        if (decoratedCake.plate) {
+          plateImg.style.display = "block";
+          plateImg.src = decoratedCake.plate.img;
+          plateImg.alt = decoratedCake.plate.alt;
+        } else {
+          plateImg.style.display = "none";
+          plateImg.src = "";
+          plateImg.alt = "";
+        }
+        selectedDecorations = decoratedCake.decorations;
+        renderDecorations();
+        btnStart.disabled = false;
+        trashBin.style.opacity = "0";
+        trashBin.style.pointerEvents = "none";
+        btnTrashButton.style.opacity = "0";
+        btnTrashButton.style.pointerEvents = "none";
+        trashBin.classList.remove("bg-gray-600");
+        btnTrashButton.classList.remove("bg-gray-500");
+      }
+      function renderHistory() {
+        historyList.innerHTML = "";
+        if (history.length === 0) {
+          const emptyMsg = document.createElement("p");
+          emptyMsg.textContent = "Chưa có bánh đã trang trí nào trong lịch sử.";
+          emptyMsg.className = "text-center text-gray-600";
+          historyList.appendChild(emptyMsg);
+          return;
+        }
+        history.forEach(item => {
+          const container = document.createElement("div");
+          container.className = "flex gap-3 items-center border border-gray-300 rounded-lg p-2";
+          const plateWrapper = document.createElement("div");
+          plateWrapper.className = "relative w-20 h-20 flex-shrink-0";
+          if (item.plate) {
+            const plateImgEl = document.createElement("img");
+            plateImgEl.src = item.plate.img;
+            plateImgEl.alt = item.plate.alt;
+            plateImgEl.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 object-contain select-none pointer-events-none";
+            plateWrapper.appendChild(plateImgEl);
+          }
+          const cakeImgEl = document.createElement("img");
+          cakeImgEl.src = item.cake.img;
+          cakeImgEl.alt = item.cake.alt;
+          cakeImgEl.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 object-contain select-none pointer-events-none";
+          plateWrapper.appendChild(cakeImgEl);
+          const decContainer = document.createElement("div");
+          decContainer.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 pointer-events-none";
+          item.decorations.forEach(dec => {
+            const decEl = document.createElement("img");
+            decEl.src = dec.img;
+            decEl.alt = dec.alt;
+            decEl.className = "absolute select-none";
+            decEl.style.left = dec.x * (16 / 56) + "px";
+            decEl.style.top = dec.y * (16 / 56) + "px";
+            decEl.style.width = dec.scale * (64 * 16 / 56) + "px";
+            decEl.style.height = "auto";
+            decContainer.appendChild(decEl);
+          });
+          plateWrapper.appendChild(decContainer);
+          container.appendChild(plateWrapper);
+          const info = document.createElement("div");
+          info.className = "flex flex-col";
+          const cakeName = document.createElement("p");
+          cakeName.textContent = item.cake.name;
+          cakeName.className = "font-semibold text-gray-800";
+          const plateName = document.createElement("p");
+          plateName.textContent = item.plate ? `Đĩa: ${item.plate.name}` : "Không có đĩa";
+          plateName.className = "text-gray-600 text-sm";
+          const decNames = item.decorations.length ? item.decorations.map(d => d.name).join(", ") : "Không có đồ trang trí";
+          const decText = document.createElement("p");
+          decText.textContent = `Trang trí: ${decNames}`;
+          decText.className = "text-gray-600 text-sm truncate max-w-xs";
+          info.appendChild(cakeName);
+          info.appendChild(plateName);
+          info.appendChild(decText);
+          container.appendChild(info);
+          historyList.appendChild(container);
+        });
+      }
+
+      btnDecoration.addEventListener("click", () => {
+        if (window.isRunning) return;
+        decorationApp.classList.remove("hidden");
+        btnStart.style.display = "block";
+        resetAll();
+      });
+      btnStart.addEventListener("click", () => {
+        if (rewardInventory.length === 0) {
+          alert("Đã hết bánh! Hãy tập trung để nhận thêm bánh nhé.");
+          return;
+        }
+        selectedCake = null;
+        selectedDecorations = [];
+        selectedPlate = null;
+        renderSelectCake();
+        btnStart.style.display = "none";
+      });
+      btnBackMain.addEventListener("click", resetAll);
+      btnHistory.addEventListener("click", () => {
+        renderHistory();
+        historyModal.classList.remove("hidden");
+      });
+      btnCloseHistory.addEventListener("click", () => historyModal.classList.add("hidden"));
+      btnBackStep.addEventListener("click", () => {
+        if (step === "selectDecorations") renderSelectCake();
+        else if (step === "selectPlate") renderSelectDecorations();
+      });
+      btnConfirmStep.addEventListener("click", () => {
+        if (step === "selectCake" && selectedCake) renderSelectDecorations();
+        else if (step === "selectDecorations") renderSelectPlate();
+        else if (step === "selectPlate") {
+          saveDecoratedCake();
+          btnStart.style.display = "block";
+        }
+      });
+
+      // Drag handlers omitted for brevity, same as above
+
+      function resetAll() {
+        step = "idle";
+        selectedCake = null;
+        selectedDecorations = [];
+        selectedPlate = null;
+        closePanel();
+        showBottomButtons(false);
+        cakeImg.style.display = "none";
+        plateImg.style.display = "none";
+        decorationsContainer.innerHTML = "";
+        btnConfirmStep.disabled = true;
+        trashBin.style.opacity = "0";
+        trashBin.style.pointerEvents = "none";
+        btnTrashButton.style.opacity = "0";
+        btnTrashButton.style.pointerEvents = "none";
+        trashBin.classList.remove("bg-gray-600");
+        btnTrashButton.classList.remove("bg-gray-500");
+        decorationApp.classList.add("hidden");
+      }
+      window.isRunning = false;
+      resetAll();
+    })();
+  </script>
+</body>
+</html>
