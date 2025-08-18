@@ -354,6 +354,33 @@ class="fixed top-4 left-4 z-50 p-3 bg-green-600 text-white rounded-full shadow-m
       </button>
     </div>
   </div>
+  <!-- Overlay -->
+<div
+id="overlay"
+class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"
+></div>
+
+<!-- Info Panel Centered -->
+<aside
+id="infoPanel"
+class="fixed top-1/2 left-1/2 w-80 max-w-full bg-white shadow-lg rounded-lg p-6 transform -translate-x-1/2 -translate-y-1/2 scale-0 transition-transform duration-300 ease-in-out z-50 overflow-y-auto max-h-[80vh]"
+aria-hidden="true"
+>
+<h2 class="text-2xl font-semibold mb-4 text-green-700">Thông tin</h2>
+<p class="mb-4 text-gray-700">
+Đây là bảng thông tin hiển thị khi bạn bấm nút ở góc trái trên. Bạn có thể thêm bất kỳ nội dung nào bạn muốn vào đây.
+</p>
+<ul class="list-disc list-inside space-y-2 text-gray-600">
+<li>Thông tin 
+</li>
+</ul>
+<button>
+  id="closeInfoBtn"
+class="mt-6 w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-400"
+>
+Đóng
+</button>
+</aside>
 
   <audio id="background-music" loop preload="auto" src="https://github.com/thuyvannnnnn/Focus-and-frost/raw/refs/heads/main/45.audio.mp3"></audio>
 
