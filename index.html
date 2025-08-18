@@ -1029,14 +1029,14 @@
       window.location.href = 'decorate.html';
     });
 
-    btnStatistics.addEventListener('click', () => {
+    btnStatistics.addEventListener('touchstart', (e) => {
+      e.preventDefault(); // Ngăn chặn hành vi mặc định
       if (isRunning) return; // disable while running
       renderCalendar();
       summaryDateEl.textContent = "Chọn một ngày để xem chi tiết";
       summaryContentEl.innerHTML = "";
       statisticsModal.classList.remove("hidden");
-    });
-
+  });
     statisticsCloseBtn.addEventListener('click', () => {
       statisticsModal.classList.add("hidden");
     });
