@@ -482,6 +482,35 @@ class="mt-6 w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md focus:
     const taskProgressBar = document.getElementById("task-progress-bar");
     const taskProgressText = document.getElementById("task-progress-text");
 
+    const infoToggleBtn = document.getElementById("infoToggleBtn");
+const infoPanel = document.getElementById("infoPanel");
+const closeInfoBtn = document.getElementById("closeInfoBtn");
+const overlay = document.getElementById("overlay");
+
+function openPanel() {
+infoPanel.classList.remove("scale-0");
+infoPanel.setAttribute("aria-hidden", "false");
+overlay.classList.remove("hidden");
+}
+
+function closePanel() {
+infoPanel.classList.add("scale-0");
+infoPanel.setAttribute("aria-hidden", "true");
+overlay.classList.add("hidden");
+}
+
+infoToggleBtn.addEventListener("click", () => {
+if (infoPanel.classList.contains("scale-0")) {
+openPanel();
+} else {
+closePanel();
+}
+});
+
+closeInfoBtn.addEventListener("click", closePanel);
+
+overlay.addEventListener("click", closePanel);
+
     // Initialize
     function updateCakeDisplay() {
       const cake = cakes[selectedCake];
