@@ -756,6 +756,11 @@ overlay.addEventListener("click", closePanel);
       uniqueCakes.forEach((cakeName) => {
         const cake = cakes[cakeName];
         const btn = document.createElement("button");
+        const closeRewardBtn = document.getElementById("closeRewardBtn");
+
+closeRewardBtn.addEventListener("click", () => {
+  rewardModal.classList.add("hidden"); // ẩn modal
+});
         btn.type = "button";
         btn.className = "flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded";
         btn.setAttribute("data-cake", cakeName);
@@ -785,6 +790,16 @@ overlay.addEventListener("click", closePanel);
         menuCakeList.appendChild(btn);
       });
     }
+    <div id="rewardModal" class="hidden fixed inset-0 flex items-center justify-center bg-black/50">
+  <div class="bg-white rounded-lg p-4 max-h-[80vh] overflow-y-auto w-80">
+    <div id="rewardContent"></div>
+    <!-- Nút đóng -->
+    <button id="closeRewardBtn" 
+            class="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+      Đóng
+    </button>
+  </div>
+</div>
 
     // Calendar rendering and interaction for statistics modal
     function renderCalendar() {
