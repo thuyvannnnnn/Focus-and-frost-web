@@ -748,7 +748,7 @@ overlay.addEventListener("click", closePanel);
 
       rewardModal.classList.remove("hidden");
     }
-    rewardContent.className = "grid grid-cols-3 gap-4 justify-items-center";
+    
 
     // Render cake menu without duplicates
     function renderCakeMenu() {
@@ -757,11 +757,7 @@ overlay.addEventListener("click", closePanel);
       uniqueCakes.forEach((cakeName) => {
         const cake = cakes[cakeName];
         const btn = document.createElement("button");
-        const closeRewardBtn = document.getElementById("closeRewardBtn");
-
-closeRewardBtn.addEventListener("click", () => {
-  rewardModal.classList.add("hidden"); // ẩn modal
-});
+        
         btn.type = "button";
         btn.className = "flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded";
         btn.setAttribute("data-cake", cakeName);
