@@ -453,7 +453,9 @@ aria-hidden="true"
     let isRunning = false;
     let remainingSeconds = 0;
     let elapsedSeconds = 0; // time already counted before pause
-    let rewardInventory = JSON.parse(localStorage.getItem("rewardInventory")) || [];
+    let cakeInventory = JSON.parse(localStorage.getItem("cakeInventory")) || [];
+let plateInventory = JSON.parse(localStorage.getItem("plateInventory")) || [];
+let decorationInventory = JSON.parse(localStorage.getItem("decorationInventory")) || [];
     let sessionHistory = JSON.parse(localStorage.getItem("sessionHistory")) || [];
     let user = JSON.parse(localStorage.getItem("user")) || null; // userID or null
 
