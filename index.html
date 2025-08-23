@@ -1105,6 +1105,27 @@ let decorationInventory = JSON.parse(localStorage.getItem("decorationInventory")
       localStorage.setItem('sessionHistory', JSON.stringify([]));
     }
 
+    // Lấy dữ liệu sẵn có từ localStorage hoặc mảng rỗng
+let cakeInventory = JSON.parse(localStorage.getItem("cakeInventory")) || [];
+let plateInventory = JSON.parse(localStorage.getItem("plateInventory")) || [];
+let decorationInventory = JSON.parse(localStorage.getItem("decorationInventory")) || [];
+
+// Phân loại rewards vào đúng inventory
+rewards.forEach(r => {
+  if (r.type === "cake") {
+    cakeInventory.push(r);
+  } else if (r.type === "plate") {
+    plateInventory.push(r);
+  } else if (r.type === "decoration") {
+    decorationInventory.push(r);
+  }
+});
+
+// Lưu lại vào localStorage
+localStorage.setItem("cakeInventory", JSON.stringify(cakeInventory));
+localStorage.setItem("plateInventory", JSON.stringify(plateInventory));
+localStorage.setItem("decorationInventory", JSON.stringify(decorationInventory));
+
     // Khi load trang
     window.addEventListener("load", () => {
       updateCakeDisplay();
