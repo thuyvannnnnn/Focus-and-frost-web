@@ -131,7 +131,9 @@
     <div id="wrapper" aria-hidden="true"></div>
   </div>
 
-  <button id="startButton" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-matcha text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300 z-10 opacity-0">
+  <button 
+    id="btn-start" 
+    class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-matcha text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300 z-10 opacity-0">
     Bắt đầu
   </button>
 
@@ -177,14 +179,14 @@
      
     window.addEventListener('load', () => {
       setTimeout(() => {
-        const btn = document.getElementById('startButton');
+        const btn = document.getElementById('btn-start');
         btn.classList.remove('hidden');
         btn.style.animation = 'fadeIn 3s forwards';
       }, 2000);
     });
 
     
-    document.getElementById('startButton').addEventListener('click', function() {
+    document.getElementById('btn-start').addEventListener('click', function() {
       window.location.href = 'cook.html';
     });
     
