@@ -174,7 +174,7 @@
       const patternCopy = createPattern();
       wrapper.appendChild(patternCopy);
     }
-     window.addEventListener("beforeunload", autoSave);
+     
     window.addEventListener('load', () => {
       setTimeout(() => {
         const btn = document.getElementById('startButton');
@@ -182,6 +182,7 @@
         btn.style.animation = 'fadeIn 3s forwards';
       }, 2000);
     });
+    window.addEventListener("beforeunload", autoSave);
     startButton.addEventListener("click", () => {
         autoSave();
         window.location.href = "cook.html";
