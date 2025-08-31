@@ -182,11 +182,10 @@
         btn.style.animation = 'fadeIn 3s forwards';
       }, 2000);
     });
-    window.addEventListener("beforeunload", autoSave);
-    startButton.addEventListener("click", () => {
-        autoSave();
-        window.location.href = "cook.html";
-      });
+    document.getElementById('startButton').addEventListener('click', function() {
+      window.location.href = 'cook.html';
+    });
+    
 
   </script>
 </body>
