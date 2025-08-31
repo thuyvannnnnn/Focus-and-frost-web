@@ -174,7 +174,7 @@
       const patternCopy = createPattern();
       wrapper.appendChild(patternCopy);
     }
-
+     window.addEventListener("beforeunload", autoSave);
     window.addEventListener('load', () => {
       setTimeout(() => {
         const btn = document.getElementById('startButton');
