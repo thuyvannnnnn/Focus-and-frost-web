@@ -212,5 +212,13 @@
       window.location.href = 'cook.html';
     });
   </script>
+  <button onclick="playSound()">Bật tắt đèn</button>
+<audio id="switchSound" src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/light-switch-81967.mp3"></audio>
+
+<script>
+  function playSound() {
+    document.getElementById("switchSound").play();
+  }
+</script>
 </body>
 </html>
