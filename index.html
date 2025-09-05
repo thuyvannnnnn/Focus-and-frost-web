@@ -157,7 +157,7 @@
     >
       <img
         id="cake-image"
-        src="https://i.ibb.co/4nK5Z7L0/1-C4-A3268-5-EA5-49-C2-83-E5-318-CC48-C1619.png"
+        src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/00CC2FB6-9ED5-4466-9DDB-C7B89C391BB1.png"
         alt="Hình ảnh Macaron màu hồng pastel, bánh ngọt tròn nhỏ xinh xắn, nền trắng"
         class="w-40 h-40 object-contain"
         draggable="false"
@@ -297,17 +297,30 @@
     role="list"
     aria-label="Menu chọn món ăn"
   >
-    <div id="menu-cake-list" class="grid grid-cols-3 gap-4 p-4">
-      <button type="button" class="flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded" data-cake="Macaron" aria-label="Chọn món Macaron">
-        <img src="https://i.ibb.co/4nK5Z7L0/1-C4-A3268-5-EA5-49-C2-83-E5-318-CC48-C1619.png" alt="Hình ảnh Macaron màu hồng pastel, bánh ngọt tròn nhỏ xinh xắn, nền trắng" class="w-20 h-20 object-contain" draggable="false" />
-        <span class="text-sm font-semibold text-gray-700">Macaron</span>
+    <div
+    id="menu-select-cake"
+    class="fixed bottom-32 left-1/2 transform -translate-x-1/2 w-full max-w-md max-h-60 bg-white bg-opacity-95 rounded-lg border border-gray-300 shadow-lg overflow-y-auto scrollbar-thin hidden z-40"
+    role="list"
+    aria-label="Menu chọn món ăn"
+  >
+        <button type="button" class="flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded" data-cake="bánh mâm xôi" aria-label="Chọn món bánh mâm xôi">
+        <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_7293.png" alt="Hình ảnh bánh mâm xôi, bóng mượt, nền trắng" class="w-20 h-20 object-contain" draggable="false" />
+        <span class="text-sm font-semibold text-gray-700"bánh mâm xôi></span>
       </button>
-      <button type="button" class="flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded" data-cake="Cà tím" aria-label="Chọn món Cà tím">
-        <img src="https://i.ibb.co/nN5GQxNr/IMG-7291.png" alt="Hình ảnh quả cà tím tím tươi, bóng mượt, nền trắng" class="w-20 h-20 object-contain" draggable="false" />
-        <span class="text-sm font-semibold text-gray-700">Cà tím</span>
+  <div
+    id="menu-select-cake"
+    class="fixed bottom-32 left-1/2 transform -translate-x-1/2 w-full max-w-md max-h-60 bg-white bg-opacity-95 rounded-lg border border-gray-300 shadow-lg overflow-y-auto scrollbar-thin hidden z-40"
+    role="list"
+    aria-label="Menu chọn món ăn"
+  >
+        <button type="button" class="flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded" data-cake="bánh cherry" aria-label="Chọn món bánh cherry">
+        <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/B89384A0-0587-48F6-BBCB-4EC98C592F1C.png" alt="Hình ảnh bánh cherry, nền trắng" class="w-20 h-20 object-contain" draggable="false" />
+        <span class="text-sm font-semibold text-gray-700"bánh cherry></span>
       </button>
+      <div/>
     </div>
   </div>
+    
 
   <!-- Reward modal -->
   <div
@@ -401,7 +414,7 @@
           draggable="false"
         />
         <p class="text-center text-gray-700 text-lg max-w-xs">
-          Hoàn thành nhiệm vụ tích lũy 7 ngày tập trung liên tục để nhận được bánh gấu!
+          Hoàn thành tích lũy 7 ngày tập trung liên tục để nhận được bánh gấu!
         </p>
         <div class="w-full max-w-xs bg-gray-200 rounded-full h-6 overflow-hidden">
           <div
@@ -412,7 +425,7 @@
             aria-valuemax="7"
             aria-valuenow="0"
             role="progressbar"
-            aria-label="Tiến độ nhiệm vụ 7 ngày tập trung liên tục"
+            aria-label="Tiến độ nhiệm vụ "
           ></div>
         </div>
         <p id="task-progress-text" class="text-center font-semibold text-gray-800 text-lg select-none">0 / 7 ngày</p>
@@ -444,8 +457,9 @@
     </p>
     <ul class="list-disc list-inside space-y-2 text-gray-600">
       <li>1.Sau khi bắt đầu tập trung, không thể thay đổi thời gian.</li>
-      <li>3.Cần tập trung từ 5 phút trở lên: nhận được bánh đã chọn.</li>
-      <li>4.Hãy sử dụng Chrome hoặc Safari để có trải nghiệm tốt nhất.</li>
+      <li>2.Cần tập trung từ 5 phút trở lên: nhận được bánh đã chọn.</li>
+      <li>3. nếu có góp ý hay thắc mắc nào hãy bấm vào nút bên góc trái </li>
+      <li>4.Hãy sử dụng Chrome hoặc Safari để có trải nghiệm tốt nhất </li>
     </ul>
     <button
       id="closeInfoBtn"
@@ -470,17 +484,22 @@
     const cakes = {
       Macaron: {
         name: "Macaron",
-        img: "https://i.ibb.co/4nK5Z7L0/1-C4-A3268-5-EA5-49-C2-83-E5-318-CC48-C1619.png",
+        img: "https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/00CC2FB6-9ED5-4466-9DDB-C7B89C391BB1.png",
         alt: "Hình ảnh Macaron màu hồng pastel, bánh ngọt tròn nhỏ xinh xắn, nền trắng",
       },
-      "Cà tím": {
-        name: "Cà tím",
-        img: "https://i.ibb.co/nN5GQxNr/IMG-7291.png",
+      "bánh mâm xôi": {
+        name: "bánh mâm xôi",
+        img: "https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_7293.png",
         alt: "Hình ảnh quả cà tím tím tươi, bóng mượt, nền trắng",
       },
-      "Không quan trọng": {
-        name: "Không quan trọng",
-        img: "https://placehold.co/64x64/png?text=B%C3%A1nh&font=roboto",
+       "bánh cherry": {
+        name: "bánh cherry",
+        img: "https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_7293.png",
+        alt: "Hình ảnh quả cà tím tím tươi, bóng mượt, nền trắng",https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/B89384A0-0587-48F6-BBCB-4EC98C592F1C.png
+      },
+      "bánh nướng bóng đêm ": {
+        name: "bánh nướng bóng đêm ",
+        img: "https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/037F53D1-AC5D-4165-BD08-FEFF3F39FD7D.png",
         alt: "Hình ảnh bánh không quan trọng, biểu tượng bánh ngọt đơn giản màu pastel trên nền trắng",
       }
     };
@@ -796,15 +815,15 @@
       const timeMinutes = elapsed / 60;
       let rewards = [];
       let rewardName = "";
-      if (timeMinutes < 5) {
-        // Under 5 minutes: reward "Không quan trọng" cake
+      if (timeMinutes < 3) {
+        // Under 3 minutes: reward "bánh nướng bóng đêm" cake
         rewards = [{
           type: "cake",
-          name: "Không quan trọng",
-          img: cakes["Không quan trọng"].img,
-          alt: cakes["Không quan trọng"].alt,
+          name: "bánh nướng bóng đêm",
+          img: cakes["bánh nướng bóng đêm"].img,
+          alt: cakes["bánh nướng bóng đêm"].alt,
         }];
-        rewardName = "Không quan trọng";
+        rewardName = "bánh nướng bóng đêmg";
       } else {
         // 5 minutes or more: receive selected cake only
         rewards = [{
