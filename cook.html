@@ -956,41 +956,39 @@
   const menuCakeList = document.getElementById("menu-cake-list");
   menuCakeList.innerHTML = "";
   Object.keys(cakes).forEach(cakeName => {
-    if (cakeName === "bánh nướng bóng") return; // Bỏ bánh nướng bóng khỏi menu
+    if (cakeName.trim() === "bánh nướng bóng đêm") return; // Bỏ bánh nướng bóng đêm khỏi menu nếu muốn
     const cake = cakes[cakeName];
-    // Tạo nút như bình thường...
-  
 
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded";
+    btn.setAttribute("data-cake", cakeName);
+    btn.setAttribute("aria-label", `Chọn món ${cakeName}`);
 
-        btn.type = "button";
-        btn.className = "flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded";
-        btn.setAttribute("data-cake", cakeName);
-        btn.setAttribute("aria-label", `Chọn món ${cakeName}`);
+    const img = document.createElement("img");
+    img.src = cake.img;
+    img.alt = cake.alt;
+    img.className = "w-14 h-14 object-contain";
+    img.draggable = false;
 
-        const img = document.createElement("img");
-        img.src = cake.img;
-        img.alt = cake.alt;
-        img.className = "w-14 h-14 object-contain";
-        img.draggable = false;
+    const span = document.createElement("span");
+    span.className = "text-sm font-semibold text-gray-700";
+    span.textContent = cakeName;
 
-        const span = document.createElement("span");
-        span.className = "text-sm font-semibold text-gray-700";
-        span.textContent = cakeName;
+    btn.appendChild(img);
+    btn.appendChild(span);
 
-        btn.appendChild(img);
-        btn.appendChild(span);
+    btn.addEventListener("click", () => {
+      if (isRunning) return;
+      selectedCake = cakeName;
+      updateCakeDisplay();
+      menuSelectCake.classList.add("hidden");
+      updateStartButtonState();
+    });
 
-        btn.addEventListener("click", () => {
-          if (isRunning) return;
-          selectedCake = cakeName;
-          updateCakeDisplay();
-          menuSelectCake.classList.add("hidden");
-          updateStartButtonState();
-        });
-
-        menuCakeList.appendChild(btn);
-      });
-    }
+    menuCakeList.appendChild(btn);
+  });
+}
 
     inputHour.addEventListener("input", () => {
       if (inputHour.value.length > 2) inputHour.value = inputHour.value.slice(0, 2);
