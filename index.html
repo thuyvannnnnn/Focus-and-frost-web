@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Diamond Pattern Infinite Scroll</title>
+  <title>Focus and frost</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link
     rel="stylesheet"
@@ -15,6 +15,7 @@
       height: 100vh;
       width: 100vw;
       background: #f3f4f6;
+      z-index: 0;
     }
     #wrapper {
       position: absolute;
@@ -27,6 +28,7 @@
       height: 4800px;
       animation: moveNW 80s linear infinite;
       will-change: transform;
+      z-index: 0;
     }
     #pattern {
       display: grid;
@@ -102,22 +104,53 @@
         }
       }
     }
+    /* Fade-in animation for button */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
   </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            matcha: '#8FBC8F',
+          },
+        },
+      },
+    };
+  </script>
 </head>
-<body class="m-0 p-0 overflow-hidden">
+<body class="m-0 p-0 overflow-hidden relative">
   <div id="pattern-container" aria-label="Infinite diamond pattern of two alternating images">
     <div id="wrapper" aria-hidden="true"></div>
   </div>
+  <body class="flex items-center justify-center min-h-screen bg-white">
+
+  <button 
+    id="btn-start" 
+    class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-matcha text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300 z-10 opacity-0">
+    Bắt đầu
+   
+  </button>;
+  
+  
+
+   
   <script>
     const wrapper = document.getElementById("wrapper");
     const cols = 20;
     const rows = 20;
-    const diamondSize = 80;
     const img1 =
       "https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_8528.png";
     const img2 =
       "https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_8718.png";
-    // Function to create pattern grid
+
     function createPattern() {
       const pattern = document.createElement("div");
       pattern.id = "pattern";
@@ -142,42 +175,27 @@
       }
       return pattern;
     }
-    // Clear wrapper
+
     wrapper.innerHTML = "";
-    // Append 9 copies of pattern for seamless infinite scroll
     for (let i = 0; i < 9; i++) {
       const patternCopy = createPattern();
       wrapper.appendChild(patternCopy);
     }
-  <title>Centered Matcha Green Button Delayed</title>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            matcha: '#8FBC8F',
-          },
-        },
-      },
-    };
-  </script>
-</head>
-<body class="flex items-center justify-center min-h-screen bg-gray-100">
-  <button id="startButton" class="hidden bg-matcha text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300">
-    Bắt đầu
-  </button>
-
-  <script>
+     
     window.addEventListener('load', () => {
       setTimeout(() => {
-        const btn = document.getElementById('startButton');
+        const btn = document.getElementById('btn-start');
         btn.classList.remove('hidden');
+        btn.style.animation = 'fadeIn 3s forwards';
       }, 2000);
     });
-  </script>
+
+    
+    document.getElementById('btn-start').addEventListener('click', function() {
+      window.location.href = 'cook.html';
+    });
+
 
   </script>
 </body>
 </html>
-
-
