@@ -296,7 +296,7 @@
      <!-- Menu chọn món (hidden by default) -->
 <div
   id="menu-select-cake"
-  class="fixed bottom-32 left-1/2 transform -translate-x-1/2 w-full max-w-md max-h-60 bg-white bg-opacity-95 rounded-lg border border-gray-300 shadow-lg overflow-y-auto scrollbar-thin hidden z-40"
+  class="fixed bottom-32 left-1/2 transform -translate-y-1/2 w-full max-w-md max-h-60 bg-white bg-opacity-95 rounded-lg border border-gray-300 shadow-lg overflow-y-auto scrollbar-thin hidden z-40"
   role="list"
   aria-label="Menu chọn món ăn"
 >
@@ -478,9 +478,11 @@
       },
        "bánh cherry": {
         name: "bánh cherry",
-        img: "https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_7293.png",
+        img: "https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/B89384A0-0587-48F6-BBCB-4EC98C592F1C.png",
         alt: "Hình ảnh bánh cherry",
       },
+    };
+    const dark = {
       "bánh nướng bóng đêm ": {
         name: "bánh nướng bóng đêm ",
         img: "https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/037F53D1-AC5D-4165-BD08-FEFF3F39FD7D.png",
@@ -802,12 +804,12 @@
       if (timeMinutes < 3) {
         // Under 3 minutes: reward "bánh nướng bóng đêm" cake
         rewards = [{
-          type: "cake",
+          type: "dark",
           name: "bánh nướng bóng đêm",
           img: cakes["bánh nướng bóng đêm"].img,
           alt: cakes["bánh nướng bóng đêm"].alt,
         }];
-        rewardName = "bánh nướng bóng đêmg";
+        rewardName = "bánh nướng bóng đêm";
       } else {
         // 5 minutes or more: receive selected cake only
         rewards = [{
