@@ -1081,9 +1081,15 @@
       initializeGoogleSignIn();
     });
 
-    function renderRewardInventory() {
-      renderSessionList();
-    }
+    function renderCakeMenu() {
+  const menuCakeList = document.getElementById("menu-cake-list");
+  menuCakeList.innerHTML = "";
+  Object.keys(cakes).forEach(cakeName => {
+    if (cakeName === "bánh nướng bóng") return; // Bỏ bánh nướng bóng khỏi menu
+    const cake = cakes[cakeName];
+    // Tạo nút như bình thường...
+  });
+}
 
     // JWT parse helper
     function parseJwt(token) {
