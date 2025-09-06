@@ -759,9 +759,9 @@
       disableInputs(true);
     }
 
-    function stopTimer(finished = false) {
+   function stopTimer(finished = false) {
   if (!isRunning) return;
-  isRunning = false;
+  isRunning = false; // Đặt lại trạng thái chạy
   clearInterval(timerInterval);
   timerInterval = null;
   cookingGif.classList.add("hidden");
@@ -780,15 +780,15 @@
   }
 }
 
-    function resetTimerState() {
-      elapsedSeconds = 0;
-      inputHour.value = "";
-      inputMinute.value = "";
-      inputSecond.value = "";
-      selectedTimeTotalSeconds = 0;
-      timeProgressBar.style.width = "100%";
-      updateStartButtonState();
-    }
+function resetTimerState() {
+  elapsedSeconds = 0;
+  selectedTimeTotalSeconds = 0;
+  inputHour.value = "";
+  inputMinute.value = "";
+  inputSecond.value = "";
+  timeProgressBar.style.width = "100%";
+  updateStartButtonState();
+}
 
     function disableInputs(disable) {
       inputHour.disabled = disable;
