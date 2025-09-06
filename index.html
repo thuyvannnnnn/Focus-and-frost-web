@@ -113,6 +113,20 @@
         opacity: 1;
       }
     }
+    #overlay-image {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      max-width: 90vw;
+      max-height: 90vh;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      pointer-events: none;
+      user-select: none;
+      object-fit: contain;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
   </style>
   <script>
     tailwind.config = {
@@ -130,18 +144,22 @@
   <div id="pattern-container" aria-label="Infinite diamond pattern of two alternating images">
     <div id="wrapper" aria-hidden="true"></div>
   </div>
-  <body class="flex items-center justify-center min-h-screen bg-white">
+
+  <img
+    id="overlay-image"
+    src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_4679.png" 
+    alt="Artistic photo of a serene winter landscape with frost-covered trees and soft morning light"
+    aria-hidden="true"
+  />
 
   <button 
     id="btn-start" 
-    class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-matcha text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300 z-10 opacity-0">
+    class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-matcha text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300 z-10 opacity-0"
+    type="button"
+  >
     Bắt đầu
-   
-  </button>;
-  
-  
+  </button>
 
-   
   <script>
     const wrapper = document.getElementById("wrapper");
     const cols = 20;
@@ -190,12 +208,9 @@
       }, 2000);
     });
 
-    
     document.getElementById('btn-start').addEventListener('click', function() {
       window.location.href = 'cook.html';
     });
-
-
   </script>
 </body>
 </html>
