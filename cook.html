@@ -760,24 +760,25 @@
     }
 
     function stopTimer(finished = false) {
-      if (!isRunning) return;
-      isRunning = false;
-      updateStartButtonState();
-      clearInterval(timerInterval);
-      timerInterval = null;
-      cookingGif.classList.add("hidden");
-      cakeImageEl.classList.remove("hidden");
-      backgroundMusic.pause();
-      backgroundMusic.currentTime = 0;
-      disableInputs(false);
-      if (finished) {
-        saveSessionHistory(elapsedSeconds);
-        addSessionToList(elapsedSeconds);
-        showReward(elapsedSeconds);
-        renderRewardInventory();
-        resetTimerState();
-      }
-    }
+  if (!isRunning) return;
+  isRunning = false;
+  clearInterval(timerInterval);
+  timerInterval = null;
+  cookingGif.classList.add("hidden");
+  cakeImageEl.classList.remove("hidden");
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0;
+  disableInputs(false);
+  if (finished) {
+    saveSessionHistory(elapsedSeconds);
+    addSessionToList(elapsedSeconds);
+    showReward(elapsedSeconds);
+    renderRewardInventory();
+    resetTimerState(); // reset và update nút ở đây
+  } else {
+    updateStartButtonState(); // nếu dừng giữa chừng thì update nút
+  }
+}
 
     function resetTimerState() {
       elapsedSeconds = 0;
