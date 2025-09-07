@@ -223,7 +223,6 @@
       </div>
     </div>
 
-  
     <!-- Hidden feedback form for submission -->
     <form
       id="feedback-form"
@@ -248,16 +247,16 @@
   >
     <i class="fas fa-comment-alt text-xl"></i>
   </button>
- <button
-  id="infoToggleBtn"
-  aria-label="Toggle information panel"
-  class="absolute top-4 left-4 
-         p-3 bg-green-600 text-white rounded-full shadow-md 
-         hover:bg-green-700 bg-opacity-50 focus:outline-none focus:ring-2 focus:ring-green-400 
-         flex items-center justify-center w-12 h-12"
->
-  <i class="fas fa-question text-lg"></i>
-</button>
+  <button
+    id="infoToggleBtn"
+    aria-label="Toggle information panel"
+    class="absolute top-4 left-4 
+           p-3 bg-green-600 text-white rounded-full shadow-md 
+           hover:bg-green-700 bg-opacity-50 focus:outline-none focus:ring-2 focus:ring-green-400 
+           flex items-center justify-center w-12 h-12"
+  >
+    <i class="fas fa-question text-lg"></i>
+  </button>
 
   <!-- Logout Confirmation Modal -->
   <div
@@ -291,20 +290,16 @@
   </div>
 
   <!-- Menu chọn món (hidden by default) -->
-
-  
-     <!-- Menu chọn món (hidden by default) -->
-<div
-  id="menu-select-cake"
-  class="fixed bottom-32 left-1/2 transform -translate-x-1/2 w-full max-w-md max-h-60 bg-white bg-opacity-95 rounded-lg border border-gray-300 shadow-lg overflow-y-auto scrollbar-thin hidden z-40"
-  role="list"
-  aria-label="Menu chọn món ăn"
->
-  <div id="menu-cake-list" class="flex flex-wrap justify-center gap-4 p-4">
-    <!-- Các nút chọn bánh sẽ được JavaScript tạo động ở đây -->
+  <div
+    id="menu-select-cake"
+    class="fixed bottom-32 left-1/2 transform -translate-x-1/2 w-full max-w-md max-h-60 bg-white bg-opacity-95 rounded-lg border border-gray-300 shadow-lg overflow-y-auto scrollbar-thin hidden z-40"
+    role="list"
+    aria-label="Menu chọn món ăn"
+  >
+    <div id="menu-cake-list" class="flex flex-wrap justify-center gap-4 p-4">
+      <!-- Các nút chọn bánh sẽ được JavaScript tạo động ở đây -->
+    </div>
   </div>
-</div>
-    
 
   <!-- Reward modal -->
   <div
@@ -469,27 +464,24 @@
       Macaron: {
         name: "Macaron",
         img: "https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/00CC2FB6-9ED5-4466-9DDB-C7B89C391BB1.png",
-        alt: "Hình ảnh Macaron",
+        alt: "Hình ảnh Macaron màu hồng pastel, bánh ngọt tròn nhỏ xinh xắn, nền trắng",
       },
       "bánh mâm xôi": {
         name: "bánh mâm xôi",
         img: "https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_7293.png",
         alt: "Hình ảnh quả cà tím tím tươi, bóng mượt, nền trắng",
       },
-       "bánh cherry": {
+      "bánh cherry": {
         name: "bánh cherry",
         img: "https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/B89384A0-0587-48F6-BBCB-4EC98C592F1C.png",
-        alt: "Hình ảnh bánh cherry",
+        alt: "Hình ảnh bánh cherry màu đỏ tươi, bánh tròn nhỏ, nền trắng",
       },
-           "bánh nướng bóng đêm ": {
-        name: "bánh nướng bóng đêm ",
+      "bánh nướng bóng đêm": {
+        name: "bánh nướng bóng đêm",
         img: "https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/037F53D1-AC5D-4165-BD08-FEFF3F39FD7D.png",
-        alt: "Hình ảnh bánh bị cháy đen",
+        alt: "Hình ảnh bánh bị cháy đen, bánh tròn, nền trắng",
       }
     };
-
- 
-    
 
     // State
     let selectedCake = "Macaron";
@@ -759,36 +751,36 @@
       disableInputs(true);
     }
 
-   function stopTimer(finished = false) {
-  if (!isRunning) return;
-  isRunning = false; // Đặt lại trạng thái chạy
-  clearInterval(timerInterval);
-  timerInterval = null;
-  cookingGif.classList.add("hidden");
-  cakeImageEl.classList.remove("hidden");
-  backgroundMusic.pause();
-  backgroundMusic.currentTime = 0;
-  disableInputs(false);
-  if (finished) {
-    saveSessionHistory(elapsedSeconds);
-    addSessionToList(elapsedSeconds);
-    showReward(elapsedSeconds);
-    renderRewardInventory();
-    resetTimerState(); // reset và update nút ở đây
-  } else {
-    updateStartButtonState(); // nếu dừng giữa chừng thì update nút
-  }
-}
+    function stopTimer(finished = false) {
+      if (!isRunning) return;
+      isRunning = false; // Đặt lại trạng thái chạy
+      clearInterval(timerInterval);
+      timerInterval = null;
+      cookingGif.classList.add("hidden");
+      cakeImageEl.classList.remove("hidden");
+      backgroundMusic.pause();
+      backgroundMusic.currentTime = 0;
+      disableInputs(false);
+      if (finished) {
+        saveSessionHistory(elapsedSeconds);
+        addSessionToList(elapsedSeconds);
+        showReward(elapsedSeconds);
+        renderRewardInventory();
+        resetTimerState(); // reset và update nút ở đây
+      } else {
+        updateStartButtonState(); // nếu dừng giữa chừng thì update nút
+      }
+    }
 
-function resetTimerState() {
-  elapsedSeconds = 0;
-  selectedTimeTotalSeconds = 0;
-  inputHour.value = "";
-  inputMinute.value = "";
-  inputSecond.value = "";
-  timeProgressBar.style.width = "100%";
-  updateStartButtonState();
-}
+    function resetTimerState() {
+      elapsedSeconds = 0;
+      selectedTimeTotalSeconds = 0;
+      inputHour.value = "";
+      inputMinute.value = "";
+      inputSecond.value = "";
+      timeProgressBar.style.width = "100%";
+      updateStartButtonState();
+    }
 
     function disableInputs(disable) {
       inputHour.disabled = disable;
@@ -953,43 +945,43 @@ function resetTimerState() {
       sessionInfoEl.textContent = `Phần thưởng: ${name} | Ngày nhận: ${date} | Thời gian nhận: ${time}`;
     }
 
-     function renderCakeMenu() {
-  const menuCakeList = document.getElementById("menu-cake-list");
-  menuCakeList.innerHTML = "";
-  Object.keys(cakes).forEach(cakeName => {
-    if (cakeName.trim() === "bánh nướng bóng đêm") return; // Bỏ bánh nướng bóng đêm khỏi menu nếu muốn
-    const cake = cakes[cakeName];
+    function renderCakeMenu() {
+      const menuCakeList = document.getElementById("menu-cake-list");
+      menuCakeList.innerHTML = "";
+      Object.keys(cakes).forEach(cakeName => {
+        if (cakeName.trim() === "bánh nướng bóng đêm") return; // Bỏ bánh nướng bóng đêm khỏi menu nếu muốn
+        const cake = cakes[cakeName];
 
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded";
-    btn.setAttribute("data-cake", cakeName);
-    btn.setAttribute("aria-label", `Chọn món ${cakeName}`);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded";
+        btn.setAttribute("data-cake", cakeName);
+        btn.setAttribute("aria-label", `Chọn món ${cakeName}`);
 
-    const img = document.createElement("img");
-    img.src = cake.img;
-    img.alt = cake.alt;
-    img.className = "w-14 h-14 object-contain";
-    img.draggable = false;
+        const img = document.createElement("img");
+        img.src = cake.img;
+        img.alt = cake.alt;
+        img.className = "w-14 h-14 object-contain";
+        img.draggable = false;
 
-    const span = document.createElement("span");
-    span.className = "text-sm font-semibold text-gray-700";
-    span.textContent = cakeName;
+        const span = document.createElement("span");
+        span.className = "text-sm font-semibold text-gray-700";
+        span.textContent = cakeName;
 
-    btn.appendChild(img);
-    btn.appendChild(span);
+        btn.appendChild(img);
+        btn.appendChild(span);
 
-    btn.addEventListener("click", () => {
-      if (isRunning) return;
-      selectedCake = cakeName;
-      updateCakeDisplay();
-      menuSelectCake.classList.add("hidden");
-      updateStartButtonState();
-    });
+        btn.addEventListener("click", () => {
+          if (isRunning) return;
+          selectedCake = cakeName;
+          updateCakeDisplay();
+          menuSelectCake.classList.add("hidden");
+          updateStartButtonState();
+        });
 
-    menuCakeList.appendChild(btn);
-  });
-}
+        menuCakeList.appendChild(btn);
+      });
+    }
 
     inputHour.addEventListener("input", () => {
       if (inputHour.value.length > 2) inputHour.value = inputHour.value.slice(0, 2);
@@ -1083,7 +1075,7 @@ function resetTimerState() {
       initializeGoogleSignIn();
     });
 
-  function renderRewardInventory() {
+    function renderRewardInventory() {
       renderSessionList();
     } 
 
@@ -1100,7 +1092,6 @@ function resetTimerState() {
         return {};
       }
     }
-
-      </script>
+  </script>
 </body>
 </html>
