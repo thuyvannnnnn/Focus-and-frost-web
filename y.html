@@ -1,0 +1,35 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trang-chủ - chao mung </title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
+  </head>
+
+  <body class="min-h-screen bg-gray-100 m-0 p-0 relative">
+  <img
+    src="https://github.com/thuyvannnnnn/Focus-and-frost/blob/515b09f6d1046f50eec450b708d8861d951ebb7a/loading.gif"
+    alt="Loading"
+    class="w-full max-w-xs h-auto object-contain mx-auto mt-20"
+  />
+  <button id="btn-start" class="bg-blue-500 text-white mt-4 px-6 py-2 rounded font-semibold opacity-0 transition-opacity duration-500" style="pointer-events: none;">
+ bat dau
+</button>
+
+    <script>
+setTimeout(() => {
+  const btn = document.getElementById('btn-start');
+  btn.style.opacity = '1';
+  btn.style.pointerEvents = 'auto';
+}, 3000);
+
+      
+    </script>
+  </body>
+</html>
+
+  
