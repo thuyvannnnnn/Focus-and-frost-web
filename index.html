@@ -9,19 +9,21 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
   />
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-0 m-0">
-  <img
-    src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/515b09f6d1046f50eec450b708d8861d951ebb7a/loading.gif"
-    alt="Animated loading spinner with blue and white colors, circular shape, rotating smoothly"
-    class="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto object-contain"
-  />
-  <button
-    id="startButton"
-    class="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg text-lg font-semibold opacity-0 transition-opacity duration-500"
-    style="pointer-events: none;"
-  >
-    Bắt đầu
-  </button>
+<body class="flex items-center justify-center min-h-screen bg-gray-100 p-4 m-0">
+  <div class="relative w-full max-w-lg flex justify-center">
+    <img
+      src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/515b09f6d1046f50eec450b708d8861d951ebb7a/loading.gif"
+      alt="Animated loading spinner with blue and white colors, circular shape, rotating smoothly"
+      class="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto object-contain"
+    />
+    <button
+      id="startButton"
+      class="absolute left-1/2 px-6 py-3 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 text-white rounded-lg text-lg font-semibold opacity-0 transition-opacity duration-500"
+      style="pointer-events: none; top: 55%; transform: translateX(-50%);"
+    >
+      Bắt đầu
+    </button>
+  </div>
 
   <script>
     setTimeout(() => {
@@ -30,15 +32,9 @@
       btn.style.pointerEvents = 'auto';
     }, 3000);
 
-  
-      document.getElementById('btn-start').addEventListener('click', function() {
+    document.getElementById('startButton').addEventListener('click', function() {
       window.location.href = 'cook.html';
     });
-      </script>
+  </script>
 </body>
 </html>
-
-
-      
-    
-  
