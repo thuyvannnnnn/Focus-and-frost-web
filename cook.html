@@ -77,6 +77,31 @@
         height: 48px;
       }
     }
+    /* Custom styles for Google SignIn button container */
+    #googleSignInButton {
+      position: relative;
+      left: -15%;
+      width: 10rem !important; /* override width to accommodate bigger button */
+      height: 2.5rem !important; /* override height */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Avatar style */
+    #userAvatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 9999px;
+      object-fit: cover;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease;
+    }
+    #userAvatar:hover, #userAvatar:focus {
+      transform: scale(1.1);
+      outline: none;
+      box-shadow: 0 0 8px rgba(0,0,0,0.4);
+    }
   </style>
 </head>
 <body class="relative min-h-screen flex flex-col items-center bg-[#f0f3e8]">
@@ -87,13 +112,27 @@
     class="fixed inset-0 w-full h-full object-cover -z-10"
   />
 
-  <!-- Header with login button or avatar -->
+  <!-- Header with Google Login / Logout Button and Avatar -->
   <header class="w-full flex justify-end p-4 max-w-screen-md relative">
-    <div id="loginContainer" class="relative z-50">
-      <button id="openModalBtn" class="px-4 py-2 rounded bg-[#9BBA74] hover:bg-[#8aa85a] text-white font-semibold shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button" aria-label="Đăng nhập">
-        Đăng nhập
-      </button>
-    </div>
+    <div id="googleSignInButton" class="w-10 h-10"></div>
+    <button
+      id="googleLogoutBtn"
+      aria-label="Đăng xuất tài khoản Google"
+      class="hidden flex items-center justify-center w-10 h-10 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] text-white font-semibold shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]"
+      type="button"
+      title="Đăng xuất tài khoản Google"
+    >
+      <i class="fas fa-arrow-right"></i>
+    </button>
+    <img
+      id="userAvatar"
+      src=""
+      alt="Ảnh đại diện người dùng Google"
+      class="hidden absolute top-4 left-4"
+      tabindex="0"
+      aria-label="Ảnh đại diện người dùng Google"
+      draggable="false"
+    />
   </header>
 
   <!-- Main Content -->
@@ -240,21 +279,58 @@
     <i class="fas fa-question text-lg"></i>
   </button>
 
-  <!-- Login Modal -->
-  <div id="loginModal" style="display:none; position:fixed; z-index:100; left:0; top:0; width:100%; height:100%; overflow:auto; background:rgba(0,0,0,0.4);">
-    <div style="background:#fff; margin:15% auto; padding:20px; border:1px solid #888; width:300px; text-align:center; border-radius:8px;">
-      <span id="closeModal" style="float:right; font-size:20px; cursor:pointer;">&times;</span>
-      <h3>Đăng nhập bằng Google</h3>
-      <div id="g_id_onload"
-           data-client_id="854945467513-gvec4958ef17nqjsoauvk9dcqinceeel.apps.googleusercontent.com"
-           data-callback="handleCredentialResponse"></div>
-      <div class="g_id_signin" data-type="standard"></div>
+  <!-- Logout Confirmation Modal -->
+  <div
+    id="logout-confirm-modal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="logout-confirm-title"
+  >
+    <div class="bg-white rounded-lg max-w-sm w-full p-6 flex flex-col space-y-4 shadow-lg">
+      <h2 id="logout-confirm-title" class="text-xl font-semibold text-gray-800 text-center">
+        Bạn có muốn đăng xuất không?
+      </h2>
+      <div class="flex justify-center space-x-6">
+        <button
+          id="logout-yes-btn"
+          class="px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#b0102a]"
+          type="button"
+        >
+          Có
+        </button>
+        <button
+          id="logout-no-btn"
+          class="px-6 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold focus:outline-none focus:ring-2 focus:ring-gray-400"
+          type="button"
+        >
+          Không
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Logout Menu -->
-  <div id="logoutMenu" style="display:none; position:absolute; top:60px; right:20px; background:#fff; border:1px solid #ccc; border-radius:6px; padding:10px; z-index:100;">
-    <button id="logoutBtn" class="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700">Đăng xuất</button>
+  <!-- Menu chọn món (hidden by default) -->
+  <div
+    id="menu-select-cake"
+    class="fixed bottom-32 left-1/2 transform -translate-x-1/2 w-full max-w-md max-h-60 bg-white bg-opacity-95 rounded-lg border border-gray-300 shadow-lg overflow-y-auto scrollbar-thin hidden z-40"
+    role="list"
+    aria-label="Menu chọn món ăn"
+  >
+    <div id="menu-cake-list" class="flex flex-wrap justify-center gap-4 p-4">
+      <button type="button" class="flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded" data-cake="Macaron" aria-label="Chọn món Macaron">
+        <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/00CC2FB6-9ED5-4466-9DDB-C7B89C391BB1.png" alt="Hình ảnh Macaron màu hồng pastel, bánh ngọt tròn nhỏ xinh xắn, nền trắng" class="w-14 h-14 object-contain" draggable="false" />
+        <span class="text-sm font-semibold text-gray-700">Macaron</span>
+      </button>
+      <button type="button" class="flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded" data-cake="bánh mâm xôi" aria-label="Chọn món bánh mâm xôi">
+        <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_7293.png" alt="Hình ảnh quả cà tím tím tươi, bóng mượt, nền trắng" class="w-14 h-14 object-contain" draggable="false" />
+        <span class="text-sm font-semibold text-gray-700">bánh mâm xôi</span>
+      </button>
+      <button type="button" class="flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded" data-cake="bánh cherry" aria-label="Chọn món bánh cherry">
+        <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/B89384A0-0587-48F6-BBCB-4EC98C592F1C.png" alt="Hình ảnh bánh cherry màu đỏ tươi, bánh tròn nhỏ, nền trắng" class="w-14 h-14 object-contain" draggable="false" />
+        <span class="text-sm font-semibold text-gray-700">bánh cherry</span>
+      </button>
+    </div>
   </div>
 
   <!-- Reward modal -->
@@ -312,45 +388,6 @@
         Lịch sử
       </h2>
       <ul id="cake-list" tabindex="0" aria-label="lịch sử tập trung">
-        <li tabindex="0" role="button" aria-label="Phần thưởng: Macaron, ngày nhận: 2024-06-01, thời gian nhận: 08:30, thời lượng: 25 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/00CC2FB6-9ED5-4466-9DDB-C7B89C391BB1.png" alt="Hình ảnh Macaron màu hồng pastel, bánh ngọt tròn nhỏ xinh xắn, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
-        <li tabindex="0" role="button" aria-label="Phần thưởng: bánh mâm xôi, ngày nhận: 2024-06-02, thời gian nhận: 09:15, thời lượng: 30 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_7293.png" alt="Hình ảnh quả cà tím tím tươi, bóng mượt, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
-        <li tabindex="0" role="button" aria-label="Phần thưởng: bánh cherry, ngày nhận: 2024-06-03, thời gian nhận: 10:45, thời lượng: 15 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/B89384A0-0587-48F6-BBCB-4EC98C592F1C.png" alt="Hình ảnh bánh cherry màu đỏ tươi, bánh tròn nhỏ, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
-        <li tabindex="0" role="button" aria-label="Phần thưởng: bánh nướng bóng đêm, ngày nhận: 2024-06-04, thời gian nhận: 11:20, thời lượng: 5 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/037F53D1-AC5D-4165-BD08-FEFF3F39FD7D.png" alt="Hình ảnh bánh bị cháy đen, bánh tròn, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
-        <li tabindex="0" role="button" aria-label="Phần thưởng: Macaron, ngày nhận: 2024-06-05, thời gian nhận: 12:00, thời lượng: 20 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/00CC2FB6-9ED5-4466-9DDB-C7B89C391BB1.png" alt="Hình ảnh Macaron màu hồng pastel, bánh ngọt tròn nhỏ xinh xắn, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
-        <li tabindex="0" role="button" aria-label="Phần thưởng: bánh mâm xôi, ngày nhận: 2024-06-06, thời gian nhận: 13:30, thời lượng: 18 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_7293.png" alt="Hình ảnh quả cà tím tím tươi, bóng mượt, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
-        <li tabindex="0" role="button" aria-label="Phần thưởng: bánh cherry, ngày nhận: 2024-06-07, thời gian nhận: 14:45, thời lượng: 22 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/B89384A0-0587-48F6-BBCB-4EC98C592F1C.png" alt="Hình ảnh bánh cherry màu đỏ tươi, bánh tròn nhỏ, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
-        <li tabindex="0" role="button" aria-label="Phần thưởng: bánh nướng bóng đêm, ngày nhận: 2024-06-08, thời gian nhận: 15:20, thời lượng: 10 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/037F53D1-AC5D-4165-BD08-FEFF3F39FD7D.png" alt="Hình ảnh bánh bị cháy đen, bánh tròn, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
-        <li tabindex="0" role="button" aria-label="Phần thưởng: Macaron, ngày nhận: 2024-06-09, thời gian nhận: 16:00, thời lượng: 25 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/00CC2FB6-9ED5-4466-9DDB-C7B89C391BB1.png" alt="Hình ảnh Macaron màu hồng pastel, bánh ngọt tròn nhỏ xinh xắn, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
-        <li tabindex="0" role="button" aria-label="Phần thưởng: bánh mâm xôi, ngày nhận: 2024-06-10, thời gian nhận: 17:30, thời lượng: 30 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_7293.png" alt="Hình ảnh quả cà tím tím tươi, bóng mượt, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
-        <li tabindex="0" role="button" aria-label="Phần thưởng: bánh cherry, ngày nhận: 2024-06-11, thời gian nhận: 18:45, thời lượng: 15 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/B89384A0-0587-48F6-BBCB-4EC98C592F1C.png" alt="Hình ảnh bánh cherry màu đỏ tươi, bánh tròn nhỏ, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
-        <li tabindex="0" role="button" aria-label="Phần thưởng: bánh nướng bóng đêm, ngày nhận: 2024-06-12, thời gian nhận: 19:20, thời lượng: 5 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/037F53D1-AC5D-4165-BD08-FEFF3F39FD7D.png" alt="Hình ảnh bánh bị cháy đen, bánh tròn, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
-        <li tabindex="0" role="button" aria-label="Phần thưởng: Macaron, ngày nhận: 2024-06-13, thời gian nhận: 20:00, thời lượng: 20 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/00CC2FB6-9ED5-4466-9DDB-C7B89C391BB1.png" alt="Hình ảnh Macaron màu hồng pastel, bánh ngọt tròn nhỏ xinh xắn, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
         <li tabindex="0" role="button" aria-label="Phần thưởng: bánh mâm xôi, ngày nhận: 2024-06-14, thời gian nhận: 21:30, thời lượng: 18 phút" class="cursor-pointer rounded">
           <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_7293.png" alt="Hình ảnh quả cà tím tím tươi, bóng mượt, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
         </li>
@@ -415,7 +452,87 @@
 
   <audio id="background-music" loop preload="auto" src="https://github.com/thuyvannnnnn/Focus-and-frost/raw/refs/heads/main/45.audio.mp3"></audio>
 
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- Script Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client"></script>
+
+  <script>
+    let googleUser  = JSON.parse(localStorage.getItem("googleuser")) || null;
+
+    const googleSignInButton = document.getElementById("googleSignInButton");
+    const googleLogoutBtn = document.getElementById("googleLogoutBtn");
+    const userAvatar = document.getElementById("userAvatar");
+
+    function updateLoginButtonUI() {
+      if (googleUser) {
+        googleSignInButton.style.display = "none";
+        googleLogoutBtn.style.display = "flex";
+        userAvatar.src = googleUser.picture;
+        userAvatar.alt = `Ảnh đại diện của ${googleUser.name}`;
+        userAvatar.classList.remove("hidden");
+        googleLogoutBtn.title = "Đăng xuất tài khoản Google";
+      } else {
+        googleSignInButton.style.display = "flex";
+        googleLogoutBtn.style.display = "none";
+        userAvatar.classList.add("hidden");
+        userAvatar.src = "";
+        userAvatar.alt = "";
+      }
+    }
+
+    function initializeGoogleSignIn() {
+      google.accounts.id.initialize({
+        client_id: "854945467513-gvec4958ef17nqjsoauvk9dcqinceeel.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
+        auto_select: false,
+        cancel_on_tap_outside: false
+      });
+      google.accounts.id.renderButton(
+        googleSignInButton,
+        { theme: "filled_green", size: "medium", width: 160, height: 40 }
+      );
+    }
+
+    function handleCredentialResponse(response) {
+      const data = parseJwt(response.credential);
+      googleUser  = {
+        id: data.sub,
+        name: data.name,
+        email: data.email,
+        picture: data.picture
+      };
+      localStorage.setItem("googleuser", JSON.stringify(googleUser ));
+      updateLoginButtonUI();
+      alert("Bạn đã đăng nhập thành công: " + googleUser.name);
+    }
+
+    googleLogoutBtn.addEventListener("click", () => {
+      if (confirm("Bạn có muốn đăng xuất không?")) {
+        googleUser  = null;
+        localStorage.removeItem("googleuser");
+        updateLoginButtonUI();
+        alert("Bạn đã đăng xuất.");
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateLoginButtonUI();
+      initializeGoogleSignIn();
+    });
+
+    // Hàm parse JWT giữ nguyên
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch {
+        return {};
+      }
+    }
+  </script>
 
   <script>
     // Remove cakeinventory, plateinventory, decorinventory from localStorage on load
@@ -491,14 +608,6 @@
     const closeInfoBtn = document.getElementById("closeInfoBtn");
     const overlay = document.getElementById("overlay");
 
-    // Login modal elements
-    const modal = document.getElementById("loginModal");
-    const openBtn = document.getElementById("openModalBtn");
-    const closeBtn = document.getElementById("closeModal");
-    const logoutMenu = document.getElementById("logoutMenu");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const loginContainer = document.getElementById("loginContainer");
-
     // Functions for info panel
     function openPanel() {
       infoPanel.classList.remove("scale-0");
@@ -523,53 +632,6 @@
     closeInfoBtn.addEventListener("click", closePanel);
 
     overlay.addEventListener("click", closePanel);
-
-    // Login modal open/close
-    openBtn.onclick = () => { modal.style.display = "block"; };
-    closeBtn.onclick = () => { modal.style.display = "none"; };
-    window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
-
-    // Handle Google login response
-    function handleCredentialResponse(response) {
-      const data = parseJwt(response.credential);
-
-      // Replace login button with avatar
-      loginContainer.innerHTML = `
-        <img id="userAvatar" src="${data.picture}" alt="avatar" 
-             style="width:40px; height:40px; border-radius:50%; cursor:pointer;" />
-      `;
-      modal.style.display = "none";
-
-      const avatar = document.getElementById("userAvatar");
-      avatar.onclick = () => {
-        logoutMenu.style.display = logoutMenu.style.display === "block" ? "none" : "block";
-      };
-    }
-
-    // Logout button handler
-    logoutBtn.onclick = () => {
-      logoutMenu.style.display = "none";
-      loginContainer.innerHTML = `<button id="openModalBtn" class="px-4 py-2 rounded bg-[#9BBA74] hover:bg-[#8aa85a] text-white font-semibold shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button" aria-label="Đăng nhập">Đăng nhập</button>`;
-      const newOpenBtn = document.getElementById("openModalBtn");
-      newOpenBtn.onclick = () => { modal.style.display = "block"; };
-      alert("Bạn đã đăng xuất!");
-    };
-
-    // JWT parse helper
-    function parseJwt(token) {
-      try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        return JSON.parse(jsonPayload);
-      } catch {
-        return {};
-      }
-    }
-
-    // Other app functions below...
 
     function updateCakeDisplay() {
       const cake = cakes[selectedCake];
@@ -608,6 +670,18 @@
 
     function totalSeconds(time) {
       return time.h * 3600 + time.m * 60 + time.s;
+    }
+
+    function formatTime(seconds) {
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      return (
+        (h > 0 ? String(h).padStart(2, "0") + ":" : "") +
+        String(m).padStart(2, "0") +
+        ":" +
+        String(s).padStart(2, "0")
+      );
     }
 
     function updateTimeInputsFromRemaining() {
@@ -661,7 +735,7 @@
 
     function stopTimer(finished = false) {
       if (!isRunning) return;
-      isRunning = false;
+      isRunning = false; // Đặt lại trạng thái chạy
       clearInterval(timerInterval);
       timerInterval = null;
       cookingGif.classList.add("hidden");
@@ -674,9 +748,9 @@
         addSessionToList(elapsedSeconds);
         showReward(elapsedSeconds);
         renderRewardInventory();
-        resetTimerState();
+        resetTimerState(); // reset và update nút ở đây
       } else {
-        updateStartButtonState();
+        updateStartButtonState(); // nếu dừng giữa chừng thì update nút
       }
     }
 
@@ -697,24 +771,28 @@
       circleCakeBtn.disabled = disable;
       document.getElementById("btn-statistics").disabled = disable;
     }
-
     function showReward(elapsed) {
       const timeMinutes = elapsed / 60;
       let rewards = [];
+      let rewardName = "";
       if (timeMinutes < 3) {
+        // Under 3 minutes: reward "bánh nướng bóng đêm" cake
         rewards = [{
           type: "cake",
           name: "bánh nướng bóng đêm",
           img: cakes["bánh nướng bóng đêm"].img,
           alt: cakes["bánh nướng bóng đêm"].alt,
         }];
+        rewardName = "bánh nướng bóng đêm";
       } else {
+        // 5 minutes or more: receive selected cake only
         rewards = [{
           type: "cake",
           name: selectedCake,
           img: cakes[selectedCake].img,
           alt: cakes[selectedCake].alt,
         }];
+        rewardName = selectedCake;
       }
 
       let rewardInventoryLocal = JSON.parse(localStorage.getItem("rewardInventory")) || [];
@@ -723,12 +801,13 @@
       const timeStr = now.toTimeString().slice(0, 5);
 
       rewards.forEach(r => {
+        // Save reward with time and date
         const rewardWithDate = {
           ...r,
           date: dateStr,
           time: timeStr,
           durationMinutes: Math.floor(elapsed / 60),
-          id: Date.now() + Math.random(),
+          id: Date.now() + Math.random(), // unique id
         };
         rewardInventoryLocal.push(rewardWithDate);
       });
@@ -808,6 +887,7 @@
         sessionInfoEl.textContent = "";
         return;
       }
+      // Show all rewardInventory items (with images, duplicates allowed)
       rewardInventory.forEach(item => {
         if (item.name === "Kem 1" || item.name === "Xanh lá") return;
 
@@ -851,7 +931,7 @@
       const menuCakeList = document.getElementById("menu-cake-list");
       menuCakeList.innerHTML = "";
       Object.keys(cakes).forEach(cakeName => {
-        if (cakeName.trim() === "bánh nướng bóng đêm") return;
+        if (cakeName.trim() === "bánh nướng bóng đêm") return; // Bỏ bánh nướng bóng đêm khỏi menu nếu muốn
         const cake = cakes[cakeName];
 
         const btn = document.createElement("button");
@@ -948,13 +1028,8 @@
       updateCakeDisplay();
       updateStartButtonState();
       renderCakeMenu();
-      renderRewardInventory();
       timeProgressBar.style.width = "100%";
     });
-
-    function renderRewardInventory() {
-      renderSessionList();
-    } 
   </script>
 </body>
 </html>
