@@ -77,7 +77,34 @@
         height: 48px;
       }
     }
- <body class="relative min-h-screen flex flex-col items-center bg-[#f0f3e8]">
+    /* Custom styles for Google SignIn button container */
+    #googleSignInButton {
+      position: relative;
+      left: -15%;
+      width: 10rem !important; /* override width to accommodate bigger button */
+      height: 2.5rem !important; /* override height */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Avatar style */
+    #userAvatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 9999px;
+      object-fit: cover;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease;
+    }
+    #userAvatar:hover, #userAvatar:focus {
+      transform: scale(1.1);
+      outline: none;
+      box-shadow: 0 0 8px rgba(0,0,0,0.4);
+    }
+  </style>
+</head>
+<body class="relative min-h-screen flex flex-col items-center bg-[#f0f3e8]">
   <!-- Background Image -->
   <img
     src="https://i.ibb.co/JRr5YSFS/66-F84-D93-7422-4-D12-AD64-8-B3103-E20-BD3.png"
@@ -85,7 +112,30 @@
     class="fixed inset-0 w-full h-full object-cover -z-10"
   />
 
-   <!-- Main Content -->
+  <!-- Header with Google Login / Logout Button and Avatar -->
+  <header class="w-full flex justify-end p-4 max-w-screen-md relative">
+    <div id="googleSignInButton" class="w-10 h-10"></div>
+    <button
+      id="googleLogoutBtn"
+      aria-label="Đăng xuất tài khoản Google"
+      class="hidden flex items-center justify-center w-10 h-10 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] text-white font-semibold shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]"
+      type="button"
+      title="Đăng xuất tài khoản Google"
+    >
+      <i class="fas fa-arrow-right"></i>
+    </button>
+    <img
+      id="userAvatar"
+      src=""
+      alt="Ảnh đại diện người dùng Google"
+      class="hidden absolute top-4 left-4"
+      tabindex="0"
+      aria-label="Ảnh đại diện người dùng Google"
+      draggable="false"
+    />
+  </header>
+
+  <!-- Main Content -->
   <main
     class="flex-grow flex flex-col items-center justify-center px-4 pb-20 relative w-full max-w-screen-md"
     aria-label="Màn hình chính ứng dụng tập trung"
@@ -229,6 +279,36 @@
     <i class="fas fa-question text-lg"></i>
   </button>
 
+  <!-- Logout Confirmation Modal -->
+  <div
+    id="logout-confirm-modal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="logout-confirm-title"
+  >
+    <div class="bg-white rounded-lg max-w-sm w-full p-6 flex flex-col space-y-4 shadow-lg">
+      <h2 id="logout-confirm-title" class="text-xl font-semibold text-gray-800 text-center">
+        Bạn có muốn đăng xuất không?
+      </h2>
+      <div class="flex justify-center space-x-6">
+        <button
+          id="logout-yes-btn"
+          class="px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#b0102a]"
+          type="button"
+        >
+          Có
+        </button>
+        <button
+          id="logout-no-btn"
+          class="px-6 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold focus:outline-none focus:ring-2 focus:ring-gray-400"
+          type="button"
+        >
+          Không
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Menu chọn món (hidden by default) -->
   <div
@@ -372,7 +452,72 @@
 
   <audio id="background-music" loop preload="auto" src="https://github.com/thuyvannnnnn/Focus-and-frost/raw/refs/heads/main/45.audio.mp3"></audio>
 
+  <!-- Script Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client"></script>
 
+  <script>
+    let googleUser  = JSON.parse(localStorage.getItem("googleuser")) || null;
+
+    const googleSignInButton = document.getElementById("googleSignInButton");
+    const googleLogoutBtn = document.getElementById("googleLogoutBtn");
+    const userAvatar = document.getElementById("userAvatar");
+
+    function updateLoginButtonUI() {
+      if (googleUser) {
+        googleSignInButton.style.display = "none";
+        googleLogoutBtn.style.display = "flex";
+        userAvatar.src = googleUser.picture;
+        userAvatar.alt = `Ảnh đại diện của ${googleUser.name}`;
+        userAvatar.classList.remove("hidden");
+        googleLogoutBtn.title = "Đăng xuất tài khoản Google";
+      } else {
+        googleSignInButton.style.display = "flex";
+        googleLogoutBtn.style.display = "none";
+        userAvatar.classList.add("hidden");
+        userAvatar.src = "";
+        userAvatar.alt = "";
+      }
+    }
+
+    function initializeGoogleSignIn() {
+      google.accounts.id.initialize({
+        client_id: "854945467513-gvec4958ef17nqjsoauvk9dcqinceeel.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
+        auto_select: false,
+        cancel_on_tap_outside: false
+      });
+      google.accounts.id.renderButton(
+        googleSignInButton,
+        { theme: "filled_green", size: "medium", width: 160, height: 40 }
+      );
+    }
+
+    function handleCredentialResponse(response) {
+      const data = parseJwt(response.credential);
+      googleUser  = {
+        id: data.sub,
+        name: data.name,
+        email: data.email,
+        picture: data.picture
+      };
+      localStorage.setItem("googleuser", JSON.stringify(googleUser ));
+      updateLoginButtonUI();
+      alert("Bạn đã đăng nhập thành công: " + googleUser.name);
+    }
+
+    googleLogoutBtn.addEventListener("click", () => {
+      if (confirm("Bạn có muốn đăng xuất không?")) {
+        googleUser  = null;
+        localStorage.removeItem("googleuser");
+        updateLoginButtonUI();
+        alert("Bạn đã đăng xuất.");
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateLoginButtonUI();
+      initializeGoogleSignIn();
+    });
 
     // Hàm parse JWT giữ nguyên
     function parseJwt(token) {
@@ -495,37 +640,27 @@
       selectedCakeNameEl.textContent = cake.name;
     }
 
-
-function updateStartButtonState() {
-  const h = Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23);
-  const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
-  const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
-  const hasTime = h + m + s > 0 || elapsedSeconds > 0;
-  const hasCake = !!selectedCake;
-
-  if (!hasTime) {
-    // Ẩn nút khi không có thời gian
-    btnStartStop.style.display = "none";
-  } else {
-    // Hiện nút khi có thời gian
-    btnStartStop.style.display = "flex";
-    btnStartStop.disabled = !hasCake;
-    btnStartStop.classList.toggle("bg-[#9BBA74]", !isRunning && !btnStartStop.disabled);
-    btnStartStop.classList.toggle("hover:bg-[#8aa85a]", !isRunning && !btnStartStop.disabled);
-    btnStartStop.classList.toggle("bg-[#DC143C]", isRunning);
-    btnStartStop.classList.toggle("hover:bg-[#b0102a]", isRunning);
-    if (isRunning) {
-      btnStartStop.textContent = "Dừng lại";
-      btnStartStop.style.color = "white";
-    } else {
-      btnStartStop.style.color = "white";
-      btnStartStop.textContent = elapsedSeconds > 0 ? "Dùng lại" : "Bắt đầu";
+    function updateStartButtonState() {
+      const h = Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23);
+      const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
+      const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
+      const hasTime = h + m + s > 0 || elapsedSeconds > 0;
+      const hasCake = !!selectedCake;
+      btnStartStop.disabled = !(hasTime && hasCake);
+      btnStartStop.classList.toggle("bg-[#9BBA74]", !isRunning && !btnStartStop.disabled);
+      btnStartStop.classList.toggle("hover:bg-[#8aa85a]", !isRunning && !btnStartStop.disabled);
+      btnStartStop.classList.toggle("bg-[#DC143C]", isRunning);
+      btnStartStop.classList.toggle("hover:bg-[#b0102a]", isRunning);
+      if (isRunning) {
+        btnStartStop.textContent = "Dừng lại";
+        btnStartStop.style.color = "white";
+      } else {
+        btnStartStop.style.color = "white";
+        btnStartStop.textContent = elapsedSeconds > 0 ? "Dùng lại" : "Bắt đầu";
+      }
     }
-  }
-}
 
-
-        function parseTimeInputs() {
+    function parseTimeInputs() {
       return {
         h: Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23),
         m: Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59),
@@ -918,182 +1053,6 @@ inputSecond.addEventListener("input", () => {
       renderCakeMenu();
       timeProgressBar.style.width = "100%";
     });
-
-<!-- Nút mở modal (ban đầu) -->
-<button id="openModalBtn">Đăng nhập</button>
-
-  <button
-    id="openLoginModal"
-    aria-label="Mở cửa sổ đăng nhập Google"
-    class="flex items-center justify-center w-10 h-10 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] text-white font-semibold shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]"
-    type="button"
-    title="Đăng nhập Google"
-  >
-    <span class="text-lg font-bold select-none">G</span>
-  </button>
-
-<!-- Modal đăng nhập Google -->
-<div
-  id="login-modal"
-  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="login-modal-title"
->
-  <div class="bg-white rounded-lg max-w-sm w-full p-6 flex flex-col space-y-4 shadow-lg relative">
-    <h2 id="login-modal-title" class="text-xl font-semibold text-gray-800 text-center">
-      Tài khoản Google
-    </h2>
-
-    <!-- Google Sign-In (hiện khi chưa đăng nhập) -->
-    <div id="google-signin-container">
-      <div
-        id="g_id_onload"
-        data-client_id="854945467513-gvec4958ef17nqjsoauvk9dcqinceeel.apps.googleusercontent.com"
-        data-callback="handleCredentialResponse"
-        data-auto_prompt="false"
-      ></div>
-      <div class="g_id_signin" data-type="standard"></div>
-    </div>
-
-    <!-- Thông tin người dùng (hiện khi đã đăng nhập) -->
-    <div id="user-info" class="hidden text-center text-gray-800 font-semibold"></div>
-
-    <!-- Nút đăng xuất -->
-    <button
-      id="logoutBtn"
-      class="hidden px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto focus:outline-none focus:ring-2 focus:ring-[#b0102a]"
-      type="button"
-    >
-      Đăng xuất
-    </button>
-
-    <!-- Nút đóng modal -->
-    <button
-      id="closeLoginModal"
-      class="mt-2 px-6 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold mx-auto focus:outline-none focus:ring-2 focus:ring-gray-400"
-      type="button"
-    >
-      Đóng
-    </button>
-
-    <!-- Icon đóng góc -->
-    <button
-      id="loginModalCloseX"
-      class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#b0102a] rounded"
-      type="button"
-    >
-      <i class="fas fa-times text-xl"></i>
-    </button>
-  </div>
-</div>
-
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<script>
-  let googleUser = null;
-
-  const loginModal = document.getElementById("login-modal");
-  const openLoginModal = document.getElementById("openLoginModal");
-  const closeLoginModal = document.getElementById("closeLoginModal");
-  const loginModalCloseX = document.getElementById("loginModalCloseX");
-
-  const googleSigninContainer = document.getElementById("google-signin-container");
-  const userInfoDiv = document.getElementById("user-info");
-  const logoutBtn = document.getElementById("logoutBtn");
-
-  // Mở modal
-  openLoginModal.addEventListener("click", () => {
-    loginModal.classList.remove("hidden");
-  });
-
-  // Đóng modal
-  function closeModal() {
-    loginModal.classList.add("hidden");
-  }
-  closeLoginModal.addEventListener("click", closeModal);
-  loginModalCloseX.addEventListener("click", closeModal);
-
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !loginModal.classList.contains("hidden")) {
-      closeModal();
-    }
-  });
-
-  // Hàm cập nhật UI
-  function updateLoginUI() {
-    if (googleUser) {
-      googleSigninContainer.classList.add("hidden");
-      userInfoDiv.classList.remove("hidden");
-      logoutBtn.classList.remove("hidden");
-      userInfoDiv.innerHTML = `
-        <p>Xin chào, <b>${googleUser.name}</b>!</p>
-        <img src="${googleUser.picture}" alt="Avatar của ${googleUser.name}" class="mx-auto w-16 h-16 rounded-full my-2"/>
-        <p>Email: ${googleUser.email}</p>
-      `;
-    } else {
-      googleSigninContainer.classList.remove("hidden");
-      userInfoDiv.classList.add("hidden");
-      logoutBtn.classList.add("hidden");
-      userInfoDiv.innerHTML = "";
-    }
-  }
-
-  // Xử lý đăng nhập Google
-  function handleCredentialResponse(response) {
-    const data = parseJwt(response.credential);
-    if (!data || !data.sub) return;
-    googleUser = {
-      id: data.sub,
-      name: data.name,
-      email: data.email,
-      picture: data.picture,
-    };
-    localStorage.setItem("googleuser", JSON.stringify(googleUser));
-    updateLoginUI();
-  }
-
-  // Đăng xuất
-  logoutBtn.addEventListener("click", () => {
-    googleUser = null;
-    localStorage.removeItem("googleuser");
-    updateLoginUI();
-    alert("Bạn đã đăng xuất.");
-  });
-
-  // Tải lại user từ localStorage
-  window.addEventListener("load", () => {
-    const storedUser = localStorage.getItem("googleuser");
-    if (storedUser) {
-      try {
-        googleUser = JSON.parse(storedUser);
-      } catch {
-        googleUser = null;
-        localStorage.removeItem("googleuser");
-      }
-    }
-    updateLoginUI();
-  });
-
-  // JWT parse helper
-  function parseJwt(token) {
-    try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map((c) => {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-          })
-          .join('')
-      );
-      return JSON.parse(jsonPayload);
-    } catch {
-      return {};
-    }
-  }
-</script>
-
   </script>
 </body>
 </html>
