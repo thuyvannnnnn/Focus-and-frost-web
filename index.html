@@ -736,28 +736,34 @@ function startTimer() {
     }
   }, 1000);
   disableInputs(true);
+  
+}
+function stopTimer(finished = false) {
+  if (!isRunning) return;
+  isRunning = false;
+  clearInterval(timerInterval);
+  timerInterval = null;
+  cookingGif.classList.add("hidden");
+  cakeImageEl.classList.remove("hidden");
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0;
+  disableInputs(false);
+  if (finished) {
+    console.log("Stop timer finished, elapsedSeconds before reset:", elapsedSeconds);
+    saveSessionHistory(elapsedSeconds);
+    addSessionToList(elapsedSeconds);
+    showReward(elapsedSeconds);
+    renderRewardInventory();
+    resetTimerState();
+    updateStartButtonState();  // Đảm bảo gọi sau resetTimerState
+    console.log("After resetTimerState, elapsedSeconds:", elapsedSeconds, "isRunning:", isRunning);
+  } else {
+    updateStartButtonState();
+  }
 }
 
-    function stopTimer(finished = false) {
-      if (!isRunning) return;
-      isRunning = false; // Đặt lại trạng thái chạy
-      clearInterval(timerInterval);
-      timerInterval = null;
-      cookingGif.classList.add("hidden");
-      cakeImageEl.classList.remove("hidden");
-      backgroundMusic.pause();
-      backgroundMusic.currentTime = 0;
-      disableInputs(false);
-      if (finished) {
-        saveSessionHistory(elapsedSeconds);
-        addSessionToList(elapsedSeconds);
-        showReward(elapsedSeconds);
-        renderRewardInventory();
-        resetTimerState(); // reset và update nút ở đây
-      } else {
-        updateStartButtonState(); // nếu dừng giữa chừng thì update nút
-      }
-    }
+
+    
 
     function resetTimerState() {
       elapsedSeconds = 0;
