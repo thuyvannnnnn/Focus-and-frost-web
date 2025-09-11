@@ -703,35 +703,40 @@
     }
 
     let selectedTimeTotalSeconds = 0;
+function startTimer() {
+  if (isRunning) return;
 
-    function startTimer() {
-      if (isRunning) return;
-      if (elapsedSeconds === 0) {
-        selectedTime = parseTimeInputs();
-        selectedTimeTotalSeconds = totalSeconds(selectedTime);
-        remainingSeconds = selectedTimeTotalSeconds;
-      } else { 
-        remainingSeconds = selectedTimeTotalSeconds - elapsedSeconds;
-      }
-      if (remainingSeconds <= 0) return;
-      isRunning = true;
-      updateStartButtonState();
-      cookingGif.classList.remove("hidden");
-      cakeImageEl.classList.add("hidden");
-      backgroundMusic.play().catch(() => {});
-      updateTimeInputsFromRemaining();
-      updateProgressBar();
-      timerInterval = setInterval(() => {
-        remainingSeconds--;
-        elapsedSeconds++;
-        updateTimeInputsFromRemaining();
-        updateProgressBar();
-        if (remainingSeconds <= 0) {
-          stopTimer(true);
-        }
-      }, 1000);
-      disableInputs(true);
+  if (elapsedSeconds === 0) {
+    selectedTime = parseTimeInputs();
+    selectedTimeTotalSeconds = totalSeconds(selectedTime);
+    remainingSeconds = selectedTimeTotalSeconds;
+  } else {
+    // Khi resume, cập nhật lại selectedTime từ input để đồng bộ
+    selectedTime = parseTimeInputs();
+    selectedTimeTotalSeconds = totalSeconds(selectedTime);
+    remainingSeconds = selectedTimeTotalSeconds - elapsedSeconds;
+  }
+
+  if (remainingSeconds <= 0) return;
+
+  isRunning = true;
+  updateStartButtonState();
+  cookingGif.classList.remove("hidden");
+  cakeImageEl.classList.add("hidden");
+  backgroundMusic.play().catch(() => {});
+  updateTimeInputsFromRemaining();
+  updateProgressBar();
+  timerInterval = setInterval(() => {
+    remainingSeconds--;
+    elapsedSeconds++;
+    updateTimeInputsFromRemaining();
+    updateProgressBar();
+    if (remainingSeconds <= 0) {
+      stopTimer(true);
     }
+  }, 1000);
+  disableInputs(true);
+}
 
     function stopTimer(finished = false) {
       if (!isRunning) return;
@@ -965,26 +970,38 @@
       });
     }
 
-    inputHour.addEventListener("input", () => {
-      if (inputHour.value.length > 2) inputHour.value = inputHour.value.slice(0, 2);
-      updateStartButtonState();
-    });
-    inputMinute.addEventListener("input", () => {
-      if (inputMinute.value.length > 2) inputMinute.value = inputMinute.value.slice(0, 2);
-      updateStartButtonState();
-    });
-    inputSecond.addEventListener("input", () => {
-      if (inputSecond.value.length > 2) inputSecond.value = inputSecond.value.slice(0, 2);
-      updateStartButtonState();
-    });
+  function onTimeInputChange() {
+  if (elapsedSeconds > 0) {
+    elapsedSeconds = 0;
+    selectedTimeTotalSeconds = 0;
+  }
+  updateStartButtonState();
+}
+
+inputHour.addEventListener("input", () => {
+  if (inputHour.value.length > 2) inputHour.value = inputHour.value.slice(0, 2);
+  onTimeInputChange();
+});
+inputMinute.addEventListener("input", () => {
+  if (inputMinute.value.length > 2) inputMinute.value = inputMinute.value.slice(0, 2);
+  onTimeInputChange();
+});
+inputSecond.addEventListener("input", () => {
+  if (inputSecond.value.length > 2) inputSecond.value = inputSecond.value.slice(0, 2);
+  onTimeInputChange();
+});
+ 
 
     btnStartStop.addEventListener("click", () => {
-      if (isRunning) {
-        stopTimer(false);
-      } else {
-        startTimer();
-      }
-    });
+  if (btnStartStop.disabled) return; // tránh xử lý khi nút disable
+
+  if (isRunning) {
+    stopTimer(false);
+  } else {
+    startTimer();
+  }
+});
+
 
     circleCakeBtn.addEventListener("click", () => {
       if (isRunning) return;
