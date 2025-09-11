@@ -77,9 +77,7 @@
         height: 48px;
       }
     }
-  </style>
-</head>
-<body class="relative min-h-screen flex flex-col items-center bg-[#f0f3e8]">
+ <body class="relative min-h-screen flex flex-col items-center bg-[#f0f3e8]">
   <!-- Background Image -->
   <img
     src="https://i.ibb.co/JRr5YSFS/66-F84-D93-7422-4-D12-AD64-8-B3103-E20-BD3.png"
@@ -87,7 +85,7 @@
     class="fixed inset-0 w-full h-full object-cover -z-10"
   />
 
-  <!-- Main Content -->
+   <!-- Main Content -->
   <main
     class="flex-grow flex flex-col items-center justify-center px-4 pb-20 relative w-full max-w-screen-md"
     aria-label="Màn hình chính ứng dụng tập trung"
@@ -231,6 +229,7 @@
     <i class="fas fa-question text-lg"></i>
   </button>
 
+
   <!-- Menu chọn món (hidden by default) -->
   <div
     id="menu-select-cake"
@@ -373,15 +372,22 @@
 
   <audio id="background-music" loop preload="auto" src="https://github.com/thuyvannnnnn/Focus-and-frost/raw/refs/heads/main/45.audio.mp3"></audio>
 
- <script>
-  window.addEventListener("load", () => {
-    initializeGoogleSignIn();
-    // Prompt Google Sign-In immediately but with a timeout to reduce delay
-    setTimeout(() => {
-      google.accounts.id.prompt();
-    }, 100);
-  });
-</script>
+
+
+    // Hàm parse JWT giữ nguyên
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch {
+        return {};
+      }
+    }
+  </script>
 
   <script>
     // Remove cakeinventory, plateinventory, decorinventory from localStorage on load
@@ -422,7 +428,6 @@
     let elapsedSeconds = 0; // time already counted before pause
     let rewardInventory = JSON.parse(localStorage.getItem("rewardInventory")) || [];
     let sessionHistory = JSON.parse(localStorage.getItem("sessionHistory")) || [];
-    let googleUser = JSON.parse(localStorage.getItem("googleuser")) || null;
 
     // Elements
     const cakeImageEl = document.getElementById("cake-image");
@@ -451,17 +456,6 @@
     const cakeListEl = document.getElementById("cake-list");
     const sessionInfoEl = document.getElementById("session-info");
     const btnStatistics = document.getElementById("btn-statistics");
-
-  
-    // Login/logout button elements
-    const googleLoginBtn = document.getElementById("googleLoginBtn");
-    const loginIcon = document.getElementById("loginIcon");
-    const logoutIcon = document.getElementById("logoutIcon");
-
-    // Logout confirmation modal elements
-    const logoutConfirmModal = document.getElementById("logout-confirm-modal");
-    const logoutYesBtn = document.getElementById("logout-yes-btn");
-    const logoutNoBtn = document.getElementById("logout-no-btn");
 
     // Info panel elements
     const infoToggleBtn = document.getElementById("infoToggleBtn");
@@ -494,92 +488,6 @@
 
     overlay.addEventListener("click", closePanel);
 
-    // Update login/logout button UI based on login state
-    function updateLoginButtonUI() {
-      if (googleUser) {
-        loginIcon.classList.add("hidden");
-        logoutIcon.classList.remove("hidden");
-        googleLoginBtn.title = "Đăng xuất tài khoản Google";
-      } else {
-        loginIcon.classList.remove("hidden");
-        logoutIcon.classList.add("hidden");
-        googleLoginBtn.title = "Đăng nhập bằng tài khoản Google";
-      }
-    }
-
-    // Initialize Google Sign-In
-    function initializeGoogleSignIn() {
-      google.accounts.id.initialize({
-        client_id: "854945467513-gvec4958ef17nqjsoauvk9dcqinceeel.apps.googleusercontent.com",
-        callback: handleCredentialResponse,
-        auto_select: false,
-        cancel_on_tap_outside: false
-      });
-    }
-
-    // Handle Google Sign-In response
-    function handleCredentialResponse(response) {
-      const data = parseJwt(response.credential);
-      googleUser = {
-        id: data.sub,
-        name: data.name,
-        email: data.email,
-        picture: data.picture
-      };
-      localStorage.setItem("googleuser", JSON.stringify(googleUser));
-      updateLoginButtonUI();
-      alert("Bạn đã đăng nhập thành công: " + googleUser.name);
-    }
-
-    // Show logout confirmation modal
-    function showLogoutConfirm() {
-      logoutConfirmModal.classList.remove("hidden");
-      overlay.classList.remove("hidden");
-    }
-
-    // Hide logout confirmation modal
-    function hideLogoutConfirm() {
-      logoutConfirmModal.classList.add("hidden");
-      overlay.classList.add("hidden");
-    }
-
-    // Event listeners for login/logout button
-    if(googleLoginBtn){
-      googleLoginBtn.addEventListener("click", () => {
-        if (googleUser) {
-          showLogoutConfirm();
-        } else {
-          google.accounts.id.prompt();
-        }
-      });
-    }
-
-    if(logoutYesBtn){
-      logoutYesBtn.addEventListener("click", () => {
-        googleUser = null;
-        localStorage.removeItem("googleuser");
-        updateLoginButtonUI();
-        hideLogoutConfirm();
-        alert("Bạn đã đăng xuất.");
-      });
-    }
-
-    if(logoutNoBtn){
-      logoutNoBtn.addEventListener("click", () => {
-        hideLogoutConfirm();
-      });
-    }
-
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        if (!rewardModal.classList.contains("hidden")) rewardModal.classList.add("hidden");
-        if (!menuSelectCake.classList.contains("hidden")) menuSelectCake.classList.add("hidden");
-        if (!statisticsModal.classList.contains("hidden")) statisticsModal.classList.add("hidden");
-              if (!logoutConfirmModal.classList.contains("hidden")) hideLogoutConfirm();
-        if (!infoPanel.classList.contains("scale-0")) closePanel();
-      }
-    });
-
     function updateCakeDisplay() {
       const cake = cakes[selectedCake];
       cakeImageEl.src = cake.img;
@@ -587,27 +495,37 @@
       selectedCakeNameEl.textContent = cake.name;
     }
 
-    function updateStartButtonState() {
-      const h = Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23);
-      const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
-      const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
-      const hasTime = h + m + s > 0 || elapsedSeconds > 0;
-      const hasCake = !!selectedCake;
-      btnStartStop.disabled = !(hasTime && hasCake);
-      btnStartStop.classList.toggle("bg-[#9BBA74]", !isRunning && !btnStartStop.disabled);
-      btnStartStop.classList.toggle("hover:bg-[#8aa85a]", !isRunning && !btnStartStop.disabled);
-      btnStartStop.classList.toggle("bg-[#DC143C]", isRunning);
-      btnStartStop.classList.toggle("hover:bg-[#b0102a]", isRunning);
-      if (isRunning) {
-        btnStartStop.textContent = "Dừng lại";
-        btnStartStop.style.color = "white";
-      } else {
-        btnStartStop.style.color = "white";
-        btnStartStop.textContent = elapsedSeconds > 0 ? "Dùng lại" : "Bắt đầu";
-      }
-    }
 
-    function parseTimeInputs() {
+function updateStartButtonState() {
+  const h = Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23);
+  const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
+  const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
+  const hasTime = h + m + s > 0 || elapsedSeconds > 0;
+  const hasCake = !!selectedCake;
+
+  if (!hasTime) {
+    // Ẩn nút khi không có thời gian
+    btnStartStop.style.display = "none";
+  } else {
+    // Hiện nút khi có thời gian
+    btnStartStop.style.display = "flex";
+    btnStartStop.disabled = !hasCake;
+    btnStartStop.classList.toggle("bg-[#9BBA74]", !isRunning && !btnStartStop.disabled);
+    btnStartStop.classList.toggle("hover:bg-[#8aa85a]", !isRunning && !btnStartStop.disabled);
+    btnStartStop.classList.toggle("bg-[#DC143C]", isRunning);
+    btnStartStop.classList.toggle("hover:bg-[#b0102a]", isRunning);
+    if (isRunning) {
+      btnStartStop.textContent = "Dừng lại";
+      btnStartStop.style.color = "white";
+    } else {
+      btnStartStop.style.color = "white";
+      btnStartStop.textContent = elapsedSeconds > 0 ? "Dùng lại" : "Bắt đầu";
+    }
+  }
+}
+
+
+        function parseTimeInputs() {
       return {
         h: Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23),
         m: Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59),
@@ -650,56 +568,67 @@
     }
 
     let selectedTimeTotalSeconds = 0;
+function startTimer() {
+  if (isRunning) return;
 
-    function startTimer() {
-      if (isRunning) return;
-      if (elapsedSeconds === 0) {
-        selectedTime = parseTimeInputs();
-        selectedTimeTotalSeconds = totalSeconds(selectedTime);
-        remainingSeconds = selectedTimeTotalSeconds;
-      } else { 
-        remainingSeconds = selectedTimeTotalSeconds - elapsedSeconds;
-      }
-      if (remainingSeconds <= 0) return;
-      isRunning = true;
-      updateStartButtonState();
-      cookingGif.classList.remove("hidden");
-      cakeImageEl.classList.add("hidden");
-      backgroundMusic.play().catch(() => {});
-      updateTimeInputsFromRemaining();
-      updateProgressBar();
-      timerInterval = setInterval(() => {
-        remainingSeconds--;
-        elapsedSeconds++;
-        updateTimeInputsFromRemaining();
-        updateProgressBar();
-        if (remainingSeconds <= 0) {
-          stopTimer(true);
-        }
-      }, 1000);
-      disableInputs(true);
-    }
+  if (elapsedSeconds === 0) {
+    selectedTime = parseTimeInputs();
+    selectedTimeTotalSeconds = totalSeconds(selectedTime);
+    remainingSeconds = selectedTimeTotalSeconds;
+  } else {
+    // Khi resume, cập nhật lại selectedTime từ input để đồng bộ
+    selectedTime = parseTimeInputs();
+    selectedTimeTotalSeconds = totalSeconds(selectedTime);
+    remainingSeconds = selectedTimeTotalSeconds - elapsedSeconds;
+  }
 
-    function stopTimer(finished = false) {
-      if (!isRunning) return;
-      isRunning = false; // Đặt lại trạng thái chạy
-      clearInterval(timerInterval);
-      timerInterval = null;
-      cookingGif.classList.add("hidden");
-      cakeImageEl.classList.remove("hidden");
-      backgroundMusic.pause();
-      backgroundMusic.currentTime = 0;
-      disableInputs(false);
-      if (finished) {
-        saveSessionHistory(elapsedSeconds);
-        addSessionToList(elapsedSeconds);
-        showReward(elapsedSeconds);
-        renderRewardInventory();
-        resetTimerState(); // reset và update nút ở đây
-      } else {
-        updateStartButtonState(); // nếu dừng giữa chừng thì update nút
-      }
+  if (remainingSeconds <= 0) return;
+
+  isRunning = true;
+  updateStartButtonState();
+  cookingGif.classList.remove("hidden");
+  cakeImageEl.classList.add("hidden");
+  backgroundMusic.play().catch(() => {});
+  updateTimeInputsFromRemaining();
+  updateProgressBar();
+  timerInterval = setInterval(() => {
+    remainingSeconds--;
+    elapsedSeconds++;
+    updateTimeInputsFromRemaining();
+    updateProgressBar();
+    if (remainingSeconds <= 0) {
+      stopTimer(true);
     }
+  }, 1000);
+  disableInputs(true);
+  
+}
+function stopTimer(finished = false) {
+  if (!isRunning) return;
+  isRunning = false;
+  clearInterval(timerInterval);
+  timerInterval = null;
+  cookingGif.classList.add("hidden");
+  cakeImageEl.classList.remove("hidden");
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0;
+  disableInputs(false);
+  if (finished) {
+    console.log("Stop timer finished, elapsedSeconds before reset:", elapsedSeconds);
+    saveSessionHistory(elapsedSeconds);
+    addSessionToList(elapsedSeconds);
+    showReward(elapsedSeconds);
+    renderRewardInventory();
+    resetTimerState();
+    updateStartButtonState();  // Đảm bảo gọi sau resetTimerState
+    console.log("After resetTimerState, elapsedSeconds:", elapsedSeconds, "isRunning:", isRunning);
+  } else {
+    updateStartButtonState();
+  }
+}
+
+
+    
 
     function resetTimerState() {
       elapsedSeconds = 0;
@@ -912,26 +841,38 @@
       });
     }
 
-    inputHour.addEventListener("input", () => {
-      if (inputHour.value.length > 2) inputHour.value = inputHour.value.slice(0, 2);
-      updateStartButtonState();
-    });
-    inputMinute.addEventListener("input", () => {
-      if (inputMinute.value.length > 2) inputMinute.value = inputMinute.value.slice(0, 2);
-      updateStartButtonState();
-    });
-    inputSecond.addEventListener("input", () => {
-      if (inputSecond.value.length > 2) inputSecond.value = inputSecond.value.slice(0, 2);
-      updateStartButtonState();
-    });
+  function onTimeInputChange() {
+  if (elapsedSeconds > 0) {
+    elapsedSeconds = 0;
+    selectedTimeTotalSeconds = 0;
+  }
+  updateStartButtonState();
+}
+
+inputHour.addEventListener("input", () => {
+  if (inputHour.value.length > 2) inputHour.value = inputHour.value.slice(0, 2);
+  onTimeInputChange();
+});
+inputMinute.addEventListener("input", () => {
+  if (inputMinute.value.length > 2) inputMinute.value = inputMinute.value.slice(0, 2);
+  onTimeInputChange();
+});
+inputSecond.addEventListener("input", () => {
+  if (inputSecond.value.length > 2) inputSecond.value = inputSecond.value.slice(0, 2);
+  onTimeInputChange();
+});
+ 
 
     btnStartStop.addEventListener("click", () => {
-      if (isRunning) {
-        stopTimer(false);
-      } else {
-        startTimer();
-      }
-    });
+  if (btnStartStop.disabled) return; // tránh xử lý khi nút disable
+
+  if (isRunning) {
+    stopTimer(false);
+  } else {
+    startTimer();
+  }
+});
+
 
     circleCakeBtn.addEventListener("click", () => {
       if (isRunning) return;
@@ -967,7 +908,6 @@
       statisticsModal.classList.add("hidden");
     });
 
-      
     if (!localStorage.getItem('sessionHistory')) {
       localStorage.setItem('sessionHistory', JSON.stringify([]));
     }
@@ -976,31 +916,12 @@
       updateCakeDisplay();
       updateStartButtonState();
       renderCakeMenu();
-      updateLoginButtonUI();
-      renderRewardInventory();
       timeProgressBar.style.width = "100%";
-      initializeGoogleSignIn();
     });
 
-    function renderRewardInventory() {
-      renderSessionList();
-    } 
+<!-- Nút mở modal (ban đầu) -->
+<button id="openModalBtn">Đăng nhập</button>
 
-    // JWT parse helper
-    function parseJwt(token) {
-      try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        return JSON.parse(jsonPayload);
-      } catch {
-        return {};
-      }
-    }
-    <!-- Nút mở modal đăng nhập -->
-<header class="w-full flex justify-end p-4 max-w-screen-md">
   <button
     id="openLoginModal"
     aria-label="Mở cửa sổ đăng nhập Google"
@@ -1010,7 +931,6 @@
   >
     <span class="text-lg font-bold select-none">G</span>
   </button>
-</header>
 
 <!-- Modal đăng nhập Google -->
 <div
@@ -1172,6 +1092,7 @@
       return {};
     }
   }
+</script>
 
   </script>
 </body>
