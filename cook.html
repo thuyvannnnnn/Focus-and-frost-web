@@ -639,25 +639,34 @@
       cakeImageEl.alt = cake.alt;
       selectedCakeNameEl.textContent = cake.name;
     }
-function updateStartButtonState() {
-      const h = Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23);
-      const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
-      const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
-      const hasTime = h + m + s > 0 || elapsedSeconds > 0;
-      const hasCake = !!selectedCake;
-      btnStartStop.style.display = (hasTime && hasCake) ? "block" : "none";
-      btnStartStop.classList.toggle("bg-[#9BBA74]", !isRunning && !btnStartStop.disabled);
-      btnStartStop.classList.toggle("hover:bg-[#8aa85a]", !isRunning && !btnStartStop.disabled);
-      btnStartStop.classList.toggle("bg-[#DC143C]", isRunning);
-      btnStartStop.classList.toggle("hover:bg-[#b0102a]", isRunning);
-      if (isRunning) {
-        btnStartStop.textContent = "Dừng lại";
-        btnStartStop.style.color = "white";
-      } else {
-        btnStartStop.style.color = "white";
-        btnStartStop.textContent = elapsedSeconds > 0 ? "Dùng lại" : "Bắt đầu";
-      }
+
+    function updateStartButtonState() {
+  const h = Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23);
+  const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
+  const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
+
+  const hasTime = h + m + s > 0 || elapsedSeconds > 0;
+  const hasCake = !!selectedCake;
+
+  // 👉 Ẩn nút khi chưa chọn thời gian hoặc chưa chọn cake
+  btnStartStop.style.display = (hasTime && hasCake) ? "block" : "none";
+
+  // 👉 Chỉ đổi màu nếu nút đang hiển thị
+  if (hasTime && hasCake) {
+    btnStartStop.classList.toggle("bg-[#9BBA74]", !isRunning);
+    btnStartStop.classList.toggle("hover:bg-[#8aa85a]", !isRunning);
+    btnStartStop.classList.toggle("bg-[#DC143C]", isRunning);
+    btnStartStop.classList.toggle("hover:bg-[#b0102a]", isRunning);
+
+    if (isRunning) {
+      btnStartStop.textContent = "Dừng lại";
+      btnStartStop.style.color = "white";
+    } else {
+      btnStartStop.style.color = "white";
+      btnStartStop.textContent = elapsedSeconds > 0 ? "Dùng lại" : "Bắt đầu";
     }
+  }
+}
     
     
 
