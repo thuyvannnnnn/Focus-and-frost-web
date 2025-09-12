@@ -645,7 +645,7 @@
   const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
   const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
 
-  const hasTime = h + m + s > 0 || elapsedSeconds > 0;
+  const hasTime = h + m + s > 0;
   const hasCake = !!selectedCake;
   const shouldShow = hasTime && hasCake;
 
@@ -1012,7 +1012,7 @@ inputSecond.addEventListener("input", () => {
   const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
   const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
 
-  const hasTime = h + m + s > 0 || elapsedSeconds > 0;
+  const hasTime = h + m + s > 0;
   const hasCake = !!selectedCake;
 
   if (!(hasTime && hasCake)) return; // chặn click khi không hợp lệ
