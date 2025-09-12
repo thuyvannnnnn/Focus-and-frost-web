@@ -1009,7 +1009,9 @@ inputSecond.addEventListener("input", () => {
  
 
     btnStartStop.addEventListener("click", () => {
-  if (btnStartStop.disabled) return; // tránh xử lý khi nút disable
+  if (!(hasTime && hasCake)) return; // thay vì check disabled
+  // xử lý khi được bấm
+});
 
   if (isRunning) {
     stopTimer(false);
