@@ -647,12 +647,12 @@
 
   const hasTime = h + m + s > 0 || elapsedSeconds > 0;
   const hasCake = !!selectedCake;
+  const shouldShow = hasTime && hasCake;
 
-  // 👉 Ẩn nút khi chưa chọn thời gian hoặc chưa chọn cake
-  btnStartStop.style.display = (hasTime && hasCake) ? "block" : "none";
+  // 👉 chỉ hiện khi đủ điều kiện
+  btnStartStop.style.display = shouldShow ? "block" : "none";
 
-  // 👉 Chỉ đổi màu nếu nút đang hiển thị
-  if (hasTime && hasCake) {
+  if (shouldShow) {
     btnStartStop.classList.toggle("bg-[#9BBA74]", !isRunning);
     btnStartStop.classList.toggle("hover:bg-[#8aa85a]", !isRunning);
     btnStartStop.classList.toggle("bg-[#DC143C]", isRunning);
@@ -667,7 +667,6 @@
     }
   }
 }
-    
     
 
     function parseTimeInputs() {
@@ -1009,9 +1008,14 @@ inputSecond.addEventListener("input", () => {
  
 
     btnStartStop.addEventListener("click", () => {
-  if (!(hasTime && hasCake)) return; // thay vì check disabled
-  // xử lý khi được bấm
-});
+  const h = Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23);
+  const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
+  const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
+
+  const hasTime = h + m + s > 0 || elapsedSeconds > 0;
+  const hasCake = !!selectedCake;
+
+  if (!(hasTime && hasCake)) return; // chặn click khi không hợp lệ
 
   if (isRunning) {
     stopTimer(false);
@@ -1019,7 +1023,6 @@ inputSecond.addEventListener("input", () => {
     startTimer();
   }
 });
-
 
     circleCakeBtn.addEventListener("click", () => {
       if (isRunning) return;
