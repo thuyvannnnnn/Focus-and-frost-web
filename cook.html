@@ -640,36 +640,25 @@
       selectedCakeNameEl.textContent = cake.name;
     }
 function updateStartButtonState() {
-  const h = Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23);
-  const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
-  const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
-  const hasTime = h + m + s > 0 || elapsedSeconds > 0;
-  const hasCake = !!selectedCake;
-
-  if (!hasTime) {
-    // Ẩn nút khi không có thời gian
-    btnStartStop.style.display = "none";
-  } else {
-    // Hiện nút khi có thời gian
-    btnStartStop.style.display = "flex"; // hoặc "inline-block" tùy style bạn muốn
-  }
-
-  // Nếu nút đang hiển thị thì cập nhật trạng thái disabled và style
-  if (btnStartStop.style.display !== "none") {
-    btnStartStop.disabled = !(hasTime && hasCake);
-    btnStartStop.classList.toggle("bg-[#9BBA74]", !isRunning && !btnStartStop.disabled);
-    btnStartStop.classList.toggle("hover:bg-[#8aa85a]", !isRunning && !btnStartStop.disabled);
-    btnStartStop.classList.toggle("bg-[#DC143C]", isRunning);
-    btnStartStop.classList.toggle("hover:bg-[#b0102a]", isRunning);
-    if (isRunning) {
-      btnStartStop.textContent = "Dừng lại";
-      btnStartStop.style.color = "white";
-    } else {
-      btnStartStop.style.color = "white";
-      btnStartStop.textContent = elapsedSeconds > 0 ? "Dùng lại" : "Bắt đầu";
+      const h = Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23);
+      const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
+      const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
+      const hasTime = h + m + s > 0 || elapsedSeconds > 0;
+      const hasCake = !!selectedCake;
+      btnStartStop.disabled = !(hasTime && hasCake);
+      btnStartStop.classList.toggle("bg-[#9BBA74]", !isRunning && !btnStartStop.disabled);
+      btnStartStop.classList.toggle("hover:bg-[#8aa85a]", !isRunning && !btnStartStop.disabled);
+      btnStartStop.classList.toggle("bg-[#DC143C]", isRunning);
+      btnStartStop.classList.toggle("hover:bg-[#b0102a]", isRunning);
+      if (isRunning) {
+        btnStartStop.textContent = "Dừng lại";
+        btnStartStop.style.color = "white";
+      } else {
+        btnStartStop.style.color = "white";
+        btnStartStop.textContent = elapsedSeconds > 0 ? "Dùng lại" : "Bắt đầu";
+      }
     }
-  }
-}
+    
     
 
     function parseTimeInputs() {
