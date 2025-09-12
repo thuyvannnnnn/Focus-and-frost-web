@@ -658,6 +658,12 @@
         btnStartStop.style.color = "white";
         btnStartStop.textContent = elapsedSeconds > 0 ? "Dùng lại" : "Bắt đầu";
       }
+      const h = Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23);
+const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
+const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
+const hasTime = h + m + s > 0 || elapsedSeconds > 0;
+const hasCake = !!selectedCake;
+btnStartStop.disabled = !(hasTime && hasCake);
     }
 
     function parseTimeInputs() {
