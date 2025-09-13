@@ -233,7 +233,7 @@
         </button>
       </div>
 
-      <!-- Center Start/Stop/Use Reward button -->
+ <!-- Center Start/Stop/Use Reward button -->
       <button
         id="btn-start-stop"
         class="flex-1 mx-4 py-2 rounded-lg font-bold text-white disabled:opacity-50 disabled:cursor-not-allowed bg-[#9BBA74] hover:bg-[#8aa85a] focus:outline-none focus:ring-2 focus:ring-[#8aa85a]"
@@ -243,6 +243,7 @@
       >
         Bắt đầu
       </button>
+
 
        <!-- Hidden feedback form for submission -->
     <form
@@ -578,7 +579,7 @@
     const cakeImageEl = document.getElementById("cake-image");
     const circleCakeBtn = document.getElementById("circle-cake");
     const selectedCakeNameEl = document.getElementById("selected-cake-name");
-    const btnStartStop = document.getElementById("btn-start-stop");
+  const btnStartStop = document.getElementById("btn-start-stop");
     const inputHour = document.getElementById("input-hour");
     const inputMinute = document.getElementById("input-minute");
     const inputSecond = document.getElementById("input-second");
@@ -640,36 +641,28 @@
       selectedCakeNameEl.textContent = cake.name;
     }
 
+  
     function updateStartButtonState() {
-  const h = Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23);
-  const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
-  const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
-
-  const hasTime = h + m + s > 0;
-  const hasCake = !!selectedCake;
-  const shouldShow = hasTime && hasCake;
-
-  // 👉 chỉ hiện khi đủ điều kiện
-  btnStartStop.style.display = shouldShow ? "block" : "none";
-
-  if (shouldShow) {
-    btnStartStop.classList.toggle("bg-[#9BBA74]", !isRunning);
-    btnStartStop.classList.toggle("hover:bg-[#8aa85a]", !isRunning);
-    btnStartStop.classList.toggle("bg-[#DC143C]", isRunning);
-    btnStartStop.classList.toggle("hover:bg-[#b0102a]", isRunning);
-
-    if (isRunning) {
-      btnStartStop.textContent = "Dừng lại";
-      btnStartStop.style.color = "white";
-    } else {
-      btnStartStop.style.color = "white";
-      btnStartStop.textContent = elapsedSeconds > 0 ? "Dùng lại" : "Bắt đầu";
+      const h = Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23);
+      const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
+      const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
+      const hasTime = h + m + s > 0 || elapsedSeconds > 0;
+      const hasCake = !!selectedCake;
+      btnStartStop.disabled = !(hasTime && hasCake);
+      btnStartStop.classList.toggle("bg-[#9BBA74]", !isRunning && !btnStartStop.disabled);
+      btnStartStop.classList.toggle("hover:bg-[#8aa85a]", !isRunning && !btnStartStop.disabled);
+      btnStartStop.classList.toggle("bg-[#DC143C]", isRunning);
+      btnStartStop.classList.toggle("hover:bg-[#b0102a]", isRunning);
+      if (isRunning) {
+        btnStartStop.textContent = "Dừng lại";
+        btnStartStop.style.color = "white";
+      } else {
+        btnStartStop.style.color = "white";
+        btnStartStop.textContent = elapsedSeconds > 0 ? "Dùng lại" : "Bắt đầu";
+      }
     }
-  }
-}
-    
 
-    function parseTimeInputs() {
+       function parseTimeInputs() {
       return {
         h: Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23),
         m: Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59),
@@ -677,7 +670,7 @@
       };
     }
 
-    function totalSeconds(time) {
+   function totalSeconds(time) {
       return time.h * 3600 + time.m * 60 + time.s;
     }
 
@@ -692,6 +685,7 @@
         String(s).padStart(2, "0")
       );
     }
+
 
     function updateTimeInputsFromRemaining() {
       const h = Math.floor(remainingSeconds / 3600);
@@ -712,65 +706,55 @@
     }
 
     let selectedTimeTotalSeconds = 0;
-function startTimer() {
-  if (isRunning) return;
-
-  if (elapsedSeconds === 0) {
-    selectedTime = parseTimeInputs();
-    selectedTimeTotalSeconds = totalSeconds(selectedTime);
-    remainingSeconds = selectedTimeTotalSeconds;
-  } else {
-    // Khi resume, cập nhật lại selectedTime từ input để đồng bộ
-    selectedTime = parseTimeInputs();
-    selectedTimeTotalSeconds = totalSeconds(selectedTime);
-    remainingSeconds = selectedTimeTotalSeconds - elapsedSeconds;
-  }
-
-  if (remainingSeconds <= 0) return;
-
-  isRunning = true;
-  updateStartButtonState();
-  cookingGif.classList.remove("hidden");
-  cakeImageEl.classList.add("hidden");
-  backgroundMusic.play().catch(() => {});
-  updateTimeInputsFromRemaining();
-  updateProgressBar();
-  timerInterval = setInterval(() => {
-    remainingSeconds--;
-    elapsedSeconds++;
-    updateTimeInputsFromRemaining();
-    updateProgressBar();
-    if (remainingSeconds <= 0) {
-      stopTimer(true);
+   function startTimer() {
+      if (isRunning) return;
+      if (elapsedSeconds === 0) {
+        selectedTime = parseTimeInputs();
+        selectedTimeTotalSeconds = totalSeconds(selectedTime);
+        remainingSeconds = selectedTimeTotalSeconds;
+      } else { 
+        remainingSeconds = selectedTimeTotalSeconds - elapsedSeconds;
+      }
+      if (remainingSeconds <= 0) return;
+      isRunning = true;
+      updateStartButtonState();
+      cookingGif.classList.remove("hidden");
+      cakeImageEl.classList.add("hidden");
+      backgroundMusic.play().catch(() => {});
+      updateTimeInputsFromRemaining();
+      updateProgressBar();
+      timerInterval = setInterval(() => {
+        remainingSeconds--;
+        elapsedSeconds++;
+        updateTimeInputsFromRemaining();
+        updateProgressBar();
+        if (remainingSeconds <= 0) {
+          stopTimer(true);
+        }
+      }, 1000);
+      disableInputs(true);
     }
-  }, 1000);
-  disableInputs(true);
-  
-}
-function stopTimer(finished = false) {
-  if (!isRunning) return;
-  isRunning = false;
-  clearInterval(timerInterval);
-  timerInterval = null;
-  cookingGif.classList.add("hidden");
-  cakeImageEl.classList.remove("hidden");
-  backgroundMusic.pause();
-  backgroundMusic.currentTime = 0;
-  disableInputs(false);
-  if (finished) {
-    console.log("Stop timer finished, elapsedSeconds before reset:", elapsedSeconds);
-    saveSessionHistory(elapsedSeconds);
-    addSessionToList(elapsedSeconds);
-    showReward(elapsedSeconds);
-    renderRewardInventory();
-    resetTimerState();
-    updateStartButtonState();  // Đảm bảo gọi sau resetTimerState
-    console.log("After resetTimerState, elapsedSeconds:", elapsedSeconds, "isRunning:", isRunning);
-  } else {
-    updateStartButtonState();
-  }
-}
 
+    function stopTimer(finished = false) {
+      if (!isRunning) return;
+      isRunning = false; // Đặt lại trạng thái chạy
+      clearInterval(timerInterval);
+      timerInterval = null;
+      cookingGif.classList.add("hidden");
+      cakeImageEl.classList.remove("hidden");
+      backgroundMusic.pause();
+      backgroundMusic.currentTime = 0;
+      disableInputs(false);
+      if (finished) {
+        saveSessionHistory(elapsedSeconds);
+        addSessionToList(elapsedSeconds);
+        showReward(elapsedSeconds);
+        renderRewardInventory();
+        resetTimerState(); // reset và update nút ở đây
+      } else {
+        updateStartButtonState(); // nếu dừng giữa chừng thì update nút
+      }
+    }
 
     
 
@@ -790,7 +774,7 @@ function stopTimer(finished = false) {
       inputSecond.disabled = disable;
       circleCakeBtn.disabled = disable;
       document.getElementById("btn-statistics").disabled = disable;
-    }
+    } 
     function showReward(elapsed) {
       const timeMinutes = elapsed / 60;
       let rewards = [];
@@ -860,6 +844,7 @@ function stopTimer(finished = false) {
 
       rewardModal.classList.remove("hidden");
     }
+
 
     function saveSessionHistory(elapsedSeconds) {
       if (elapsedSeconds <= 0) return;
@@ -947,7 +932,7 @@ function stopTimer(finished = false) {
       sessionInfoEl.textContent = `Phần thưởng: ${name} | Ngày: ${date} | ${time} | Thời lượng: ${duration} phút` ;
     }
 
-    function renderCakeMenu() {
+      function renderCakeMenu() {
       const menuCakeList = document.getElementById("menu-cake-list");
       menuCakeList.innerHTML = "";
       Object.keys(cakes).forEach(cakeName => {
@@ -985,49 +970,33 @@ function stopTimer(finished = false) {
       });
     }
 
-  function onTimeInputChange() {
-  if (elapsedSeconds > 0) {
-    elapsedSeconds = 0;
-    selectedTimeTotalSeconds = 0;
-  }
-  updateStartButtonState();
-}
-
-inputHour.addEventListener("input", () => {
-  if (inputHour.value.length > 2) inputHour.value = inputHour.value.slice(0, 2);
-  onTimeInputChange();
-});
-inputMinute.addEventListener("input", () => {
-  if (inputMinute.value.length > 2) inputMinute.value = inputMinute.value.slice(0, 2);
-  onTimeInputChange();
-});
-inputSecond.addEventListener("input", () => {
-  if (inputSecond.value.length > 2) inputSecond.value = inputSecond.value.slice(0, 2);
-  onTimeInputChange();
-});
- 
+    inputHour.addEventListener("input", () => {
+      if (inputHour.value.length > 2) inputHour.value = inputHour.value.slice(0, 2);
+      updateStartButtonState();
+    });
+    inputMinute.addEventListener("input", () => {
+      if (inputMinute.value.length > 2) inputMinute.value = inputMinute.value.slice(0, 2);
+      updateStartButtonState();
+    });
+    inputSecond.addEventListener("input", () => {
+      if (inputSecond.value.length > 2) inputSecond.value = inputSecond.value.slice(0, 2);
+      updateStartButtonState();
+    });
 
     btnStartStop.addEventListener("click", () => {
-  const h = Math.min(Math.max(parseInt(inputHour.value) || 0, 0), 23);
-  const m = Math.min(Math.max(parseInt(inputMinute.value) || 0, 0), 59);
-  const s = Math.min(Math.max(parseInt(inputSecond.value) || 0, 0), 59);
-
-  const hasTime = h + m + s > 0;
-  const hasCake = !!selectedCake;
-
-  if (!(hasTime && hasCake)) return; // chặn click khi không hợp lệ
-
-  if (isRunning) {
-    stopTimer(false);
-  } else {
-    startTimer();
-  }
-});
+      if (isRunning) {
+        stopTimer(false);
+      } else {
+        startTimer();
+      }
+    });
 
     circleCakeBtn.addEventListener("click", () => {
       if (isRunning) return;
       menuSelectCake.classList.toggle("hidden");
     });
+
+
 
     rewardConfirmBtn.addEventListener("click", () => {
       rewardModal.classList.add("hidden");
@@ -1058,6 +1027,7 @@ inputSecond.addEventListener("input", () => {
       statisticsModal.classList.add("hidden");
     });
 
+      
     if (!localStorage.getItem('sessionHistory')) {
       localStorage.setItem('sessionHistory', JSON.stringify([]));
     }
@@ -1066,8 +1036,30 @@ inputSecond.addEventListener("input", () => {
       updateCakeDisplay();
       updateStartButtonState();
       renderCakeMenu();
+      updateLoginButtonUI();
+      renderRewardInventory();
       timeProgressBar.style.width = "100%";
+      initializeGoogleSignIn();
     });
+
+    function renderRewardInventory() {
+      renderSessionList();
+    } 
+
+    // JWT parse helper
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch {
+        return {};
+      }
+    }
+
   </script>
 </body>
 </html>
