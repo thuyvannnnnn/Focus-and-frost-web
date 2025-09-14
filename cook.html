@@ -529,6 +529,7 @@
     </button>
   </div>
 </div>
+   
 
 
                <!-- Overlay -->
@@ -645,27 +646,7 @@
       updateLoginButtonUI();
       initializeGoogleSignIn();
     });
-     const btnReward = document.getElementById("btn-reward");
-const btnChart = document.getElementById("btn-chart");
-const rewardView = document.getElementById("reward-view");
-const chartView = document.getElementById("chart-view");
-
-function switchTab(tab) {
-  if (tab === "reward") {
-    rewardView.classList.remove("hidden");
-    chartView.classList.add("hidden");
-    btnReward.classList.add("active");
-    btnChart.classList.remove("active");
-  } else {
-    chartView.classList.remove("hidden");
-    rewardView.classList.add("hidden");
-    btnChart.classList.add("active");
-    btnReward.classList.remove("active");
-  }
-}
-
-btnReward.addEventListener("click", () => switchTab("reward"));
-btnChart.addEventListener("click", () => switchTab("chart"));
+    
 
     // Hàm parse JWT giữ nguyên
     function parseJwt(token) {
