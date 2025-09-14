@@ -4,6 +4,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trang-chủ - Ứng dụng tập trung</title>
   <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
   <link
     rel="stylesheet"
@@ -30,55 +32,56 @@
       background-color: #9bba74;
       border-radius: 3px;
     }
-    /* Statistics modal content: no grid, just images in a row wrapping naturally */
-    #cake-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      max-height: 70vh;
-      overflow-y: auto;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: flex-start;
-      align-items: center;
-    }
-    #cake-list li {
-      background: transparent;
-      padding: 0;
-      cursor: pointer;
-      outline: none;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 0.5rem;
-    }
-    #cake-list li:focus,
-    #cake-list li:hover {
-      transform: scale(1.1);
-      box-shadow: 0 4px 8px rgb(0 0 0 / 0.2);
-      z-index: 10;
-    }
-    #cake-list li img {
-      width: 64px;
-      height: 64px;
-      object-fit: contain;
-      border-radius: 0.5rem;
-      user-select: none;
-      pointer-events: none;
-      display: block;
-    }
-    #cake-list li span {
-      display: none;
-    }
-    @media (max-width: 480px) {
-      #cake-list li img {
-        width: 48px;
-        height: 48px;
-      }
-    }
-    /* Hiệu ứng chuyển đổi khung */
+  /* Statistics modal content: no grid, just images in a row wrapping naturally */
+#cake-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 70vh;
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: flex-start;
+  align-items: center;
+}
+#cake-list li {
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+}
+#cake-list li:focus,
+#cake-list li:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgb(0 0 0 / 0.2);
+  z-index: 10;
+}
+#cake-list li img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  user-select: none;
+  pointer-events: none;
+  display: block;
+}
+#cake-list li span {
+  display: none;
+}
+@media (max-width: 480px) {
+  #cake-list li img {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* Hiệu ứng chuyển đổi khung */
 #reward-view,
 #chart-view {
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -87,6 +90,11 @@
   display: none !important;
   opacity: 0;
   transform: scale(0.95);
+}
+.visible {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
 }
 
 /* Style cho 2 nút tab */
@@ -103,6 +111,7 @@
   color: white;
   box-shadow: 0 4px 8px rgb(0 0 0 / 0.2);
 }
+
 
     /* Custom styles for Google SignIn button container */
     #googleSignInButton {
@@ -145,12 +154,7 @@
     <button
       id="googleLogoutBtn"
       aria-label="Đăng xuất tài khoản Google"
-      
-  class="fixed top-4 left-4 z-50 flex items-center justify-center w-10 h-10 rounded-full 
-         bg-[#9BBA74] hover:bg-[#8aa85a] text-white font-semibold shadow 
-         focus:outline-none focus:ring-2 focus:ring-[#8aa85a]">
-  ?
-
+      class="hidden flex items-center justify-center w-10 h-10 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] text-white font-semibold shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]"
       type="button"
       title="Đăng xuất tài khoản Google"
     >
@@ -160,7 +164,7 @@
       id="userAvatar"
       src=""
       alt="Ảnh đại diện người dùng Google"
-      class=" absolute top-4 right-16 w-10 h-10 rounded-full"
+      class="hidden absolute top-4 left-4"
       tabindex="0"
       aria-label="Ảnh đại diện người dùng Google"
       draggable="false"
@@ -408,7 +412,8 @@
     </div>
   </div>
 
-    <!-- Statistics modal with scrollable images -->
+
+  <!-- Statistics modal with scrollable images -->
 <div
   id="statistics-modal"
   class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden"
@@ -512,7 +517,8 @@
     }
   });
 </script>
-  
+
+    
     <!-- Thông tin phiên -->
     <div id="session-info" class="mt-4 p-4 bg-gray-100 rounded-lg text-center text-gray-700 min-h-[4rem] select-none" aria-live="polite" aria-atomic="true"></div>
 
@@ -526,9 +532,10 @@
     </button>
   </div>
 </div>
- 
+   
 
 
+    
 
                <!-- Overlay -->
   <div
@@ -576,78 +583,6 @@
 
   <audio id="background-music" loop preload="auto" src="https://github.com/thuyvannnnnn/Focus-and-frost/raw/refs/heads/main/45.audio.mp3"></audio>
 
-  
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-  const btnReward = document.getElementById("btn-reward");
-const btnChart = document.getElementById("btn-chart");
-const rewardView = document.getElementById("reward-view");
-const chartView = document.getElementById("chart-view");
-
-function switchTab(tab) {
-  if (tab === "reward") {
-    rewardView.classList.remove("hidden");
-    chartView.classList.add("hidden");
-    btnReward.classList.add("active");
-    btnChart.classList.remove("active");
-  } else {
-    chartView.classList.remove("hidden");
-    rewardView.classList.add("hidden");
-    btnChart.classList.add("active");
-    btnReward.classList.remove("active");
-    renderChart(); // vẽ biểu đồ khi mở tab chart
-  }
-}
-
-btnReward.addEventListener("click", () => switchTab("reward"));
-btnChart.addEventListener("click", () => switchTab("chart"));
-
-// ==== Chart.js setup ====
-const ctx = document.getElementById("stats-chart").getContext("2d");
-let statsChart;
-
-function getMonthlyData(history) {
-  const totalByMonth = {};
-  history.forEach(item => {
-    const d = new Date(item.date);
-    const monthLabel = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    if (!totalByMonth[monthLabel]) totalByMonth[monthLabel] = 0;
-    totalByMonth[monthLabel] += item.durationMinutes; // <-- LẤY durationMinutes
-  });
-  return totalByMonth;
-}
-
-function renderChart() {
-  const monthlyData = getMonthlyData(sessionHistory);
-  const labels = Object.keys(monthlyData);
-  const data = Object.values(monthlyData);
-
-  if (statsChart) statsChart.destroy(); // xóa chart cũ
-
-  statsChart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: labels,
-      datasets: [{
-        label: "Tổng thời gian (phút)",
-        data: data,
-        backgroundColor: "#FF69B4"
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        title: { display: true, text: "Thống kê tổng thời gian theo tháng" },
-        legend: { display: false }
-      },
-      scales: {
-        y: { beginAtZero: true, title: { display: true, text: "Phút" } },
-        x: { title: { display: true, text: "Tháng" } }
-      }
-    }
-  });
-}
-    </script>
   <!-- Script Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client"></script>
 
@@ -970,6 +905,8 @@ function renderChart() {
       circleCakeBtn.disabled = disable;
       document.getElementById("btn-statistics").disabled = disable;
     } 
+
+
     function showReward(elapsed) {
       const timeMinutes = elapsed / 60;
       let rewards = [];
@@ -1087,9 +1024,11 @@ function renderChart() {
         sessionInfoEl.textContent = "";
         return;
       }
+
+
       // Show all rewardInventory items (with images, duplicates allowed)
       rewardInventory.forEach(item => {
-        if (item.name === "Kem 1" || item.name === "Xanh lá") return;
+        if (item.name === "banh" || item.name === "Xanh lá") return;
 
         const li = document.createElement("li");
         li.className = "cursor-pointer rounded";
@@ -1241,6 +1180,29 @@ function renderChart() {
       renderSessionList();
     } 
 
+const btnReward = document.getElementById("btn-reward");
+const btnChart = document.getElementById("btn-chart");
+const rewardView = document.getElementById("reward-view");
+const chartView = document.getElementById("chart-view");
+
+function switchTab(tab) {
+  if (tab === "reward") {
+    rewardView.classList.remove("hidden");
+    chartView.classList.add("hidden");
+    btnReward.classList.add("active");
+    btnChart.classList.remove("active");
+  } else {
+    chartView.classList.remove("hidden");
+    rewardView.classList.add("hidden");
+    btnChart.classList.add("active");
+    btnReward.classList.remove("active");
+  }
+}
+
+btnReward.addEventListener("click", () => switchTab("reward"));
+btnChart.addEventListener("click", () => switchTab("chart"));
+
+
     // JWT parse helper
     function parseJwt(token) {
       try {
@@ -1258,3 +1220,4 @@ function renderChart() {
   </script>
 </body>
 </html>
+
