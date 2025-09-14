@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trang-chủ - Ứng dụng tập trung</title>
   <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 
   <link
@@ -32,7 +32,7 @@
       background-color: #9bba74;
       border-radius: 3px;
     }
-  /* Statistics modal content: no grid, just images in a row wrapping naturally */
+    /* Statistics modal content: no grid, just images in a row wrapping naturally */
 #cake-list {
   list-style: none;
   padding: 0;
@@ -412,7 +412,6 @@
     </div>
   </div>
 
-
   <!-- Statistics modal with scrollable images -->
 <div
   id="statistics-modal"
@@ -518,8 +517,7 @@
   });
 </script>
 
-    
-    <!-- Thông tin phiên -->
+ <!-- Thông tin phiên -->
     <div id="session-info" class="mt-4 p-4 bg-gray-100 rounded-lg text-center text-gray-700 min-h-[4rem] select-none" aria-live="polite" aria-atomic="true"></div>
 
     <!-- Nút đóng -->
@@ -532,10 +530,7 @@
     </button>
   </div>
 </div>
-   
 
-
-    
 
                <!-- Overlay -->
   <div
@@ -587,6 +582,31 @@
   <script src="https://accounts.google.com/gsi/client"></script>
 
   <script>
+
+ const btnReward = document.getElementById("btn-reward");
+const btnChart = document.getElementById("btn-chart");
+const rewardView = document.getElementById("reward-view");
+const chartView = document.getElementById("chart-view");
+
+function switchTab(tab) {
+  if (tab === "reward") {
+    rewardView.classList.remove("hidden");
+    chartView.classList.add("hidden");
+    btnReward.classList.add("active");
+    btnChart.classList.remove("active");
+  } else {
+    chartView.classList.remove("hidden");
+    rewardView.classList.add("hidden");
+    btnChart.classList.add("active");
+    btnReward.classList.remove("active");
+  }
+}
+
+btnReward.addEventListener("click", () => switchTab("reward"));
+btnChart.addEventListener("click", () => switchTab("chart"));
+
+
+
     let googleUser  = JSON.parse(localStorage.getItem("googleuser")) || null;
 
     const googleSignInButton = document.getElementById("googleSignInButton");
@@ -905,8 +925,6 @@
       circleCakeBtn.disabled = disable;
       document.getElementById("btn-statistics").disabled = disable;
     } 
-
-
     function showReward(elapsed) {
       const timeMinutes = elapsed / 60;
       let rewards = [];
@@ -1024,11 +1042,9 @@
         sessionInfoEl.textContent = "";
         return;
       }
-
-
       // Show all rewardInventory items (with images, duplicates allowed)
       rewardInventory.forEach(item => {
-        if (item.name === "banh" || item.name === "Xanh lá") return;
+        if (item.name === "Kem 1" || item.name === "Xanh lá") return;
 
         const li = document.createElement("li");
         li.className = "cursor-pointer rounded";
@@ -1180,29 +1196,6 @@
       renderSessionList();
     } 
 
-const btnReward = document.getElementById("btn-reward");
-const btnChart = document.getElementById("btn-chart");
-const rewardView = document.getElementById("reward-view");
-const chartView = document.getElementById("chart-view");
-
-function switchTab(tab) {
-  if (tab === "reward") {
-    rewardView.classList.remove("hidden");
-    chartView.classList.add("hidden");
-    btnReward.classList.add("active");
-    btnChart.classList.remove("active");
-  } else {
-    chartView.classList.remove("hidden");
-    rewardView.classList.add("hidden");
-    btnChart.classList.add("active");
-    btnReward.classList.remove("active");
-  }
-}
-
-btnReward.addEventListener("click", () => switchTab("reward"));
-btnChart.addEventListener("click", () => switchTab("chart"));
-
-
     // JWT parse helper
     function parseJwt(token) {
       try {
@@ -1220,4 +1213,3 @@ btnChart.addEventListener("click", () => switchTab("chart"));
   </script>
 </body>
 </html>
-
