@@ -4,7 +4,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trang-chủ - Ứng dụng tập trung</title>
   <script src="https://cdn.tailwindcss.com"></script>
- <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
   <link
     rel="stylesheet"
@@ -31,7 +32,7 @@
       background-color: #9bba74;
       border-radius: 3px;
     }
-   /* Statistics modal content: no grid, just images in a row wrapping naturally */
+  /* Statistics modal content: no grid, just images in a row wrapping naturally */
 #cake-list {
   list-style: none;
   padding: 0;
@@ -111,6 +112,7 @@
   box-shadow: 0 4px 8px rgb(0 0 0 / 0.2);
 }
 
+
     /* Custom styles for Google SignIn button container */
     #googleSignInButton {
       position: relative;
@@ -162,7 +164,7 @@
       id="userAvatar"
       src=""
       alt="Ảnh đại diện người dùng Google"
-      class=" hidden absolute top-4 left-4"
+      class="hidden absolute top-4 left-4"
       tabindex="0"
       aria-label="Ảnh đại diện người dùng Google"
       draggable="false"
@@ -410,6 +412,7 @@
     </div>
   </div>
 
+
   <!-- Statistics modal with scrollable images -->
 <div
   id="statistics-modal"
@@ -532,6 +535,8 @@
    
 
 
+    
+
                <!-- Overlay -->
   <div
     id="overlay"
@@ -618,8 +623,6 @@
       );
     }
 
-
-
     function handleCredentialResponse(response) {
       const data = parseJwt(response.credential);
       googleUser  = {
@@ -646,7 +649,6 @@
       updateLoginButtonUI();
       initializeGoogleSignIn();
     });
-    
 
     // Hàm parse JWT giữ nguyên
     function parseJwt(token) {
@@ -903,6 +905,8 @@
       circleCakeBtn.disabled = disable;
       document.getElementById("btn-statistics").disabled = disable;
     } 
+
+
     function showReward(elapsed) {
       const timeMinutes = elapsed / 60;
       let rewards = [];
@@ -1020,9 +1024,11 @@
         sessionInfoEl.textContent = "";
         return;
       }
+
+
       // Show all rewardInventory items (with images, duplicates allowed)
       rewardInventory.forEach(item => {
-        if (item.name === "Kem 1" || item.name === "Xanh lá") return;
+        if (item.name === "banh" || item.name === "Xanh lá") return;
 
         const li = document.createElement("li");
         li.className = "cursor-pointer rounded";
@@ -1059,27 +1065,7 @@
     function showSessionInfoByNameDateTime(name, date, time, duration) {
       sessionInfoEl.textContent = `Phần thưởng: ${name} | Ngày: ${date} | ${time} | Thời lượng: ${duration} phút` ;
     }
-   const btnReward = document.getElementById("btn-reward");
-const btnChart = document.getElementById("btn-chart");
-const rewardView = document.getElementById("reward-view");
-const chartView = document.getElementById("chart-view");
 
-function switchTab(tab) {
-  if (tab === "reward") {
-    rewardView.classList.remove("hidden");
-    chartView.classList.add("hidden");
-    btnReward.classList.add("active");
-    btnChart.classList.remove("active");
-  } else {
-    chartView.classList.remove("hidden");
-    rewardView.classList.add("hidden");
-    btnChart.classList.add("active");
-    btnReward.classList.remove("active");
-  }
-}
-
-btnReward.addEventListener("click", () => switchTab("reward"));
-btnChart.addEventListener("click", () => switchTab("chart"));
       function renderCakeMenu() {
       const menuCakeList = document.getElementById("menu-cake-list");
       menuCakeList.innerHTML = "";
@@ -1194,6 +1180,29 @@ btnChart.addEventListener("click", () => switchTab("chart"));
       renderSessionList();
     } 
 
+const btnReward = document.getElementById("btn-reward");
+const btnChart = document.getElementById("btn-chart");
+const rewardView = document.getElementById("reward-view");
+const chartView = document.getElementById("chart-view");
+
+function switchTab(tab) {
+  if (tab === "reward") {
+    rewardView.classList.remove("hidden");
+    chartView.classList.add("hidden");
+    btnReward.classList.add("active");
+    btnChart.classList.remove("active");
+  } else {
+    chartView.classList.remove("hidden");
+    rewardView.classList.add("hidden");
+    btnChart.classList.add("active");
+    btnReward.classList.remove("active");
+  }
+}
+
+btnReward.addEventListener("click", () => switchTab("reward"));
+btnChart.addEventListener("click", () => switchTab("chart"));
+
+
     // JWT parse helper
     function parseJwt(token) {
       try {
@@ -1211,3 +1220,4 @@ btnChart.addEventListener("click", () => switchTab("chart"));
   </script>
 </body>
 </html>
+
