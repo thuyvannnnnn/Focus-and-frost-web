@@ -103,6 +103,54 @@
       outline: none;
       box-shadow: 0 0 8px rgba(0,0,0,0.4);
     }
+    /* Chart styles */
+    .chart-container {
+      width: 100%;
+      height: 300px;
+      margin-top: 20px;
+      position: relative;
+    }
+    .chart-bar {
+      position: absolute;
+      bottom: 0;
+      background-color: #9BBA74;
+      width: 30px;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      transition: height 0.5s ease;
+    }
+    .chart-label {
+      position: absolute;
+      bottom: -25px;
+      text-align: center;
+      width: 30px;
+      font-size: 12px;
+    }
+    .chart-value {
+      position: absolute;
+      top: -20px;
+      text-align: center;
+      width: 30px;
+      font-size: 11px;
+    }
+    .stat-tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #9BBA74;
+    }
+    .stat-tab {
+      padding: 8px 16px;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      font-weight: bold;
+      color: #666;
+    }
+    .stat-tab.active {
+      color: #9BBA74;
+      border-bottom: 3px solid #9BBA74;
+    }
   </style>
 </head>
 <body class="relative min-h-screen flex flex-col items-center bg-[#f0f3e8]">
@@ -389,14 +437,30 @@
       <h2 id="statistics-title" class="text-2xl font-bold text-center text-gray-800 mb-4">
         Lịch sử
       </h2>
-      <ul id="cake-list" tabindex="0" aria-label="lịch sử tập trung">
-        <li tabindex="0" role="button" aria-label="Phần thưởng: bánh mâm xôi, ngày nhận: 2024-06-14, thời gian nhận: 21:30, thời lượng: 18 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_7293.png" alt="Hình ảnh quả cà tím tím tươi, bóng mượt, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
-        <li tabindex="0" role="button" aria-label="Phần thưởng: bánh cherry, ngày nhận: 2024-06-15, thời gian nhận: 22:45, thời lượng: 22 phút" class="cursor-pointer rounded">
-          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/B89384A0-0587-48F6-BBCB-4EC98C592F1C.png" alt="Hình ảnh bánh cherry màu đỏ tươi, bánh tròn nhỏ, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
-        </li>
-      </ul>
+      
+      <!-- Tabs for switching between views -->
+      <div class="stat-tabs">
+        <button class="stat-tab active" data-view="rewards">Phần thưởng</button>
+        <button class="stat-tab" data-view="chart">Thống kê theo tháng</button>
+      </div>
+      
+      <!-- Rewards view (existing) -->
+      <div id="rewards-view">
+        <ul id="cake-list" tabindex="0" aria-label="lịch sử tập trung">
+          <li tabindex="0" role="button" aria-label="Phần thưởng: bánh mâm xôi, ngày nhận: 2024-06-14, thời gian nhận: 21:30, thời lượng: 18 phút" class="cursor-pointer rounded">
+            <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_7293.png" alt="Hình ảnh quả cà tím tím tươi, bóng mượt, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
+          </li>
+          <li tabindex="0" role="button" aria-label="Phần thưởng: bánh cherry, ngày nhận: 2024-06-15, thời gian nhận: 22:45, thời lượng: 22 phút" class="cursor-pointer rounded">
+            <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/B89384A0-0587-48F6-BBCB-4EC98C592F1C.png" alt="Hình ảnh bánh cherry màu đỏ tươi, bánh tròn nhỏ, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Chart view (new) -->
+      <div id="chart-view" class="hidden">
+        <div class="chart-container" id="monthly-chart"></div>
+      </div>
+      
       <div id="session-info" class="mt-4 p-4 bg-gray-100 rounded-lg text-center text-gray-700 min-h-[4rem] select-none" aria-live="polite" aria-atomic="true"></div>
       <button
         id="statistics-close"
@@ -603,6 +667,12 @@
     const cakeListEl = document.getElementById("cake-list");
     const sessionInfoEl = document.getElementById("session-info");
     const btnStatistics = document.getElementById("btn-statistics");
+
+    // New elements for chart view
+    const rewardsView = document.getElementById("rewards-view");
+    const chartView = document.getElementById("chart-view");
+    const monthlyChart = document.getElementById("monthly-chart");
+    const statTabs = document.querySelectorAll(".stat-tab");
 
     // Info panel elements
     const infoToggleBtn = document.getElementById("infoToggleBtn");
@@ -1033,6 +1103,104 @@
       localStorage.setItem('sessionHistory', JSON.stringify([]));
     }
 
+    // NEW: Function to render monthly chart
+    function renderMonthlyChart() {
+      monthlyChart.innerHTML = '';
+      
+      // Get session history from localStorage
+      const sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
+      
+      if (sessionHistory.length === 0) {
+        monthlyChart.innerHTML = '<p class="text-center text-gray-500">Chưa có dữ liệu thống kê theo tháng</p>';
+        return;
+      }
+      
+      // Group sessions by month and calculate total duration
+      const monthlyData = {};
+      sessionHistory.forEach(session => {
+        const date = new Date(session.date);
+        const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
+        
+        if (!monthlyData[monthYear]) {
+          monthlyData[monthYear] = 0;
+        }
+        
+        monthlyData[monthYear] += session.durationMinutes || 0;
+      });
+      
+      // Get months and values for chart
+      const months = Object.keys(monthlyData);
+      const values = Object.values(monthlyData);
+      
+      if (months.length === 0) {
+        monthlyChart.innerHTML = '<p class="text-center text-gray-500">Chưa có dữ liệu thống kê theo tháng</p>';
+        return;
+      }
+      
+      // Calculate max value for scaling
+      const maxValue = Math.max(...values);
+      const chartHeight = 250;
+      const barWidth = 30;
+      const spacing = 40;
+      const chartWidth = months.length * (barWidth + spacing);
+      
+      monthlyChart.style.width = `${chartWidth}px`;
+      
+      // Create bars for each month
+      months.forEach((month, index) => {
+        const value = values[index];
+        const barHeight = maxValue > 0 ? (value / maxValue) * chartHeight : 0;
+        
+        const barContainer = document.createElement('div');
+        barContainer.className = 'chart-bar-container';
+        barContainer.style.position = 'absolute';
+        barContainer.style.left = `${index * (barWidth + spacing)}px`;
+        barContainer.style.width = `${barWidth}px`;
+        barContainer.style.height = `${chartHeight}px`;
+        
+        const bar = document.createElement('div');
+        bar.className = 'chart-bar';
+        bar.style.height = `${barHeight}px`;
+        bar.style.backgroundColor = '#9BBA74';
+        bar.title = `${month}: ${value} phút`;
+        
+        const valueLabel = document.createElement('div');
+        valueLabel.className = 'chart-value';
+        valueLabel.textContent = value;
+        
+        const monthLabel = document.createElement('div');
+        monthLabel.className = 'chart-label';
+        monthLabel.textContent = month;
+        
+        barContainer.appendChild(bar);
+        barContainer.appendChild(valueLabel);
+        barContainer.appendChild(monthLabel);
+        
+        monthlyChart.appendChild(barContainer);
+      });
+    }
+
+    // NEW: Tab switching functionality
+    statTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Update active tab
+        statTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        const view = tab.dataset.view;
+        
+        // Show appropriate view
+        if (view === 'rewards') {
+          rewardsView.classList.remove('hidden');
+          chartView.classList.add('hidden');
+        } else if (view === 'chart') {
+          rewardsView.classList.add('hidden');
+          chartView.classList.remove('hidden');
+          renderMonthlyChart();
+        }
+      });
+    });
+
     window.addEventListener("load", () => {
       updateCakeDisplay();
       updateStartButtonState();
@@ -1052,8 +1220,9 @@
       try {
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        const jsonPayload = decodeComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00'At(0).toString(16)).slice(-2);
         }).join(''));
         return JSON.parse(jsonPayload);
       } catch {
