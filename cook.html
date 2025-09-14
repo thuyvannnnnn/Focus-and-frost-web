@@ -4,6 +4,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trang-chủ - Ứng dụng tập trung</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
@@ -442,6 +444,77 @@
     <!-- Khung 2: biểu đồ -->
     <div id="chart-view" class="hidden">
       <canvas id="stats-chart" width="300" height="200"></canvas>
+    </div>
+      <script>
+  // Ví dụ dữ liệu giả lập: danh sách các phiên tập trung
+  const sessions = [
+    { date: "2024-06-14", durationMinutes: 18 },
+    { date: "2024-06-15", durationMinutes: 22 },
+    { date: "2024-06-20", durationMinutes: 40 },
+    { date: "2024-07-01", durationMinutes: 30 },
+    { date: "2024-07-05", durationMinutes: 15 },
+    { date: "2024-07-10", durationMinutes: 45 },
+    { date: "2024-07-15", durationMinutes: 25 }
+  ];
+
+  // Gom tổng thời gian theo tháng
+  const monthlyData = {};
+  sessions.forEach(s => {
+    const month = s.date.slice(0, 7); // YYYY-MM
+    monthlyData[month] = (monthlyData[month] || 0) + s.durationMinutes;
+  });
+
+  const labels = Object.keys(monthlyData);
+  const data = Object.values(monthlyData);
+
+  // Tạo biểu đồ
+  const ctx = document.getElementById("stats-chart").getContext("2d");
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Tổng thời gian tập trung (phút)",
+          data: data,
+          backgroundColor: "rgba(255, 105, 180, 0.7)", // hồng pastel
+          borderColor: "rgba(255, 105, 180, 1)",
+          borderWidth: 1,
+          borderRadius: 6
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          callbacks: {
+            label: (context) => context.raw + " phút"
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "Phút"
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: "Tháng"
+          }
+        }
+      }
+    }
+  });
+</script>
+
     </div>
 
     <!-- Thông tin phiên -->
