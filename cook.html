@@ -29,54 +29,86 @@
       background-color: #9bba74;
       border-radius: 3px;
     }
-    /* Statistics modal content: no grid, just images in a row wrapping naturally */
-    #cake-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      max-height: 70vh;
-      overflow-y: auto;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: flex-start;
-      align-items: center;
-    }
-    #cake-list li {
-      background: transparent;
-      padding: 0;
-      cursor: pointer;
-      outline: none;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 0.5rem;
-    }
-    #cake-list li:focus,
-    #cake-list li:hover {
-      transform: scale(1.1);
-      box-shadow: 0 4px 8px rgb(0 0 0 / 0.2);
-      z-index: 10;
-    }
-    #cake-list li img {
-      width: 64px;
-      height: 64px;
-      object-fit: contain;
-      border-radius: 0.5rem;
-      user-select: none;
-      pointer-events: none;
-      display: block;
-    }
-    #cake-list li span {
-      display: none;
-    }
-    @media (max-width: 480px) {
-      #cake-list li img {
-        width: 48px;
-        height: 48px;
-      }
-    }
+   /* Statistics modal content: no grid, just images in a row wrapping naturally */
+#cake-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 70vh;
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: flex-start;
+  align-items: center;
+}
+#cake-list li {
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+}
+#cake-list li:focus,
+#cake-list li:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgb(0 0 0 / 0.2);
+  z-index: 10;
+}
+#cake-list li img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  user-select: none;
+  pointer-events: none;
+  display: block;
+}
+#cake-list li span {
+  display: none;
+}
+@media (max-width: 480px) {
+  #cake-list li img {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* Hiệu ứng chuyển đổi khung */
+#reward-view,
+#chart-view {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.hidden {
+  display: none !important;
+  opacity: 0;
+  transform: scale(0.95);
+}
+.visible {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Style cho 2 nút tab */
+.tab-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 2px solid #FF69B4;
+  color: #FF69B4;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.tab-btn.active {
+  background: #FF69B4;
+  color: white;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 0.2);
+}
+
     /* Custom styles for Google SignIn button container */
     #googleSignInButton {
       position: relative;
