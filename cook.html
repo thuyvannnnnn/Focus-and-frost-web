@@ -454,11 +454,11 @@
         const btnStatistics = document.getElementById("btn-statistics");
 
          // reward modal elements
-    const rewardModal = document.getElementById("reward-modal");
+    const reward-modal = document.getElementById("reward-modal");
     const rewardCloseBtn = document.getElementById("reward-close");
     const cakeListEl = document.getElementById("cake-list");
     const sessionInfoEl = document.getElementById("session-info");
-    const btnStatistics = document.getElementById("btn-reward");
+    const btn-use-reward = document.getElementById("btn-use-reward");
 
         
         // Các phần tử thống kê
@@ -527,6 +527,7 @@
             inputMinute.value = m > 0 || h > 0 ? m : "";
             inputSecond.value = s > 0 || m > 0 || h > 0 ? s : "";
         }
+
 
         function updateProgressBar() {
             if (selectedTimeTotalSeconds === 0) {
@@ -602,6 +603,13 @@
             inputSecond.disabled = disable;
             circleCakeBtn.disabled = disable;
             document.getElementById("btn-statistics").disabled = disable;
+        }
+        function disableInputs(disable) {
+      inputHour.disabled = disable;
+      inputMinute.disabled = disable;
+      inputSecond.disabled = disable;
+      circleCakeBtn.disabled = disable;
+      document.getElementById("btn-use-reward").disabled = disable;
         }
 
         function showReward(elapsed) {
@@ -989,6 +997,20 @@
         btnUseReward.addEventListener("click", () => {
             alert("Tính năng sử dụng phần thưởng đang được phát triển!");
         });
+ btnStatistics.addEventListener('click', () => {
+      if (isRunning) return;
+      renderSessionList();
+      statisticsModal.classList.remove("hidden");
+    });
+
+    statisticsCloseBtn.addEventListener('click', () => {
+      statisticsModal.classList.add("hidden");
+    });
+
+      
+    if (!localStorage.getItem('sessionHistory')) {
+      localStorage.setItem('sessionHistory', JSON.stringify([]));
+    }
 
         // Khởi tạo ứng dụng
         window.addEventListener("load", () => {
