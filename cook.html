@@ -24,6 +24,8 @@
             border-radius: 3px;
         }
         #googleSignInButton {
+            position: relative;
+            left: -15%;
             width: 10rem !important;
             height: 2.5rem !important;
             display: flex;
@@ -43,56 +45,6 @@
             transform: scale(1.1);
             outline: none;
             box-shadow: 0 0 8px rgba(0,0,0,0.4);
-        }
-        #btn-start-stop {
-            transition: all 0.3s ease;
-        }
-        #cake-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 70vh;
-            overflow-y: auto;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: flex-start;
-            align-items: center;
-        }
-        #cake-list li {
-            background: transparent;
-            padding: 0;
-            cursor: pointer;
-            outline: none;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 0.5rem;
-        }
-        #cake-list li:focus,
-        #cake-list li:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 8px rgb(0 0 0 / 0.2);
-            z-index: 10;
-        }
-        #cake-list li img {
-            width: 64px;
-            height: 64px;
-            object-fit: contain;
-            border-radius: 0.5rem;
-            user-select: none;
-            pointer-events: none;
-            display: block;
-        }
-        #cake-list li span {
-            display: none;
-        }
-        @media (max-width: 480px) {
-            #cake-list li img {
-                width: 48px;
-                height: 48px;
-            }
         }
         .chart-container {
             width: 100%;
@@ -122,6 +74,24 @@
             text-align: center;
             width: 30px;
             font-size: 11px;
+        }
+        .stat-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #9BBA74;
+        }
+        .stat-tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            font-weight: bold;
+            color: #666;
+        }
+        .stat-tab.active {
+            color: #9BBA74;
+            border-bottom: 3px solid #9BBA74;
         }
         .monthly-stats {
             margin-top: 20px;
@@ -155,6 +125,9 @@
             font-size: 0.875rem;
             color: #718096;
         }
+        #btn-start-stop {
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 <body class="relative min-h-screen flex flex-col items-center bg-[#f0f3e8]">
@@ -175,7 +148,7 @@
         <!-- Time selector rectangle above circle with progress bar -->
         <div id="time-selector" class="mb-6 w-full max-w-xs rounded-lg border-4 border-[#9BBA74] bg-white bg-opacity-90 p-4 flex flex-col select-none" aria-label="Chọn thời gian giờ phút giây">
             <div class="relative w-full h-10 rounded bg-gray-200 overflow-hidden mb-2" aria-hidden="true">
-                <div id="time-progress-bar" class="absolute left-0 top-0 h-10 bg-[#9BBA74] transition-all duration-500 ease-linear" style="width: 100%;"></div>
+                <div id="time-progress-bar" class="absolute left-0 top-0 h-10 bg-[#9BBA74] transition-all duration-500 ease-linear" style="width: 0%;"></div>
             </div>
             <div class="flex justify-center space-x-2 z-10 relative">
                 <input type="number" id="input-hour" min="0" max="23" placeholder="Giờ" class="w-16 text-center rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] text-lg font-semibold bg-transparent" aria-label="Giờ">
@@ -222,7 +195,9 @@
 
         <!-- Hidden feedback form for submission -->
         <form id="feedback-form" action="https://formspree.io/f/mzzvylbg" method="POST" class="hidden">
-            <input type="email" name="email" value="madebyvann">
+            <label>
+                <input type="email" name="thuyvan01012008@gmail.com" value="madebyvann">
+            </label>
             <input type="hidden" name="message" id="feedback-message">
         </form>
     </main>
@@ -266,10 +241,13 @@
 
     <!-- Reward modal -->
     <div id="reward-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="reward-title">
-        <div class="bg-white rounded-lg max-w-md w-full p-6 flex flex-col space-y-4 shadow-lg max-h-[90vh] overflow-y-auto">
-            <h2 id="reward-title" class="text-2xl font-bold text-center text-gray-800 mb-4">Phần thưởng</h2>
-            <div id="reward-content" class="flex flex-col items-center"></div>
-            <button id="reward-close" class="mt-4 px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto focus:outline-none focus:ring-2 focus:ring-[#b0102a]" type="button">Đóng</button>
+        <div class="bg-white rounded-lg max-w-md w-full p-6 flex flex-col space-y-4 shadow-lg relative">
+            <h2 id="reward-title" class="text-xl font-semibold text-gray-800 text-center">Hoan hô! Bạn đã nhận được</h2>
+            <div id="reward-content" class="flex flex-row items-center justify-center space-x-4 flex-wrap" aria-live="polite" aria-atomic="true"></div>
+            <button id="reward-confirm" class="mt-4 px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto focus:outline-none focus:ring-2 focus:ring-[#b0102a]" type="button">Xác nhận</button>
+            <button id="reward-close" aria-label="Đóng bảng hoan hô" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#b0102a] rounded" type="button">
+                <i class="fas fa-times text-xl"></i>
+            </button>
         </div>
     </div>
 
@@ -328,7 +306,9 @@
         <button id="closeInfoBtn" class="mt-2 px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto block focus:outline-none focus:ring-2 focus:ring-[#b0102a]" type="button">Đóng</button>
     </aside>
 
-    <audio id="background-music" loop preload="auto" src="https://github.com/thuyvannnnnn/Focus-and-frost/raw/refs/heads/main/45.audio.mp3"></audio>
+    <audio id="background-music" loop preload="auto">
+        <source src="https://github.com/thuyvannnnnn/Focus-and-frost/raw/refs/heads/main/45.audio.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- Script Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client"></script>
@@ -381,6 +361,7 @@
         const cookingGif = document.getElementById("cooking-gif");
         const rewardModal = document.getElementById("reward-modal");
         const rewardContent = document.getElementById("reward-content");
+        const rewardConfirmBtn = document.getElementById("reward-confirm");
         const rewardCloseBtn = document.getElementById("reward-close");
         const feedbackBtn = document.getElementById("btn-feedback");
         const feedbackForm = document.getElementById("feedback-form");
@@ -402,7 +383,7 @@
         const logoutNoBtn = document.getElementById("logout-no-btn");
         const btnUseReward = document.getElementById("btn-use-reward");
         const btnStatistics = document.getElementById("btn-statistics");
-
+        
         // Các phần tử thống kê
         const totalSessionsEl = document.getElementById("total-sessions");
         const totalMinutesEl = document.getElementById("total-minutes");
@@ -482,30 +463,48 @@
         let selectedTimeTotalSeconds = 0;
         function startTimer() {
             if (isRunning) return;
+            
+            // Nếu chưa có thời gian đã chọn, lấy từ input
             if (elapsedSeconds === 0) {
                 selectedTime = parseTimeInputs();
                 selectedTimeTotalSeconds = totalSeconds(selectedTime);
                 remainingSeconds = selectedTimeTotalSeconds;
+                
+                // Kiểm tra nếu không có thời gian hợp lệ
+                if (selectedTimeTotalSeconds <= 0) {
+                    alert("Vui lòng nhập thời gian hợp lệ!");
+                    return;
+                }
             } else { 
                 remainingSeconds = selectedTimeTotalSeconds - elapsedSeconds;
             }
+            
             if (remainingSeconds <= 0) return;
+            
             isRunning = true;
             updateStartButtonState();
             cookingGif.classList.remove("hidden");
             cakeImageEl.classList.add("hidden");
-            backgroundMusic.play().catch(() => {});
+            
+            // Thử phát nhạc nền
+            backgroundMusic.play().catch((error) => {
+                console.log("Không thể phát nhạc nền:", error);
+            });
+            
             updateTimeInputsFromRemaining();
             updateProgressBar();
+            
             timerInterval = setInterval(() => {
                 remainingSeconds--;
                 elapsedSeconds++;
                 updateTimeInputsFromRemaining();
                 updateProgressBar();
+                
                 if (remainingSeconds <= 0) {
                     stopTimer(true);
                 }
             }, 1000);
+            
             disableInputs(true);
         }
 
@@ -519,6 +518,7 @@
             backgroundMusic.pause();
             backgroundMusic.currentTime = 0;
             disableInputs(false);
+            
             if (finished) {
                 saveSessionHistory(elapsedSeconds);
                 showReward(elapsedSeconds);
@@ -534,7 +534,7 @@
             inputHour.value = "";
             inputMinute.value = "";
             inputSecond.value = "";
-            timeProgressBar.style.width = "100%";
+            timeProgressBar.style.width = "0%";
             updateStartButtonState();
         }
 
@@ -550,6 +550,7 @@
             const timeMinutes = elapsed / 60;
             let rewards = [];
             let rewardName = "";
+            
             if (timeMinutes < 3) {
                 rewards = [{
                     type: "cake",
@@ -602,183 +603,94 @@
                 div.appendChild(span);
                 rewardContent.appendChild(div);
             });
+            
             const textLine = document.createElement("p");
             textLine.className = "text-center font-semibold text-lg text-gray-900 mt-2";
             textLine.textContent = "Hoan hô! Bạn đã nhận được " + rewards.map((r) => r.name).join(", ") + ".";
             rewardContent.appendChild(textLine);
 
-            rewardModal.classListContent.appendChild(textLine);
-
             rewardModal.classList.remove("hidden");
         }
 
-        function saveSessionHistory.remove("hidden");
-        }
-
-        function saveSessionHistory(elapsedSeconds(elapsedSeconds)) {
- {
-            if (elapsedSeconds <=            if (elapsedSeconds <= 0) return;
-            const now 0) return;
+        function saveSessionHistory(elapsedSeconds) {
+            if (elapsedSeconds <= 0) return;
             const now = new Date();
- = new Date();
-            const            const dateStr = now dateStr = now.toISOString().slice(0, 10.toISOString().slice(0, 10);
-            const time);
-            const timeStr = now.toStr = now.toTimeString().slice(0TimeString().slice, 5);
-            const(0, 5);
-            const new newSession = {
-                id: DateSession = {
+            const dateStr = now.toISOString().slice(0, 10);
+            const timeStr = now.toTimeString().slice(0, 5);
+            const newSession = {
                 id: Date.now(),
-.now(),
-                name:                name: selected selectedCake,
-               Cake,
+                name: selectedCake,
                 time: timeStr,
-                time: timeStr,
-                date: dateStr date: dateStr,
-                timeSeconds,
+                date: dateStr,
                 timeSeconds: elapsedSeconds,
-               : elapsedSeconds,
-                durationMinutes: Math.floor(elapsedSeconds / durationMinutes: Math.floor(elapsed 60),
-               Seconds / 60),
-                image: cakes image: cakes[selectedCake].[selectedCake].img,
+                durationMinutes: Math.floor(elapsedSeconds / 60),
+                image: cakes[selectedCake].img,
             };
-           img,
-            };
- sessionHistory.push(newSession);
-            localStorage.set            sessionHistory.push(newSession);
-            localStorage.setItem("sessionHistoryItem("sessionHistory",", JSON.stringify(session JSON.stringify(sessionHistory));
+            sessionHistory.push(newSession);
+            localStorage.setItem("sessionHistory", JSON.stringify(sessionHistory));
         }
 
-       History));
-        }
-
-        function renderCake function renderCakeMenu()Menu() {
-            const menuCake {
-            const menuList = documentCakeList = document.getElementById("menu-cake.getElementById("menu-cake-list");
--list");
+        function renderCakeMenu() {
+            const menuCakeList = document.getElementById("menu-cake-list");
             menuCakeList.innerHTML = "";
-            menuCakeList.innerHTML = "";
-            Object.keys(c            Object.keys(cakes).forEach(cakeNameakes).forEach(cakeName => {
-                if => {
-                if (cakeName.trim (cakeName.trim() === "b() === "bánánh nướngh nướng b bóng đêmóng đêm") return") return;
-                const cake = cakes;
-                const cake = cakes[c[cakeName];
+            Object.keys(cakes).forEach(cakeName => {
+                if (cakeName.trim() === "bánh nướng bóng đêm") return;
+                const cake = cakes[cakeName];
 
-akeName];
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded";
+                btn.setAttribute("data-cake", cakeName);
+                btn.setAttribute("aria-label", `Chọn món ${cakeName}`);
 
-                const btn = document.createElement("                const btn = document.createElement("button");
-                btn.typebutton");
-                btn.type = = "button";
-                btn "button";
-                btn.className = "flex.className = "flex flex-col items-center space-y-1 focus flex-col items-center space-y-1 focus:outline-none focus:ring:outline-none focus:ring-2-2 focus:ring-[#9BBA focus:ring-[#9BBA74] rounded";
-               74] rounded";
-                btn.setAttribute(" btn.setAttribute("datadata-cake",-cake", cakeName);
-                btn.setAttribute cakeName);
-                btn("aria-label",.setAttribute("aria-label", `Ch `Chọn mọn món ${cakeNameón ${cakeName}`}`);
-
-                const img = document.createElement);
-
-                const img = document.createElement("img("img");
-                img.src");
-                img.src = cake = cake.img;
-.img;
-                img                img.alt = cake.alt = cake.alt;
-                img.alt;
-                img.className = ".className = "ww-14 h-14 h-14 object-contain";
--14 object-contain";
-                img.dra                img.draggableggable = false = false;
-
-               ;
+                const img = document.createElement("img");
+                img.src = cake.img;
+                img.alt = cake.alt;
+                img.className = "w-14 h-14 object-contain";
+                img.draggable = false;
 
                 const span = document.createElement("span");
- const span = document.createElement("span");
-                               span.class span.className = "Name = "text-smtext-sm font-semibold text-gray- font-semibold text-gray-700";
-700";
-                span.text                span.textContent =Content = cakeName;
+                span.className = "text-sm font-semibold text-gray-700";
+                span.textContent = cakeName;
 
                 btn.appendChild(img);
- cakeName;
-
-                btn.appendChild(img);
-                btn                btn.appendChild(span);
-
                 btn.appendChild(span);
 
-                btn.addEventListener("click",.addEventListener("click", () () => {
-                    if => {
+                btn.addEventListener("click", () => {
                     if (isRunning) return;
- (isRunning) return;
-                    selectedC                    selectedCake =ake = cakeName;
-                    cakeName;
-                    updateCakeDisplay updateCakeDisplay();
-                    menuSelectCake();
+                    selectedCake = cakeName;
+                    updateCakeDisplay();
                     menuSelectCake.classList.add("hidden");
-                    updateStart.classList.add("hidden");
                     updateStartButtonState();
-               ButtonState();
                 });
 
-                menuCakeList });
-
-                menuCakeList.appendChild(.appendChild(btnbtn);
-);
+                menuCakeList.appendChild(btn);
             });
         }
 
-        function render            });
-        }
-
         function renderMonthlyChart() {
-            monthlyChartMonthlyChart() {
-            monthlyChart.innerHTML =.innerHTML = '';
-            
-            const sessionHistory = JSON '';
+            monthlyChart.innerHTML = '';
             
             const sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
             
-           .parse(localStorage.getItem('sessionHistory')) || [];
-            
-            if (session if (sessionHistory.length === 0) {
-                monthlyChart.innerHTML =History.length === 0) {
-                monthlyChart.innerHTML = '<p '<p class=" class="text-center text-gray-500text-center text-gray-500">Chưa">Chưa có có dữ li dữ liệu thệu thống kống kê theo tháng</pê theo tháng</p>';
-                updateMonthly>';
-                updateMonthlyStatsStats(0,(0, 0 0, , 0, 00, 0);
+            if (sessionHistory.length === 0) {
+                monthlyChart.innerHTML = '<p class="text-center text-gray-500">Chưa có dữ liệu thống kê theo tháng</p>';
+                updateMonthlyStats(0, 0, 0, 0);
                 return;
             }
             
-);
-                return;
-            }
-            
-            const monthly            const monthlyData =Data = {};
-            {};
+            const monthlyData = {};
             const currentDate = new Date();
-            const currentDate = new Date();
-            const current const currentMonth =Month = currentDate currentDate.getMonth();
-            const currentYear.getMonth();
-            const currentYear = current = currentDate.getFullYear();
-Date.getFullYear();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
             
-            let totalSessions            
-            let totalSessions =  = 0;
-            let0;
+            let totalSessions = 0;
             let totalMinutes = 0;
- totalMinutes =             let successfulSessions = 0;
-            
-            // Lọc dữ liệu trong 6 tháng gần đây
-            for (let i = 5; i >= 0; i--) {
-                const date = new Date(currentYear, currentMonth - i, 10;
             let successfulSessions = 0;
             
             // Lọc dữ liệu trong 6 tháng gần đây
             for (let i = 5; i >= 0; i--) {
-                const date = new Date(currentYear, currentMonth - i);
-                const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
-                monthlyData[monthYear] = 0;
-            }
-            
-            // Tính tổng thời gian theo tháng
-            sessionHistory.forEach(session => {
-                const sessionDate = new Date(session.date, 1);
+                const date = new Date(currentYear, currentMonth - i, 1);
                 const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
                 monthlyData[monthYear] = 0;
             }
@@ -793,22 +705,9 @@ Date.getFullYear();
                 }
                 
                 monthlyData[monthYear] += session.durationMinutes || 0;
-);
-                const monthYear = `${sessionDate.getMonth() + 1}/${sessionDate.getFullYear()}`;
                 
-                if (!monthlyData[monthYear]) {
-                    monthlyData[monthYear] = 0;
-                }
-                
-                monthlyData[monthYear] += session.durationMinutes || 0;
-                
-                // Tính tổng số cho tháng hiện tại
-                if (sessionDate.getMonth() === currentMonth && sessionDate.getFullYear                
                 // Tính tổng số cho tháng hiện tại
                 if (sessionDate.getMonth() === currentMonth && sessionDate.getFullYear() === currentYear) {
-                    totalSessions++;
-                    totalMinutes += session.durationMinutes || 0;
-                    if (session.durationMinutes >= 5)() === currentYear) {
                     totalSessions++;
                     totalMinutes += session.durationMinutes || 0;
                     if (session.durationMinutes >= 5) {
@@ -818,25 +717,10 @@ Date.getFullYear();
             });
             
             const months = Object.keys(monthlyData);
-            const values = Object.values(monthlyData {
-                        successfulSessions++;
-                    }
-                }
-            });
-            
-            const months = Object.keys(monthlyData);
             const values = Object.values(monthlyData);
             
             if (months.length === 0) {
-                monthlyChart.innerHTML = '<p class="text-center text-gray-500">);
-            
-            if (months.length === 0) {
-                monthlyChart.innerHTML = '<p class="text-center text-gray-500Chưa có dữ liệu thống kê theo tháng</p>';
-                return;
-            }
-            
-            const maxValue = Math.max(...values);
-            const chartHeight = ">Chưa có dữ liệu thống kê theo tháng</p>';
+                monthlyChart.innerHTML = '<p class="text-center text-gray-500">Chưa có dữ liệu thống kê theo tháng</p>';
                 return;
             }
             
@@ -844,453 +728,231 @@ Date.getFullYear();
             const chartHeight = 200;
             const barWidth = 30;
             const spacing = 40;
-            const chartWidth = months.length * (barWidth200;
-            const barWidth = 30;
-            const spacing = 40;
             const chartWidth = months.length * (barWidth + spacing);
             
-            monthlyChart.style + spacing);
+            monthlyChart.style.width = `${chartWidth}px`;
             
-            monthlyChart.style.width = `${chart.width = `${chartWidth}px`;
-            
-           Width}px`;
- months.forEach((month            
-            months.forEach((month, index), index) => {
-                const value => {
+            months.forEach((month, index) => {
                 const value = values[index];
-                const = values[index];
- barHeight = max                const barHeight = maxValue > 0 ? (value /Value > 0 ? (value / maxValue) maxValue) * chart * chartHeight : Height : 0;
+                const barHeight = maxValue > 0 ? (value / maxValue) * chartHeight : 0;
                 
-                const bar0;
+                const barContainer = document.createElement('div');
+                barContainer.className = 'chart-bar-container';
+                barContainer.style.position = 'absolute';
+                barContainer.style.left = `${index * (barWidth + spacing)}px`;
+                barContainer.style.width = `${barWidth}px`;
+                barContainer.style.height = `${chartHeight}px`;
                 
-                const barContainer =Container = document document.createElement('div');
-                barContainer.createElement('div');
-                barContainer.className =.className = 'chart-bar 'chart-bar-container';
-               -container';
-                barContainer.style.position = ' barContainer.style.position = 'absolute';
-                barContainer.style.left =absolute';
-                barContainer.style.left = `${index * (bar `${index * (barWidth + spacing)}px`;
-Width + spacing)}px`;
-                bar                barContainer.style.width = `${barContainer.style.width = `${barWidth}px`;
-Width}px`;
-                               barContainer.style barContainer.style.height = `${chartHeight}.height = `${chartHeight}px`;
-                
-               px`;
-                
-                const bar = document const bar = document.createElement('div');
-                bar.className =.createElement('div');
-                bar.className 'chart-bar';
-                bar = 'chart-bar';
-                bar.style.height =.style.height = `${barHeight}px`;
- `${barHeight}px`;
-                bar.style.backgroundColor                bar.style.backgroundColor = '#9B = '#9BBA74';
-                bar.title = `${month}:BA74';
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar';
+                bar.style.height = `${barHeight}px`;
+                bar.style.backgroundColor = '#9BBA74';
                 bar.title = `${month}: ${value} phút`;
                 
-                const value ${value} phút`;
-                
-                const valueLabel =Label = document.createElement('div');
-                document.createElement('div');
-                valueLabel.className valueLabel.className = = 'chart-value 'chart-value';
-                valueLabel.textContent';
+                const valueLabel = document.createElement('div');
+                valueLabel.className = 'chart-value';
                 valueLabel.textContent = value;
                 
- = value;
+                const monthLabel = document.createElement('div');
+                monthLabel.className = 'chart-label';
+                monthLabel.textContent = month;
                 
-                const monthLabel = document                const monthLabel.createElement('div');
-                month = document.createElement('div');
-                monthLabel.classNameLabel.className = = 'chart-label';
-                monthLabel.text 'chart-label';
-                monthLabel.textContent =Content = month;
- month;
-                
-                barContainer.appendChild(                
                 barContainer.appendChild(bar);
-                barContainer.appendChild(valueLabelbar);
                 barContainer.appendChild(valueLabel);
-);
-                barContainer                barContainer.appendChild(monthLabel);
+                barContainer.appendChild(monthLabel);
                 
-.appendChild(monthLabel);
-                
-                monthlyChart.appendChild                monthlyChart.appendChild(bar(barContainer);
-Container);
+                monthlyChart.appendChild(barContainer);
             });
             
-            // Cập            });
+            // Cập nhật thống kê tháng
+            const avgSession = totalSessions > 0 ? Math.round(totalMinutes / totalSessions) : 0;
+            const successRate = totalSessions > 0 ? Math.round((successfulSessions / totalSessions) * 100) : 0;
             
-            // Cập nh nhật thống kật thống kê tháng
-            constê tháng
-            const avgSession = total avgSession = totalSessions > 0 ? Math.round(totalMinutesSessions > 0 ? Math.round(totalMinutes / totalSessions / totalSessions) : 0;
-) : 0;
-                       const successRate = const successRate = totalSessions > 0 totalSessions > 0 ? Math ? Math.round((successfulSessions.round((successfulSessions / totalSessions / totalSessions) * 100) * 100) : 0;
-            
-) : 0;
-            
-            updateMonthlyStats            updateMonthlyStats(totalSessions,(totalSessions, totalMinutes, avg totalMinutes, avgSession, successSession, successRate);
-        }
-        
-        function updateMonthlyStats(sRate);
+            updateMonthlyStats(totalSessions, totalMinutes, avgSession, successRate);
         }
         
         function updateMonthlyStats(sessions, minutes, avg, rate) {
-essions, minutes, avg, rate) {
-            totalSessionsEl.textContent =            totalSessionsEl.textContent = sessions;
-            total sessions;
-            totalMinutesEl.textContent = minutesMinutesEl.textContent = minutes;
-            avgSession;
-            avgSessionEl.textContent =El.textContent = avg;
-            successRate avg;
-            successRateEl.textContent =El.textContent = `${rate}%`;
- `${rate}%`;
+            totalSessionsEl.textContent = sessions;
+            totalMinutesEl.textContent = minutes;
+            avgSessionEl.textContent = avg;
+            successRateEl.textContent = `${rate}%`;
         }
 
-        function        }
-
-        function updateLoginButtonUI updateLoginButtonUI() {
-            if (() {
-            if (googleUser)googleUser) {
-                googleSignInButton {
-                googleSignInButton.style.display = ".style.display = "nonenone";
-                googleLogoutBtn.style";
-                googleLogoutBtn.style.display =.display = "flex";
- "flex";
-                userAvatar.src =                userAvatar.src = googleUser.p googleUser.picture;
-                userAvatar.icture;
-                userAvataralt = `Ả.alt = `Ảnh đnh đại diện của ${googleại diện của ${googleUser.name}`;
-User.name}`;
-                userAvatar.classList.remove("                userAvatar.classList.remove("hidden");
-hidden");
-                googleLogout                googleLogoutBtn.title = "ĐăngBtn.title = "Đăng xuất tài xuất tài khoản Google";
+        function updateLoginButtonUI() {
+            if (googleUser) {
+                googleSignInButton.style.display = "none";
+                googleLogoutBtn.style.display = "flex";
+                userAvatar.src = googleUser.picture;
+                userAvatar.alt = `Ảnh đại diện của ${googleUser.name}`;
+                userAvatar.classList.remove("hidden");
+                googleLogoutBtn.title = "Đăng xuất tài khoản Google";
             } else {
- khoản Google";
-            } else {
-                googleSignInButton.style                googleSignInButton.style.display = "flex.display = "flex";
-";
+                googleSignInButton.style.display = "flex";
                 googleLogoutBtn.style.display = "none";
-                user                googleLogoutBtn.style.display = "none";
-                userAvatar.classListAvatar.classList.add("hidden");
-                user.add("hidden");
+                userAvatar.classList.add("hidden");
                 userAvatar.src = "";
-Avatar.src = "";
-                user                userAvatar.alt = "";
-            }
-Avatar.alt = "";
+                userAvatar.alt = "";
             }
         }
 
-               }
-
-        function initialize function initializeGoogleSignIn()GoogleSignIn() {
-            google. {
-            google.accounts.id.initializeaccounts.id.initialize({
-                client_id: "({
-                client_id: "854854945467513945467513-gvec4958ef17nq-gvec4958ef17nqjsoauvk9dcjsoauvk9dcqinceeelqinceeel.apps.googleusercontent.apps.googleusercontent.com",
-                callback.com",
+        function initializeGoogleSignIn() {
+            google.accounts.id.initialize({
+                client_id: "854945467513-gvec4958ef17nqjsoauvk9dcqinceeel.apps.googleusercontent.com",
                 callback: handleCredentialResponse,
-: handleCredentialResponse,
-                auto_select:                auto_select: false,
-                cancel false,
-                cancel_on_tap_out_on_tap_outside: false
-           side: false
+                auto_select: false,
+                cancel_on_tap_outside: false
             });
-            google });
-            google..accounts.id.renderButtonaccounts.id.renderButton(
-                googleSignIn(
+            google.accounts.id.renderButton(
                 googleSignInButton,
-                {Button,
-                { theme: "filled_green theme: "filled", size: "medium", width: _green", size: "medium", width: 160, height160, height: : 40 }
+                { theme: "filled_green", size: "medium", width: 160, height: 40 }
             );
         }
 
-40 }
-            );
-        }
-
-        function handleCred        function handleCredentialentialResponse(response)Response(response) {
-            {
-            const data = parseJwt(response. const data = parseJwt(response.credential);
-            googleUser = {
-credential);
+        function handleCredentialResponse(response) {
+            const data = parseJwt(response.credential);
             googleUser = {
                 id: data.sub,
-                name: data                id: data.sub,
                 name: data.name,
                 email: data.email,
-.name,
-                email: data.email,
-                picture: data.p                picture: data.pictureicture
+                picture: data.picture
             };
-            localStorage.setItem("
-            };
-            localStorage.setgoogleuser", JSON.stringify(googleUserItem("googleuser", JSON.stringify(googleUser));
-            updateLogin));
+            localStorage.setItem("googleuser", JSON.stringify(googleUser));
             updateLoginButtonUI();
-            alert("BạnButtonUI();
-            alert(" đã đăngBạn đã đăng nhập thành công: " nhập thành công: " + googleUser.name + googleUser.name);
+            alert("Bạn đã đăng nhập thành công: " + googleUser.name);
         }
 
-       );
-        }
-
-        function parseJwt function parseJwt(token) {
+        function parseJwt(token) {
             try {
-(token) {
-            try {
-                const base64                const base64Url = token.split('.Url = token.split('.')[1];
-')[1];
-                const base64 = base                const base64 = base64Url.replace(64Url.replace(/-/g, '+').replace(/-/g, '+').replace(/_/g, '/');
-/_/g, '/');
-                const jsonPayload                const jsonPayload = decodeURIComponent = decodeURIComponent(atob(base64(atob(base64).split('').map(function).split('').map(function(c) {
-                   (c) {
-                    return '%' + return '%' + ('00' + ('00' + c.charCodeAt(0 c.charCodeAt(0).toString(16)).slice(-2);
-               ).toString(16)).slice(-2);
-                }).join(' }).join(''));
-                return JSON.parse(json'));
-                return JSON.parsePayload);
-            } catch {
-                return {};
-(jsonPayload);
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
             } catch {
                 return {};
             }
-            }
         }
-
-        function        }
 
         function openPanel() {
- openPanel() {
-            infoPanel.classList            infoPanel.classList.remove("scale-0");
-.remove("scale-0            infoPanel.setAttribute("aria-hidden");
+            infoPanel.classList.remove("scale-0");
             infoPanel.setAttribute("aria-hidden", "false");
-", "false");
-            overlay.classList.remove            overlay.classList.remove("hidden");
+            overlay.classList.remove("hidden");
         }
 
-       ("hidden");
+        function closePanel() {
+            infoPanel.classList.add("scale-0");
+            infoPanel.setAttribute("aria-hidden", "true");
+            overlay.classList.add("hidden");
         }
 
-        function closePanel() function closePanel() {
-            infoPanel {
-            infoPanel.classList.add("scale-.classList.add("scale-0");
-            infoPanel0");
-            infoPanel.setAttribute("aria.setAttribute("aria-hidden", "true");
-           -hidden", "true");
-            overlay.classList.add overlay.classList.add("("hidden");
-        }
-
-        // Gánhidden");
-        }
-
-        // Gán sự kiện sự kiện
-        inputHour
-        inputHour.addEventListener("input", () =>.addEventListener("input", () => {
-            if (inputHour.value.length > 2) inputHour.value = inputHour.value.slice(0, 2);
-            updateStartButton {
+        // Gán sự kiện
+        inputHour.addEventListener("input", () => {
             if (inputHour.value.length > 2) inputHour.value = inputHour.value.slice(0, 2);
             updateStartButtonState();
-State();
         });
-        inputMinute        });
-        inputMinute.addEventListener(".addEventListener("inputinput", () => {
-            if (inputMinute.value.length > 2) inputMinute.value = input", () => {
-            if (inputMinute.value.length > 2) inputMinute.value = inputMinute.value.slice(0, 2Minute.value.slice(0, 2);
-            updateStartButtonState();
-);
+        inputMinute.addEventListener("input", () => {
+            if (inputMinute.value.length > 2) inputMinute.value = inputMinute.value.slice(0, 2);
             updateStartButtonState();
         });
         inputSecond.addEventListener("input", () => {
-                   });
-        inputSecond.addEventListener("input", () => {
-            if (inputSecond if (inputSecond.value.length > .value.length > 2) inputSecond2) inputSecond.value =.value = inputSecond.value.slice(0 inputSecond.value.slice(0, 2);
-, 2);
+            if (inputSecond.value.length > 2) inputSecond.value = inputSecond.value.slice(0, 2);
             updateStartButtonState();
         });
 
-            updateStartButtonState();
-        });
-
-        btnStartStop        btnStartStop.addEventListener("click", () =>.addEventListener("click", () => {
-            {
-            if ( if (isRunning) {
-                stopTimer(falseisRunning) {
+        btnStartStop.addEventListener("click", () => {
+            if (isRunning) {
                 stopTimer(false);
-            } else);
-            } {
+            } else {
                 startTimer();
             }
         });
 
-        else {
-                startTimer();
-            }
+        circleCakeBtn.addEventListener("click", () => {
+            if (isRunning) return;
+            menuSelectCake.classList.toggle("hidden");
         });
 
-        circleCakeBtn circleCakeBtn.addEventListener("click", () =>.addEventListener("click", () => {
-            {
-            if (isRunning) return if (isRunning) return;
-            menu;
-            menuSelectCake.classList.tSelectCake.classList.toggle("hidden");
-oggle("hidden");
+        rewardConfirmBtn.addEventListener("click", () => {
+            rewardModal.classList.add("hidden");
         });
 
-        rewardCloseBtn        });
-
-        rewardCloseBtn.addEventListener(".addEventListener("click", () => {
-            rewardModalclick", () => {
-            rewardModal.classList.add("hidden.classList.add("hidden");
+        rewardCloseBtn.addEventListener("click", () => {
+            rewardModal.classList.add("hidden");
         });
 
-        feedbackBtn");
-        });
-
-        feedbackBtn.addEventListener(".addEventListener("click", () => {
-            constclick", () => {
-            const message = prompt message = prompt("V("Vui lòng nhập gópui lòng nhập góp ý của bạn:");
- ý của bạn:");
-            if (message            if (message === null) return;
-            === null) return;
-            if (message if (message.trim() === "") {
-.trim() === "") {
-                alert("V                alert("Vui lòng nhập nui lòng nhập nội dungội dung g góp ýóp ý.");
-                return;
-            }
-.");
+        feedbackBtn.addEventListener("click", () => {
+            const message = prompt("Vui lòng nhập góp ý của bạn:");
+            if (message === null) return;
+            if (message.trim() === "") {
+                alert("Vui lòng nhập nội dung góp ý.");
                 return;
             }
             feedbackMessage.value = message.trim();
-            feedbackForm            feedbackMessage.value = message.trim();
             feedbackForm.submit();
         });
 
-       .submit();
-        });
-
         btnStatistics.addEventListener('click', () => {
-            btnStatistics.addEventListener('click', () => {
-            if (isRunning) if (isRunning) return;
-            render return;
-            renderMonthlyChartMonthlyChart();
-            statisticsModal.classList.remove("hidden();
+            if (isRunning) return;
+            renderMonthlyChart();
             statisticsModal.classList.remove("hidden");
-");
         });
 
-               });
-
-        statisticsCloseBtn.addEventListener('click statisticsCloseBtn.addEventListener('click', () => {
-            statisticsModal', () => {
-            statisticsModal.classList.add.classList.add("hidden("hidden");
+        statisticsCloseBtn.addEventListener('click', () => {
+            statisticsModal.classList.add("hidden");
         });
 
-        infoToggleBtn");
-        });
-
-        infoToggle.addEventListener("click", () => {
-           Btn.addEventListener("click", () => {
-            if (infoPanel if (infoPanel.classList.contains("scale-0.classList.contains("scale-0")) {
-                open")) {
+        infoToggleBtn.addEventListener("click", () => {
+            if (infoPanel.classList.contains("scale-0")) {
                 openPanel();
             } else {
-Panel();
-            } else {
-                close                closePanel();
+                closePanel();
             }
         });
 
-Panel();
-            }
+        closeInfoBtn.addEventListener("click", closePanel);
+
+        overlay.addEventListener("click", closePanel);
+
+        googleLogoutBtn.addEventListener("click", () => {
+            logoutConfirmModal.classList.remove("hidden");
         });
 
-        closeInfoBtn.addEventListener("click",        closeInfoBtn.addEventListener("click", close closePanel);
-
-       Panel);
-
-        overlay.addEventListener overlay.addEventListener("click", closePanel);
-
-        googleLogoutBtn("click", closePanel);
-
-        googleLogoutBtn.addEventListener("click.addEventListener("click", () => {
-", () => {
-            logoutConfirmModal.classList            logoutConfirmModal.classList.remove.remove("hidden");
-        });
-
-        logoutYesBtn("hidden");
-        });
-
-        logoutYesBtn.addEventListener("click", ().addEventListener("click", () => {
-            google => {
+        logoutYesBtn.addEventListener("click", () => {
             googleUser = null;
-User = null;
-            localStorage.removeItem("            localStorage.removeItem("googleuser");
-           googleuser");
-            updateLoginButton updateLoginButtonUI();
-            logoutConfirmModal.classListUI();
-            logoutConfirmModal.classList.add.add("hidden");
-            alert("Bạn("hidden");
+            localStorage.removeItem("googleuser");
+            updateLoginButtonUI();
+            logoutConfirmModal.classList.add("hidden");
             alert("Bạn đã đăng xuất.");
         });
 
-        đã đăng xuất.");
-        });
-
-        logoutNoBtn.addEventListener("click logoutNoBtn.addEventListener("click", () => {
-            logoutConfirmModal", () => {
+        logoutNoBtn.addEventListener("click", () => {
             logoutConfirmModal.classList.add("hidden");
-.classList.add("hidden");
         });
-
-        btnUseReward.addEventListener("        });
 
         btnUseReward.addEventListener("click", () => {
-            alert("click", () => {
-            alert("Tính năng sử dụng phần thTính năng sửưởng đang được phát tri dụng phần thưởng đang được phát triển!");
+            alert("Tính năng sử dụng phần thưởng đang được phát triển!");
         });
 
-        //ển!");
-        });
-
-        // Khở Khởi tạo ứng dụng
-i tạo ứng dụng
-        window.addEventListener("        window.addEventListener("load", () => {
-           load", () => {
-            updateCakeDisplay updateCakeDisplay();
-            updateStartButtonState();
-           ();
+        // Khởi tạo ứng dụng
+        window.addEventListener("load", () => {
+            updateCakeDisplay();
             updateStartButtonState();
             renderCakeMenu();
-            renderCakeMenu();
-            updateLoginButtonUI updateLoginButtonUI();
-            timeProgressBar.style();
-            timeProgressBar.style.width = ".width = "100%";
-100%";
+            updateLoginButtonUI();
+            timeProgressBar.style.width = "0%";
             initializeGoogleSignIn();
             
-                       initializeGoogleSignIn();
-            
-            // Đảm bảo sessionHistory tồn // Đảm bảo sessionHistory tồn tại trong localStorage
-            if (!localStorage.getItem tại trong localStorage
+            // Đảm bảo sessionHistory tồn tại trong localStorage
             if (!localStorage.getItem('sessionHistory')) {
-                localStorage.set('sessionHistory')) {
-                localStorage.setItem('Item('sessionHistory', JSON.stringify([]));
-           sessionHistory', JSON.stringify([]));
+                localStorage.setItem('sessionHistory', JSON.stringify([]));
             }
             
-            // Xóa }
-            
-            // Xóa các inventory các inventory không cần thiết
- không cần thiết
-            localStorage.removeItem            localStorage.removeItem('cakeinventory');
-           ('cakeinventory localStorage.removeItem('plateinventory');
-            localStorage');
+            // Xóa các inventory không cần thiết
+            localStorage.removeItem('cakeinventory');
             localStorage.removeItem('plateinventory');
-            localStorage.removeItem.removeItem('decorinventory');
-        });
-('decorinventory');
+            localStorage.removeItem('decorinventory');
         });
     </script>
-    </script>
-</body>
 </body>
 </html>
