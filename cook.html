@@ -310,7 +310,7 @@
       </ul>
       <div id="session-info" class="mt-4 p-4 bg-gray-100 rounded-lg text-center text-gray-700 min-h-[4rem] select-none" aria-live="polite" aria-atomic="true"></div>
       <button
-        id="statistics-close"
+        id="reward-close"
         class="mt-4 px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto focus:outline-none focus:ring-2 focus:ring-[#b0102a]"
         type="button"
       >
@@ -454,12 +454,8 @@
         const btnStatistics = document.getElementById("btn-statistics");
 
          // reward modal elements
-    const reward-modal = document.getElementById("reward-modal");
-    const rewardCloseBtn = document.getElementById("reward-close");
     const cakeListEl = document.getElementById("cake-list");
     const sessionInfoEl = document.getElementById("session-info");
-    const btn-use-reward = document.getElementById("btn-use-reward");
-
         
         // Các phần tử thống kê
         const totalSessionsEl = document.getElementById("total-sessions");
@@ -603,13 +599,6 @@
             inputSecond.disabled = disable;
             circleCakeBtn.disabled = disable;
             document.getElementById("btn-statistics").disabled = disable;
-        }
-        function disableInputs(disable) {
-      inputHour.disabled = disable;
-      inputMinute.disabled = disable;
-      inputSecond.disabled = disable;
-      circleCakeBtn.disabled = disable;
-      document.getElementById("btn-use-reward").disabled = disable;
         }
 
         function showReward(elapsed) {
@@ -997,20 +986,6 @@
         btnUseReward.addEventListener("click", () => {
             alert("Tính năng sử dụng phần thưởng đang được phát triển!");
         });
- btnStatistics.addEventListener('click', () => {
-      if (isRunning) return;
-      renderSessionList();
-      statisticsModal.classList.remove("hidden");
-    });
-
-    statisticsCloseBtn.addEventListener('click', () => {
-      statisticsModal.classList.add("hidden");
-    });
-
-      
-    if (!localStorage.getItem('sessionHistory')) {
-      localStorage.setItem('sessionHistory', JSON.stringify([]));
-    }
 
         // Khởi tạo ứng dụng
         window.addEventListener("load", () => {
