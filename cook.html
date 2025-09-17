@@ -23,6 +23,56 @@
             background-color: #9bba74;
             border-radius: 3px;
         }
+
+  /* statistics-reward modal content: no grid, just images in a row wrapping naturally */
+    #cake-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 70vh;
+      overflow-y: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: flex-start;
+      align-items: center;
+    }
+    #cake-list li {
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+      outline: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 0.5rem;
+    }
+    #cake-list li:focus,
+    #cake-list li:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgb(0 0 0 / 0.2);
+      z-index: 10;
+    }
+    #cake-list li img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      border-radius: 0.5rem;
+      user-select: none;
+      pointer-events: none;
+      display: block;
+    }
+    #cake-list li span {
+      display: none;
+    }
+    @media (max-width: 480px) {
+      #cake-list li img {
+        width: 48px;
+        height: 48px;
+      }
+    }
+
         #googleSignInButton {
             position: relative;
             left: -15%;
@@ -51,15 +101,26 @@
             height: 300px;
             margin-top: 20px;
             position: relative;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+        .chart-wrapper {
+            position: relative;
+            height: 100%;
+            min-width: 600px; /* Đảm bảo biểu đồ đủ rộng để scroll */
         }
         .chart-bar {
             position: absolute;
-            bottom: 0;
+            bottom: 30px; /* Dành chỗ cho trục x */
             background-color: #9BBA74;
             width: 30px;
             border-top-left-radius: 4px;
             border-top-right-radius: 4px;
             transition: height 0.5s ease;
+            cursor: pointer;
+        }
+        .chart-bar:hover {
+            background-color: #8aa85a;
         }
         .chart-label {
             position: absolute;
@@ -74,6 +135,31 @@
             text-align: center;
             width: 30px;
             font-size: 11px;
+        }
+        .y-axis {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+        .y-tick {
+            font-size: 10px;
+            color: #666;
+            text-align: right;
+            padding-right: 5px;
+        }
+        .x-axis {
+            position: absolute;
+            bottom: 0;
+            left: 30px;
+            width: calc(100% - 30px);
+            height: 20px;
+            border-top: 1px solid #ccc;
         }
         .stat-tabs {
             display: flex;
@@ -127,6 +213,16 @@
         }
         #btn-start-stop {
             transition: all 0.3s ease;
+        }
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 100;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -187,7 +283,7 @@
             
             <!-- Right side buttons -->
             <div class="flex space-x-4">
-                <button id="btn-use-reward" aria-label="Sử dụng phần thưởng" class="w-11 h-11 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] flex items-center justify-center text-white shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button">
+                <button id="btn-statistics-reward" aria-label="Sử dụng phần thưởng" class="w-11 h-11 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] flex items-center justify-center text-white shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button">
                     <i class="fas fa-gift text-lg"></i>
                 </button>
             </div>
@@ -209,6 +305,38 @@
     <button id="infoToggleBtn" aria-label="Toggle information panel" class="absolute top-4 left-4 p-3 bg-green-600 text-white rounded-full shadow-md hover:bg-green-700 bg-opacity-50 focus:outline-none focus:ring-2 focus:ring-green-400 flex items-center justify-center w-12 h-12">
         <i class="fas fa-question text-lg"></i>
     </button>
+
+<!-- statistics-reward modal with scrollable images -->
+  <div
+    id="btn-statistics-reward"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="statistics-reward-title"
+  >
+    <div class="bg-white rounded-lg max-w-md w-full p-6 flex flex-col space-y-4 shadow-lg max-h-[90vh] overflow-y-auto">
+      <h2 id="statistics-reward-title" class="text-2xl font-bold text-center text-gray-800 mb-4">
+        Lịch sử
+      </h2>
+      <ul id="cake-list" tabindex="0" aria-label="lịch sử tập trung">
+        <li tabindex="0" role="button" aria-label="Phần thưởng: bánh mâm xôi, ngày nhận: 2024-06-14, thời gian nhận: 21:30, thời lượng: 18 phút" class="cursor-pointer rounded">
+          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_7293.png" alt="Hình ảnh quả cà tím tím tươi, bóng mượt, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
+        </li>
+        <li tabindex="0" role="button" aria-label="Phần thưởng: bánh cherry, ngày nhận: 2024-06-15, thời gian nhận: 22:45, thời lượng: 22 phút" class="cursor-pointer rounded">
+          <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/B89384A0-0587-48F6-BBCB-4EC98C592F1C.png" alt="Hình ảnh bánh cherry màu đỏ tươi, bánh tròn nhỏ, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
+        </li>
+      </ul>
+      <div id="session-info" class="mt-4 p-4 bg-gray-100 rounded-lg text-center text-gray-700 min-h-[4rem] select-none" aria-live="polite" aria-atomic="true"></div>
+      <button
+        id="statistics-reward-close"
+        class="mt-4 px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto focus:outline-none focus:ring-2 focus:ring-[#b0102a]"
+        type="button"
+      >
+        Đóng
+      </button>
+    </div>
+  </div>
+ 
 
     <!-- Logout Confirmation Modal -->
     <div id="logout-confirm-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="logout-confirm-title">
@@ -240,7 +368,7 @@
     </div>
 
     <!-- Reward modal -->
-    <div id="reward-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="reward-title">
+    <div id="statistics-reward-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="reward-title">
         <div class="bg-white rounded-lg max-w-md w-full p-6 flex flex-col space-y-4 shadow-lg relative">
             <h2 id="reward-title" class="text-xl font-semibold text-gray-800 text-center">Hoan hô! Bạn đã nhận được</h2>
             <div id="reward-content" class="flex flex-row items-center justify-center space-x-4 flex-wrap" aria-live="polite" aria-atomic="true"></div>
@@ -253,12 +381,21 @@
 
     <!-- Statistics modal with monthly chart only -->
     <div id="statistics-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="statistics-title">
-        <div class="bg-white rounded-lg max-w-md w-full p-6 flex flex-col space-y-4 shadow-lg max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-lg max-w-4xl w-full p-6 flex flex-col space-y-4 shadow-lg max-h-[90vh] overflow-y-auto">
             <h2 id="statistics-title" class="text-2xl font-bold text-center text-gray-800 mb-4">Thống kê theo tháng</h2>
             
             <!-- Chart view -->
             <div id="chart-view">
-                <div class="chart-container" id="monthly-chart"></div>
+                <div class="chart-container" id="monthly-chart">
+                    <div class="chart-wrapper" id="chart-wrapper">
+                        <!-- Y-axis -->
+                        <div class="y-axis" id="y-axis"></div>
+                        <!-- X-axis -->
+                        <div class="x-axis" id="x-axis"></div>
+                        <!-- Tooltip -->
+                        <div class="tooltip hidden" id="chart-tooltip"></div>
+                    </div>
+                </div>
             </div>
             
             <!-- Monthly statistics summary -->
@@ -371,6 +508,10 @@
         const statisticsModal = document.getElementById("statistics-modal");
         const statisticsCloseBtn = document.getElementById("statistics-close");
         const monthlyChart = document.getElementById("monthly-chart");
+        const chartWrapper = document.getElementById("chart-wrapper");
+        const yAxis = document.getElementById("y-axis");
+        const xAxis = document.getElementById("x-axis");
+        const chartTooltip = document.getElementById("chart-tooltip");
         const infoToggleBtn = document.getElementById("infoToggleBtn");
         const infoPanel = document.getElementById("infoPanel");
         const closeInfoBtn = document.getElementById("closeInfoBtn");
@@ -381,8 +522,25 @@
         const logoutConfirmModal = document.getElementById("logout-confirm-modal");
         const logoutYesBtn = document.getElementById("logout-yes-btn");
         const logoutNoBtn = document.getElementById("logout-no-btn");
-        const btnUseReward = document.getElementById("btn-use-reward");
+        const btnStatisticsReward = document.getElementById("btn-statistics-reward");
         const btnStatistics = document.getElementById("btn-statistics");
+
+const statisticsRewardModal = document.getElementById("statistics-reward-modal");
+const statisticsRewardCloseBtn = document.getElementById("statistics-reward-close");
+
+btnStatisticsReward.addEventListener('click', () => {
+  if (isRunning) return;
+  renderSessionList();
+  statisticsRewardModal.classList.remove("hidden");
+});
+
+statisticsRewardCloseBtn.addEventListener('click', () => {
+  statisticsRewardModal.classList.add("hidden");
+});
+
+
+
+
         
         // Các phần tử thống kê
         const totalSessionsEl = document.getElementById("total-sessions");
@@ -539,420 +697,309 @@
         }
 
         function disableInputs(disable) {
-            inputHour.disabled = disable;
-            inputMinute.disabled = disable;
-            inputSecond.disabled = disable;
-            circleCakeBtn.disabled = disable;
-            document.getElementById("btn-statistics").disabled = disable;
-        }
+      inputHour.disabled = disable;
+      inputMinute.disabled = disable;
+      inputSecond.disabled = disable;
+      circleCakeBtn.disabled = disable;
+      document.getElementById("btn-statistics").disabled = disable;
+document.getElementById("btn-statistics-reward").disabled = disable;
+    } 
+    function showReward(elapsed) {
+  const timeMinutes = elapsed / 60;
+  let rewards = [];
+  let rewardName = "";
 
-        function showReward(elapsed) {
-            const timeMinutes = elapsed / 60;
-            let rewards = [];
-            let rewardName = "";
-            
-            if (timeMinutes < 3) {
-                rewards = [{
-                    type: "cake",
-                    name: "bánh nướng bóng đêm",
-                    img: cakes["bánh nướng bóng đêm"].img,
-                    alt: cakes["bánh nướng bóng đêm"].alt,
-                }];
-                rewardName = "bánh nướng bóng đêm";
-            } else {
-                rewards = [{
-                    type: "cake",
-                    name: selectedCake,
-                    img: cakes[selectedCake].img,
-                    alt: cakes[selectedCake].alt,
-                }];
-                rewardName = selectedCake;
-            }
+  if (timeMinutes < 3) {
+    // Dưới 3 phút: phần thưởng bánh nướng bóng đêm
+    rewards = [{
+      type: "cake",
+      name: "bánh nướng bóng đêm",
+      img: cakes["bánh nướng bóng đêm"].img,
+      alt: cakes["bánh nướng bóng đêm"].alt,
+    }];
+    rewardName = "bánh nướng bóng đêm";
+  } else {
+    // Từ 3 phút trở lên: phần thưởng bánh đã chọn
+    rewards = [{
+      type: "cake",
+      name: selectedCake,
+      img: cakes[selectedCake].img,
+      alt: cakes[selectedCake].alt,
+    }];
+    rewardName = selectedCake;
+  }
 
-            let rewardInventoryLocal = JSON.parse(localStorage.getItem("rewardInventory")) || [];
-            const now = new Date();
-            const dateStr = now.toISOString().slice(0, 10);
-            const timeStr = now.toTimeString().slice(0, 5);
+  // Lấy dữ liệu phần thưởng hiện tại từ localStorage
+  let rewardInventoryLocal = JSON.parse(localStorage.getItem("rewardInventory")) || [];
+  const now = new Date();
+  const dateStr = now.toISOString().slice(0, 10);
+  const timeStr = now.toTimeString().slice(0, 5);
 
-            rewards.forEach(r => {
-                const rewardWithDate = {
-                    ...r,
-                    date: dateStr,
-                    time: timeStr,
-                    durationMinutes: Math.floor(elapsed / 60),
-                    id: Date.now() + Math.random(),
-                };
-                rewardInventoryLocal.push(rewardWithDate);
-            });
-            localStorage.setItem("rewardInventory", JSON.stringify(rewardInventoryLocal));
-            rewardInventory = rewardInventoryLocal;
+  rewards.forEach(r => {
+    // Lưu phần thưởng kèm ngày giờ và thời lượng
+    const rewardWithDate = {
+      ...r,
+      date: dateStr,
+      time: timeStr,
+      durationMinutes: Math.floor(elapsed / 60),
+      id: Date.now() + Math.random(), // id duy nhất
+    };
+    rewardInventoryLocal.push(rewardWithDate);
+  });
+  localStorage.setItem("rewardInventory", JSON.stringify(rewardInventoryLocal));
+  rewardInventory = rewardInventoryLocal;
 
-            rewardContent.innerHTML = "";
-            rewards.forEach((r) => {
-                const div = document.createElement("div");
-                div.className = "flex flex-col items-center space-y-1";
-                const img = document.createElement("img");
-                img.src = r.img;
-                img.alt = r.alt;
-                img.className = "w-[56px] h-[56px] object-contain";
-                img.draggable = false;
-                const span = document.createElement("span");
-                span.className = "text-gray-800 font-semibold text-center text-sm";
-                span.textContent = r.name;
-                div.appendChild(img);
-                div.appendChild(span);
-                rewardContent.appendChild(div);
-            });
-            
-            const textLine = document.createElement("p");
-            textLine.className = "text-center font-semibold text-lg text-gray-900 mt-2";
-            textLine.textContent = "Hoan hô! Bạn đã nhận được " + rewards.map((r) => r.name).join(", ") + ".";
-            rewardContent.appendChild(textLine);
+  // Hiển thị phần thưởng trong modal
+  rewardContent.innerHTML = "";
+  rewards.forEach((r) => {
+    const div = document.createElement("div");
+    div.className = "flex flex-col items-center space-y-1";
+    const img = document.createElement("img");
+    img.src = r.img;
+    img.alt = r.alt;
+    img.className = "w-[56px] h-[56px] object-contain";
+    img.draggable = false;
+    const span = document.createElement("span");
+    span.className = "text-gray-800 font-semibold text-center text-sm";
+    span.textContent = r.name;
+    div.appendChild(img);
+    div.appendChild(span);
+    rewardContent.appendChild(div);
+  });
+  const textLine = document.createElement("p");
+  textLine.className = "text-center font-semibold text-lg text-gray-900 mt-2";
+  textLine.textContent =
+    "Hoan hô! Bạn đã nhận được " +
+    rewards.map((r) => r.name).join(", ") +
+    ".";
+  rewardContent.appendChild(textLine);
 
-            rewardModal.classList.remove("hidden");
-        }
+  rewardModal.classList.remove("hidden");
+}
 
-        function saveSessionHistory(elapsedSeconds) {
-            if (elapsedSeconds <= 0) return;
-            const now = new Date();
-            const dateStr = now.toISOString().slice(0, 10);
-            const timeStr = now.toTimeString().slice(0, 5);
-            const newSession = {
-                id: Date.now(),
-                name: selectedCake,
-                time: timeStr,
-                date: dateStr,
-                timeSeconds: elapsedSeconds,
-                durationMinutes: Math.floor(elapsedSeconds / 60),
-                image: cakes[selectedCake].img,
-            };
-            sessionHistory.push(newSession);
-            localStorage.setItem("sessionHistory", JSON.stringify(sessionHistory));
-        }
+    function saveSessionHistory(elapsedSeconds) {
+      if (elapsedSeconds <= 0) return;
+      const now = new Date();
+      const dateStr = now.toISOString().slice(0, 10);
+      const timeStr = now.toTimeString().slice(0, 5);
+      const newSession = {
+        id: Date.now(),
+        name: selectedCake,
+        time: timeStr,
+        date: dateStr,
+        timeSeconds: elapsedSeconds,
+        durationMinutes: Math.floor(elapsedSeconds / 60),
+        image: cakes[selectedCake].img,
+      };
+      sessionHistory.push(newSession);
+      localStorage.setItem("sessionHistory", JSON.stringify(sessionHistory));
+    }
 
-        function renderCakeMenu() {
-            const menuCakeList = document.getElementById("menu-cake-list");
-            menuCakeList.innerHTML = "";
-            Object.keys(cakes).forEach(cakeName => {
-                if (cakeName.trim() === "bánh nướng bóng đêm") return;
-                const cake = cakes[cakeName];
+    function addSessionToList(elapsedSeconds) {
+      const now = new Date();
+      const dateStr = now.toISOString().slice(0, 10);
+      const timeStr = now.toTimeString().slice(0, 5);
+      const session = {
+        id: Date.now(),
+        name: selectedCake,
+        time: timeStr,
+        date: dateStr,
+        timeSeconds: elapsedSeconds,
+        durationMinutes: Math.floor(elapsedSeconds / 60),
+        image: cakes[selectedCake].img,
+      };
+      sessionHistory.push(session);
+      localStorage.setItem("sessionHistory", JSON.stringify(sessionHistory));
+      renderSessionList();
+    }
 
-                const btn = document.createElement("button");
-                btn.type = "button";
-                btn.className = "flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded";
-                btn.setAttribute("data-cake", cakeName);
-                btn.setAttribute("aria-label", `Chọn món ${cakeName}`);
+    function renderSessionList() {
+      cakeListEl.innerHTML = "";
+      if (!sessionHistory.length && rewardInventory.length === 0) {
+        const emptyMsg = document.createElement("p");
+        emptyMsg.className = "text-center text-gray-500 w-full";
+        emptyMsg.textContent = "Chưa có lịch sử tập trung hoặc phần thưởng nào.";
+        cakeListEl.appendChild(emptyMsg);
+        sessionInfoEl.textContent = "";
+        return;
+      }
+      // Show all rewardInventory items (with images, duplicates allowed)
+      rewardInventory.forEach(item => {
+        if (item.name === "Kem 1" || item.name === "Xanh lá") return;
 
-                const img = document.createElement("img");
-                img.src = cake.img;
-                img.alt = cake.alt;
-                img.className = "w-14 h-14 object-contain";
-                img.draggable = false;
+        const li = document.createElement("li");
+        li.className = "cursor-pointer rounded";
+        li.setAttribute("tabindex", "0");
+        li.setAttribute("role", "button");
+        li.setAttribute("aria-label", `${item.name}, ngày: ${item.date}, thời gian nhận: ${item.time}, thời lượng: ${item.durationMinutes} phút`);
+        li.dataset.name = item.name;
+        li.dataset.date = item.date;
+        li.dataset.time = item.time;
+        li.dataset.durationMinutes = item.durationMinutes;
 
-                const span = document.createElement("span");
-                span.className = "text-sm font-semibold text-gray-700";
-                span.textContent = cakeName;
+        const img = document.createElement("img");
+        img.src = item.img;
+        img.alt = item.alt;
+        img.className = "w-16 h-16 object-contain rounded";
+        img.draggable = false;
 
-                btn.appendChild(img);
-                btn.appendChild(span);
+        li.appendChild(img);
+        cakeListEl.appendChild(li);
 
-                btn.addEventListener("click", () => {
-                    if (isRunning) return;
-                    selectedCake = cakeName;
-                    updateCakeDisplay();
-                    menuSelectCake.classList.add("hidden");
-                    updateStartButtonState();
-                });
-
-                menuCakeList.appendChild(btn);
-            });
-        }
-
-        function renderMonthlyChart() {
-            monthlyChart.innerHTML = '';
-            
-            const sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
-            
-            if (sessionHistory.length === 0) {
-                monthlyChart.innerHTML = '<p class="text-center text-gray-500">Chưa có dữ liệu thống kê theo tháng</p>';
-                updateMonthlyStats(0, 0, 0, 0);
-                return;
-            }
-            
-            const monthlyData = {};
-            const currentDate = new Date();
-            const currentMonth = currentDate.getMonth();
-            const currentYear = currentDate.getFullYear();
-            
-            let totalSessions = 0;
-            let totalMinutes = 0;
-            let successfulSessions = 0;
-            
-            // Lọc dữ liệu trong 6 tháng gần đây
-            for (let i = 5; i >= 0; i--) {
-                const date = new Date(currentYear, currentMonth - i, 1);
-                const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
-                monthlyData[monthYear] = 0;
-            }
-            
-            // Tính tổng thời gian theo tháng
-            sessionHistory.forEach(session => {
-                const sessionDate = new Date(session.date);
-                const monthYear = `${sessionDate.getMonth() + 1}/${sessionDate.getFullYear()}`;
-                
-                if (!monthlyData[monthYear]) {
-                    monthlyData[monthYear] = 0;
-                }
-                
-                monthlyData[monthYear] += session.durationMinutes || 0;
-                
-                // Tính tổng số cho tháng hiện tại
-                if (sessionDate.getMonth() === currentMonth && sessionDate.getFullYear() === currentYear) {
-                    totalSessions++;
-                    totalMinutes += session.durationMinutes || 0;
-                    if (session.durationMinutes >= 5) {
-                        successfulSessions++;
-                    }
-                }
-            });
-            
-            const months = Object.keys(monthlyData);
-            const values = Object.values(monthlyData);
-            
-            if (months.length === 0) {
-                monthlyChart.innerHTML = '<p class="text-center text-gray-500">Chưa có dữ liệu thống kê theo tháng</p>';
-                return;
-            }
-            
-            const maxValue = Math.max(...values);
-            const chartHeight = 200;
-            const barWidth = 30;
-            const spacing = 40;
-            const chartWidth = months.length * (barWidth + spacing);
-            
-            monthlyChart.style.width = `${chartWidth}px`;
-            
-            months.forEach((month, index) => {
-                const value = values[index];
-                const barHeight = maxValue > 0 ? (value / maxValue) * chartHeight : 0;
-                
-                const barContainer = document.createElement('div');
-                barContainer.className = 'chart-bar-container';
-                barContainer.style.position = 'absolute';
-                barContainer.style.left = `${index * (barWidth + spacing)}px`;
-                barContainer.style.width = `${barWidth}px`;
-                barContainer.style.height = `${chartHeight}px`;
-                
-                const bar = document.createElement('div');
-                bar.className = 'chart-bar';
-                bar.style.height = `${barHeight}px`;
-                bar.style.backgroundColor = '#9BBA74';
-                bar.title = `${month}: ${value} phút`;
-                
-                const valueLabel = document.createElement('div');
-                valueLabel.className = 'chart-value';
-                valueLabel.textContent = value;
-                
-                const monthLabel = document.createElement('div');
-                monthLabel.className = 'chart-label';
-                monthLabel.textContent = month;
-                
-                barContainer.appendChild(bar);
-                barContainer.appendChild(valueLabel);
-                barContainer.appendChild(monthLabel);
-                
-                monthlyChart.appendChild(barContainer);
-            });
-            
-            // Cập nhật thống kê tháng
-            const avgSession = totalSessions > 0 ? Math.round(totalMinutes / totalSessions) : 0;
-            const successRate = totalSessions > 0 ? Math.round((successfulSessions / totalSessions) * 100) : 0;
-            
-            updateMonthlyStats(totalSessions, totalMinutes, avgSession, successRate);
-        }
-        
-        function updateMonthlyStats(sessions, minutes, avg, rate) {
-            totalSessionsEl.textContent = sessions;
-            totalMinutesEl.textContent = minutes;
-            avgSessionEl.textContent = avg;
-            successRateEl.textContent = `${rate}%`;
-        }
-
-        function updateLoginButtonUI() {
-            if (googleUser) {
-                googleSignInButton.style.display = "none";
-                googleLogoutBtn.style.display = "flex";
-                userAvatar.src = googleUser.picture;
-                userAvatar.alt = `Ảnh đại diện của ${googleUser.name}`;
-                userAvatar.classList.remove("hidden");
-                googleLogoutBtn.title = "Đăng xuất tài khoản Google";
-            } else {
-                googleSignInButton.style.display = "flex";
-                googleLogoutBtn.style.display = "none";
-                userAvatar.classList.add("hidden");
-                userAvatar.src = "";
-                userAvatar.alt = "";
-            }
-        }
-
-        function initializeGoogleSignIn() {
-            google.accounts.id.initialize({
-                client_id: "854945467513-gvec4958ef17nqjsoauvk9dcqinceeel.apps.googleusercontent.com",
-                callback: handleCredentialResponse,
-                auto_select: false,
-                cancel_on_tap_outside: false
-            });
-            google.accounts.id.renderButton(
-                googleSignInButton,
-                { theme: "filled_green", size: "medium", width: 160, height: 40 }
-            );
-        }
-
-        function handleCredentialResponse(response) {
-            const data = parseJwt(response.credential);
-            googleUser = {
-                id: data.sub,
-                name: data.name,
-                email: data.email,
-                picture: data.picture
-            };
-            localStorage.setItem("googleuser", JSON.stringify(googleUser));
-            updateLoginButtonUI();
-            alert("Bạn đã đăng nhập thành công: " + googleUser.name);
-        }
-
-        function parseJwt(token) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                return JSON.parse(jsonPayload);
-            } catch {
-                return {};
-            }
-        }
-
-        function openPanel() {
-            infoPanel.classList.remove("scale-0");
-            infoPanel.setAttribute("aria-hidden", "false");
-            overlay.classList.remove("hidden");
-        }
-
-        function closePanel() {
-            infoPanel.classList.add("scale-0");
-            infoPanel.setAttribute("aria-hidden", "true");
-            overlay.classList.add("hidden");
-        }
-
-        // Gán sự kiện
-        inputHour.addEventListener("input", () => {
-            if (inputHour.value.length > 2) inputHour.value = inputHour.value.slice(0, 2);
-            updateStartButtonState();
+        li.addEventListener("click", () => {
+          showSessionInfoByNameDateTime(item.name, item.date, item.time, item.durationMinutes);
         });
-        inputMinute.addEventListener("input", () => {
-            if (inputMinute.value.length > 2) inputMinute.value = inputMinute.value.slice(0, 2);
-            updateStartButtonState();
+        li.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            showSessionInfoByNameDateTime(item.name, item.date, item.time, item.durationMinutes);
+          }
         });
-        inputSecond.addEventListener("input", () => {
-            if (inputSecond.value.length > 2) inputSecond.value = inputSecond.value.slice(0, 2);
-            updateStartButtonState();
+      });
+      sessionInfoEl.textContent = "";
+    }
+
+    function showSessionInfoByNameDateTime(name, date, time, duration) {
+      sessionInfoEl.textContent = `Phần thưởng: ${name} | Ngày: ${date} | ${time} | Thời lượng: ${duration} phút` ;
+    }
+
+      function renderCakeMenu() {
+      const menuCakeList = document.getElementById("menu-cake-list");
+      menuCakeList.innerHTML = "";
+      Object.keys(cakes).forEach(cakeName => {
+        if (cakeName.trim() === "bánh nướng bóng đêm") return; // Bỏ bánh nướng bóng đêm khỏi menu nếu muốn
+        const cake = cakes[cakeName];
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "flex flex-col items-center space-y-1 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded";
+        btn.setAttribute("data-cake", cakeName);
+        btn.setAttribute("aria-label", `Chọn món ${cakeName}`);
+
+        const img = document.createElement("img");
+        img.src = cake.img;
+        img.alt = cake.alt;
+        img.className = "w-14 h-14 object-contain";
+        img.draggable = false;
+
+        const span = document.createElement("span");
+        span.className = "text-sm font-semibold text-gray-700";
+        span.textContent = cakeName;
+
+        btn.appendChild(img);
+        btn.appendChild(span);
+
+        btn.addEventListener("click", () => {
+          if (isRunning) return;
+          selectedCake = cakeName;
+          updateCakeDisplay();
+          menuSelectCake.classList.add("hidden");
+          updateStartButtonState();
         });
 
-        btnStartStop.addEventListener("click", () => {
-            if (isRunning) {
-                stopTimer(false);
-            } else {
-                startTimer();
-            }
-        });
+        menuCakeList.appendChild(btn);
+      });
+    }
 
-        circleCakeBtn.addEventListener("click", () => {
-            if (isRunning) return;
-            menuSelectCake.classList.toggle("hidden");
-        });
+    inputHour.addEventListener("input", () => {
+      if (inputHour.value.length > 2) inputHour.value = inputHour.value.slice(0, 2);
+      updateStartButtonState();
+    });
+    inputMinute.addEventListener("input", () => {
+      if (inputMinute.value.length > 2) inputMinute.value = inputMinute.value.slice(0, 2);
+      updateStartButtonState();
+    });
+    inputSecond.addEventListener("input", () => {
+      if (inputSecond.value.length > 2) inputSecond.value = inputSecond.value.slice(0, 2);
+      updateStartButtonState();
+    });
 
-        rewardConfirmBtn.addEventListener("click", () => {
-            rewardModal.classList.add("hidden");
-        });
+    btnStartStop.addEventListener("click", () => {
+      if (isRunning) {
+        stopTimer(false);
+      } else {
+        startTimer();
+      }
+    });
 
-        rewardCloseBtn.addEventListener("click", () => {
-            rewardModal.classList.add("hidden");
-        });
+    circleCakeBtn.addEventListener("click", () => {
+      if (isRunning) return;
+      menuSelectCake.classList.toggle("hidden");
+    });
 
-        feedbackBtn.addEventListener("click", () => {
-            const message = prompt("Vui lòng nhập góp ý của bạn:");
-            if (message === null) return;
-            if (message.trim() === "") {
-                alert("Vui lòng nhập nội dung góp ý.");
-                return;
-            }
-            feedbackMessage.value = message.trim();
-            feedbackForm.submit();
-        });
 
-        btnStatistics.addEventListener('click', () => {
-            if (isRunning) return;
-            renderMonthlyChart();
-            statisticsModal.classList.remove("hidden");
-        });
 
-        statisticsCloseBtn.addEventListener('click', () => {
-            statisticsModal.classList.add("hidden");
-        });
+    rewardConfirmBtn.addEventListener("click", () => {
+      rewardModal.classList.add("hidden");
+    });
 
-        infoToggleBtn.addEventListener("click", () => {
-            if (infoPanel.classList.contains("scale-0")) {
-                openPanel();
-            } else {
-                closePanel();
-            }
-        });
+    rewardCloseBtn.addEventListener("click", () => {
+      rewardModal.classList.add("hidden");
+    });
 
-        closeInfoBtn.addEventListener("click", closePanel);
+    feedbackBtn.addEventListener("click", () => {
+      const message = prompt("Vui lòng nhập góp ý của bạn:");
+      if (message === null) return;
+      if (message.trim() === "") {
+        alert("Vui lòng nhập nội dung góp ý.");
+        return;
+      }
+      feedbackMessage.value = message.trim();
+      feedbackForm.submit();
+    });
 
-        overlay.addEventListener("click", closePanel);
+    btnStatistics.addEventListener('click', () => {
+      if (isRunning) return;
+      renderSessionList();
+      statisticsModal.classList.remove("hidden");
+    });
 
-        googleLogoutBtn.addEventListener("click", () => {
-            logoutConfirmModal.classList.remove("hidden");
-        });
+    statisticsCloseBtn.addEventListener('click', () => {
+      statisticsModal.classList.add("hidden");
+    });
+btnStatisticsReward.addEventListener('click', () => { ... });
+statisticsRewardCloseBtn.addEventListener('click', () => { ... });
 
-        logoutYesBtn.addEventListener("click", () => {
-            googleUser = null;
-            localStorage.removeItem("googleuser");
-            updateLoginButtonUI();
-            logoutConfirmModal.classList.add("hidden");
-            alert("Bạn đã đăng xuất.");
-        });
 
-        logoutNoBtn.addEventListener("click", () => {
-            logoutConfirmModal.classList.add("hidden");
-        });
+    statisticsrewardCloseBtn.addEventListener('click', () => {
+      statisticsrewardModal.classList.add("hidden");
+    });
 
-        btnUseReward.addEventListener("click", () => {
-            alert("Tính năng sử dụng phần thưởng đang được phát triển!");
-        });
 
-        // Khởi tạo ứng dụng
-        window.addEventListener("load", () => {
-            updateCakeDisplay();
-            updateStartButtonState();
-            renderCakeMenu();
-            updateLoginButtonUI();
-            timeProgressBar.style.width = "0%";
-            initializeGoogleSignIn();
-            
-            // Đảm bảo sessionHistory tồn tại trong localStorage
-            if (!localStorage.getItem('sessionHistory')) {
-                localStorage.setItem('sessionHistory', JSON.stringify([]));
-            }
-            
-            // Xóa các inventory không cần thiết
-            localStorage.removeItem('cakeinventory');
-            localStorage.removeItem('plateinventory');
-            localStorage.removeItem('decorinventory');
-        });
-    </script>
+      
+    if (!localStorage.getItem('sessionHistory')) {
+      localStorage.setItem('sessionHistory', JSON.stringify([]));
+    }
+
+    window.addEventListener("load", () => {
+      updateCakeDisplay();
+      updateStartButtonState();
+      renderCakeMenu();
+      updateLoginButtonUI();
+      renderRewardInventory();
+      timeProgressBar.style.width = "100%";
+      initializeGoogleSignIn();
+    });
+
+    function renderRewardInventory() {
+      renderSessionList();
+    } 
+
+    // JWT parse helper
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch {
+        return {};
+      }
+    }
+
+  </script>
 </body>
 </html>
+
