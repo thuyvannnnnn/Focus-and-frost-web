@@ -1020,45 +1020,41 @@ btnStatistics.addEventListener('click', () => {
             updateLoginButtonUI();
         }
 
-        function handleCredentialResponse(response) {
-            const responsePayload = parseJwt(response.credential);
-            console.log("Google login successful:", responsePayload);
-            
-            // Lưu thông tin người dùng
-            googleUser = {
-                name: responsePayload.name,
-                email: responsePayload.email,
-                picture: responsePayload.picture,
-                sub: responsePayload.sub
-            };
-            
-            localStorage.setItem("googleuser", JSON.stringify(googleUser));
-            
-            // Cập nhật giao diện
-            updateLoginButtonUI();
-            
-            // Có thể gửi thông tin đến server của bạn ở đây
-            // sendUserDataToServer(googleUser);
-        }
-
-        function updateLoginButtonUI() {
-            const user = JSON.parse(localStorage.getItem("googleuser"));
-            
-            if (user) {
-                // Đã đăng nhập
-                document.getElementById("googleSignInButton").classList.add("hidden");
-                document.getElementById("googleLogoutBtn").classList.remove("hidden");
-                document.getElementById("userAvatar").classList.remove("hidden");
-                document.getElementById("userAvatar").src = user.picture;
-                document.getElementById("googleSignInButton").style.display = "none";
-            } else {
-                // Chưa đăng nhập
-                document.getElementById("googleSignInButton").classList.remove("hidden");
-                document.getElementById("googleLogoutBtn").classList.add("hidden");
-                document.getElementById("userAvatar").classList.add("hidden");
-            } 
-        }
-
+    function handleCredentialResponse(response) {
+    const responsePayload = parseJwt(response.credential);
+    console.log("Google login successful:", responsePayload);
+    
+    // Lưu thông tin người dùng
+    googleUser  = {
+        name: responsePayload.name,
+        email: responsePayload.email,
+        picture: responsePayload.picture,
+        sub: responsePayload.sub
+    };
+    
+    localStorage.setItem("googleuser", JSON.stringify(googleUser ));
+    console.log("User  saved to localStorage:", localStorage.getItem("googleuser"));
+    
+    // Cập nhật giao diện ngay lập tức
+    updateLoginButtonUI();
+}
+function updateLoginButtonUI() {
+    const user = JSON.parse(localStorage.getItem("googleuser"));
+    console.log("Updating login UI, user:", user);
+    
+    if (user) {
+        // Đã đăng nhập
+        googleSignInButton.classList.add("hidden");
+        googleLogoutBtn.classList.remove("hidden");
+        userAvatar.classList.remove("hidden");
+        userAvatar.src = user.picture;
+    } else {
+        // Chưa đăng nhập
+        googleSignInButton.classList.remove("hidden");
+        googleLogoutBtn.classList.add("hidden");
+        userAvatar.classList.add("hidden");
+    }
+}
         function handleLogout() {
             localStorage.removeItem("googleuser");
             googleUser = null;
