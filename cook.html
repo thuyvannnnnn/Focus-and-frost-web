@@ -1093,14 +1093,15 @@ function updateLoginButtonUI() {
         if (!localStorage.getItem('sessionHistory')) {
             localStorage.setItem('sessionHistory', JSON.stringify([]));
         }
-
-        window.addEventListener("load", () => {
+window.addEventListener("load", () => {
     updateCakeDisplay();
     updateStartButtonState();
     renderCakeMenu();
     timeProgressBar.style.width = "100%";
     initializeGoogleSignIn();
-    updateLoginButtonUI();
+    updateLoginButtonUI(); // Đảm bảo hàm này được gọi
+    
+});
 
     // Thêm sự kiện mở/đóng info panel
     infoToggleBtn.addEventListener("click", () => {
