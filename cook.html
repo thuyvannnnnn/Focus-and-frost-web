@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -1053,13 +1054,13 @@ function updateLoginButtonUI() {
     
     if (user && user.picture) {
         // Đã đăng nhập
-        googleSignInButton.classList.add("hidden");
+        googleSignInButton.style.display = "none";
         googleLogoutBtn.classList.remove("hidden");
         userAvatar.classList.remove("hidden");
         userAvatar.src = user.picture;
     } else {
         // Chưa đăng nhập
-        googleSignInButton.classList.remove("hidden");
+        googleSignInButton.style.display = "flex";
         googleLogoutBtn.classList.add("hidden");
         userAvatar.classList.add("hidden");
     }
@@ -1100,11 +1101,6 @@ function updateLoginButtonUI() {
     timeProgressBar.style.width = "100%";
     initializeGoogleSignIn();
     updateLoginButtonUI();
-
-      const userData = localStorage.getItem("googleuser");
-    if (!userData) {
-        googleSignInButton.style.display = "flex";
-    }
 
     // Thêm sự kiện mở/đóng info panel
     infoToggleBtn.addEventListener("click", () => {
@@ -1152,3 +1148,7 @@ function parseJwt(token) {
     </script>
 </body>
 </html>
+
+
+
+
