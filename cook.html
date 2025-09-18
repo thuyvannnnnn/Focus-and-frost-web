@@ -388,51 +388,38 @@
         </div>
     </div>
 
-    <!-- Statistics modal with monthly chart only -->
-    <div id="statistics-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="statistics-title">
-        <div class="bg-white rounded-lg max-w-4xl w-full p-6 flex flex-col space-y-4 shadow-lg max-h-[90vh] overflow-y-auto">
-            <h2 id="statistics-title" class="text-2xl font-bold text-center text-gray-800 mb-4">Thống kê theo tháng</h2>
-            
-            <!-- Chart view -->
-            <div id="chart-view">
-                <div class="chart-container" id="monthly-chart">
-                    <div class="chart-wrapper" id="chart-wrapper">
-                        <!-- Y-axis -->
-                        <div class="y-axis" id="y-axis"></div>
-                        <!-- X-axis -->
-                        <div class="x-axis" id="x-axis"></div>
-                        <!-- Tooltip -->
-                        <div class="tooltip hidden" id="chart-tooltip"></div>
-                    </div>
+   <div id="statistics-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="statistics-title">
+    <div class="bg-white rounded-lg max-w-4xl w-full p-6 flex flex-col space-y-4 shadow-lg max-h-[90vh] overflow-y-auto">
+        <h2 id="statistics-title" class="text-2xl font-bold text-center text-gray-800 mb-4">Thống kê theo tháng</h2>
+        
+        <!-- Bỏ phần biểu đồ -->
+
+        <!-- Monthly statistics summary -->
+        <div class="monthly-stats">
+            <h3>Tổng quan tháng này</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="total-sessions">0</div>
+                    <div class="stat-label">Phiên tập trung</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="total-minutes">0</div>
+                    <div class="stat-label">Phút tập trung</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="avg-session">0</div>
+                    <div class="stat-label">Phút/phiên</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="success-rate">0%</div>
+                    <div class="stat-label">Tỷ lệ thành công</div>
                 </div>
             </div>
-            
-            <!-- Monthly statistics summary -->
-            <div class="monthly-stats">
-                <h3>Tổng quan tháng này</h3>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value" id="total-sessions">0</div>
-                        <div class="stat-label">Phiên tập trung</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="total-minutes">0</div>
-                        <div class="stat-label">Phút tập trung</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="avg-session">0</div>
-                        <div class="stat-label">Phút/phiên</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="success-rate">0%</div>
-                        <div class="stat-label">Tỷ lệ thành công</div>
-                    </div>
-                </div>
-            </div>
-            
-            <button id="statistics-close" class="mt-4 px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto focus:outline-none focus:ring-2 focus:ring-[#b0102a]" type="button">Đóng</button>
         </div>
+        
+        <button id="statistics-close" class="mt-4 px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto focus:outline-none focus:ring-2 focus:ring-[#b0102a]" type="button">Đóng</button>
     </div>
+</div>
 
     <!-- Overlay -->
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
@@ -516,11 +503,7 @@
         const timeProgressBar = document.getElementById("time-progress-bar");
         const statisticsModal = document.getElementById("statistics-modal");
         const statisticsCloseBtn = document.getElementById("statistics-close");
-        const monthlyChart = document.getElementById("monthly-chart");
-        const chartWrapper = document.getElementById("chart-wrapper");
-        const yAxis = document.getElementById("y-axis");
-        const xAxis = document.getElementById("x-axis");
-        const chartTooltip = document.getElementById("chart-tooltip");
+       
         const infoToggleBtn = document.getElementById("infoToggleBtn");
         const infoPanel = document.getElementById("infoPanel");
         const closeInfoBtn = document.getElementById("closeInfoBtn");
