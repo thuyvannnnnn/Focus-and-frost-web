@@ -1093,15 +1093,18 @@ function updateLoginButtonUI() {
         if (!localStorage.getItem('sessionHistory')) {
             localStorage.setItem('sessionHistory', JSON.stringify([]));
         }
-window.addEventListener("load", () => {
+ window.addEventListener("load", () => {
     updateCakeDisplay();
     updateStartButtonState();
     renderCakeMenu();
     timeProgressBar.style.width = "100%";
     initializeGoogleSignIn();
-    updateLoginButtonUI(); // Đảm bảo hàm này được gọi
-    
-});
+    updateLoginButtonUI();
+
+      const userData = localStorage.getItem("googleuser");
+    if (!userData) {
+        googleSignInButton.style.display = "flex";
+    }
 
     // Thêm sự kiện mở/đóng info panel
     infoToggleBtn.addEventListener("click", () => {
