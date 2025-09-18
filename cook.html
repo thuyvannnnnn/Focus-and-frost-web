@@ -1050,12 +1050,13 @@ btnStatistics.addEventListener('click', () => {
                 document.getElementById("googleLogoutBtn").classList.remove("hidden");
                 document.getElementById("userAvatar").classList.remove("hidden");
                 document.getElementById("userAvatar").src = user.picture;
+                document.getElementById("googleSignInButton").style.display = "none";
             } else {
                 // Chưa đăng nhập
                 document.getElementById("googleSignInButton").classList.remove("hidden");
                 document.getElementById("googleLogoutBtn").classList.add("hidden");
                 document.getElementById("userAvatar").classList.add("hidden");
-            }
+            } 
         }
 
         function handleLogout() {
