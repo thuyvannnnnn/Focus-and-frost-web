@@ -1020,29 +1020,38 @@ btnStatistics.addEventListener('click', () => {
             updateLoginButtonUI();
         }
 
-    function handleCredentialResponse(response) {
+   function handleCredentialResponse(response) {
     const responsePayload = parseJwt(response.credential);
     console.log("Google login successful:", responsePayload);
     
     // Lưu thông tin người dùng
-    googleUser  = {
+    const userData = {
         name: responsePayload.name,
         email: responsePayload.email,
         picture: responsePayload.picture,
         sub: responsePayload.sub
     };
     
-    localStorage.setItem("googleuser", JSON.stringify(googleUser ));
-    console.log("User  saved to localStorage:", localStorage.getItem("googleuser"));
+    localStorage.setItem("googleuser", JSON.stringify(userData));
+    console.log("User saved to localStorage:", userData);
     
     // Cập nhật giao diện ngay lập tức
     updateLoginButtonUI();
 }
 function updateLoginButtonUI() {
-    const user = JSON.parse(localStorage.getItem("googleuser"));
+    const userData = localStorage.getItem("googleuser");
+    let user = null;
+    
+    try {
+        user = userData ? JSON.parse(userData) : null;
+    } catch (e) {
+        console.error("Error parsing user data:", e);
+        user = null;
+    }
+    
     console.log("Updating login UI, user:", user);
     
-    if (user) {
+    if (user && user.picture) {
         // Đã đăng nhập
         googleSignInButton.classList.add("hidden");
         googleLogoutBtn.classList.remove("hidden");
@@ -1055,17 +1064,18 @@ function updateLoginButtonUI() {
         userAvatar.classList.add("hidden");
     }
 }
-        function handleLogout() {
-            localStorage.removeItem("googleuser");
-            googleUser = null;
-            updateLoginButtonUI();
-            
-            // Đăng xuất khỏi Google
-            google.accounts.id.disableAutoSelect();
-            
-            console.log("User logged out");
-        }
-
+       function handleLogout() {
+    localStorage.removeItem("googleuser");
+    googleUser = null;
+    updateLoginButtonUI();
+    
+    // Đăng xuất khỏi Google
+    if (typeof google !== 'undefined') {
+        google.accounts.id.disableAutoSelect();
+    }
+    
+    console.log("User logged out");
+}
         // Xử lý sự kiện đăng xuất
         googleLogoutBtn.addEventListener('click', () => {
             logoutConfirmModal.classList.remove("hidden");
