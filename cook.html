@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -143,6 +142,13 @@
             align-items: center;
             gap: 10px;
         }
+        .data-info {
+            background-color: #edf2f7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #9BBA74;
+        }
     </style>
 </head>
 <body class="relative min-h-screen flex flex-col items-center bg-[#f0f3e8]">
@@ -208,6 +214,13 @@
                     <i class="fas fa-gift text-lg"></i>
                 </button>
             </div>
+        </div>
+
+        <!-- Data information section -->
+        <div class="data-info mt-6 w-full max-w-xs">
+            <h3 class="font-semibold text-gray-800">Thông tin dữ liệu:</h3>
+            <p class="text-sm text-gray-600">Dữ liệu được lưu trữ cục bộ trên trình duyệt này và không phân biệt theo tài khoản Google.</p>
+            <p class="text-sm text-gray-600 mt-2">Để lưu trữ riêng biệt cho mỗi tài khoản, ứng dụng cần kết nối với server backend.</p>
         </div>
 
         <!-- Hidden feedback form for submission -->
@@ -341,6 +354,7 @@
             <li>1. Sau khi bắt đầu tập trung, không thể thay đổi thời gian.</li>
             <li>2. Cần tập trung từ 5 phút trở lên: nhận được bánh đã chọn.</li>
             <li>3. Nếu có góp ý hay thắc mắc nào hãy bấm vào nút bên góc phải</li>
+            <li>4. Dữ liệu được lưu trữ cục bộ trên trình duyệt và không phân biệt theo tài khoản Google</li>
         </ul>
         <button id="infoImageBtn" type="button" aria-label="Nút dẫn tới https://s.shopee.vn/2LOiiEexWq" class="mt-2 mx-auto block focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded" onclick="window.location.href='https://s.shopee.vn/2LOiiEexWq'" style="width: 36.8rem; max-width: 100%;">
             <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/4fb2c5e6beca14572e1804fba69eed7455380768/01483ACC-E2E7-46D0-B15C-35BB9D41E3C4.png" class="w-full h-auto object-contain" draggable="false">
@@ -387,6 +401,8 @@
         let isRunning = false;
         let remainingSeconds = 0;
         let elapsedSeconds = 0;
+        
+        // Lấy dữ liệu từ localStorage
         let rewardInventory = JSON.parse(localStorage.getItem("rewardInventory")) || [];
         let sessionHistory = JSON.parse(localStorage.getItem("sessionHistory")) || [];
         let googleUser = JSON.parse(localStorage.getItem("googleuser")) || null;
@@ -535,7 +551,7 @@
         function startTimer() {
             if (isRunning) return;
             
-            // Nếu chưa có thời gian đã chọn, lấy từ input
+            // Nếu chưa có thời gian đã đặt, lấy từ input
             if (elapsedSeconds === 0) {
                 selectedTime = parseTimeInputs();
                 selectedTimeTotalSeconds = totalSeconds(selectedTime);
