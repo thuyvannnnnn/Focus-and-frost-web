@@ -149,6 +149,10 @@
             margin: 15px 0;
             border-left: 4px solid #9BBA74;
         }
+        .account-data-info {
+            background-color: #e6f7ff;
+            border-left: 4px solid #1890ff;
+        }
     </style>
 </head>
 <body class="relative min-h-screen flex flex-col items-center bg-[#f0f3e8]">
@@ -216,11 +220,11 @@
             </div>
         </div>
 
-        <!-- Data information section -->
-        <div class="data-info mt-6 w-full max-w-xs">
+        <!-- Data information section - ĐÃ CẬP NHẬT -->
+        <div class="data-info account-data-info mt-6 w-full max-w-xs">
             <h3 class="font-semibold text-gray-800">Thông tin dữ liệu:</h3>
-            <p class="text-sm text-gray-600">Dữ liệu được lưu trữ cục bộ trên trình duyệt này và không phân biệt theo tài khoản Google.</p>
-            <p class="text-sm text-gray-600 mt-2">Để lưu trữ riêng biệt cho mỗi tài khoản, ứng dụng cần kết nối với server backend.</p>
+            <p class="text-sm text-gray-600">Dữ liệu giờ đây được lưu trữ riêng biệt cho từng tài khoản Google.</p>
+            <p class="text-sm text-gray-600 mt-2">Khi bạn đăng nhập bằng tài khoản Google khác, bạn sẽ thấy dữ liệu phần thưởng và lịch sử tập trung khác nhau.</p>
         </div>
 
         <!-- Hidden feedback form for submission -->
@@ -354,7 +358,7 @@
             <li>1. Sau khi bắt đầu tập trung, không thể thay đổi thời gian.</li>
             <li>2. Cần tập trung từ 5 phút trở lên: nhận được bánh đã chọn.</li>
             <li>3. Nếu có góp ý hay thắc mắc nào hãy bấm vào nút bên góc phải</li>
-            <li>4. Dữ liệu được lưu trữ cục bộ trên trình duyệt và không phân biệt theo tài khoản Google</li>
+            <li>4. Dữ liệu được lưu trữ riêng biệt cho từng tài khoản Google</li>
         </ul>
         <button id="infoImageBtn" type="button" aria-label="Nút dẫn tới https://s.shopee.vn/2LOiiEexWq" class="mt-2 mx-auto block focus:outline-none focus:ring-2 focus:ring-[#9BBA74] rounded" onclick="window.location.href='https://s.shopee.vn/2LOiiEexWq'" style="width: 36.8rem; max-width: 100%;">
             <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/4fb2c5e6beca14572e1804fba69eed7455380768/01483ACC-E2E7-46D0-B15C-35BB9D41E3C4.png" class="w-full h-auto object-contain" draggable="false">
@@ -402,10 +406,24 @@
         let remainingSeconds = 0;
         let elapsedSeconds = 0;
         
-        // Lấy dữ liệu từ localStorage
-        let rewardInventory = JSON.parse(localStorage.getItem("rewardInventory")) || [];
-        let sessionHistory = JSON.parse(localStorage.getItem("sessionHistory")) || [];
+        // Hàm lấy khóa lưu trữ theo user ID
+        function getStorageKey(key) {
+            if (googleUser && googleUser.sub) {
+                return `${key}_${googleUser.sub}`;
+            }
+            return key; // Fallback nếu chưa đăng nhập
+        }
+
+        // Lấy dữ liệu từ localStorage theo user ID
         let googleUser = JSON.parse(localStorage.getItem("googleuser")) || null;
+        let rewardInventory = JSON.parse(localStorage.getItem(getStorageKey("rewardInventory"))) || [];
+        let sessionHistory = JSON.parse(localStorage.getItem(getStorageKey("sessionHistory"))) || [];
+
+        // Hàm lưu dữ liệu vào localStorage theo user ID
+        function saveUserData() {
+            localStorage.setItem(getStorageKey("rewardInventory"), JSON.stringify(rewardInventory));
+            localStorage.setItem(getStorageKey("sessionHistory"), JSON.stringify(sessionHistory));
+        }
 
         // Lấy các phần tử DOM
         const cakeImageEl = document.getElementById("cake-image");
@@ -660,24 +678,21 @@
             }
 
             // Lấy dữ liệu phần thưởng hiện tại từ localStorage
-            let rewardInventoryLocal = JSON.parse(localStorage.getItem("rewardInventory")) || [];
-            const now = new Date();
-            const dateStr = now.toISOString().slice(0, 10);
-            const timeStr = now.toTimeString().slice(0, 5);
-
             rewards.forEach(r => {
                 // Lưu phần thưởng kèm ngày giờ và thời lượng
                 const rewardWithDate = {
                     ...r,
-                    date: dateStr,
-                    time: timeStr,
+                    date: new Date().toISOString().slice(0, 10),
+                    time: new Date().toTimeString().slice(0, 5),
                     durationMinutes: Math.floor(elapsed / 60),
                     id: Date.now() + Math.random(), // id duy nhất
                 };
-                rewardInventoryLocal.push(rewardWithDate);
+                rewardInventory.push(rewardWithDate);
             });
-const userId = googleUser ? googleUser.sub : "anonymous";
-localStorage.setItem(`rewardInventory_${userId}`, JSON.stringify(rewards));
+            
+            // Lưu dữ liệu theo user ID
+            saveUserData();
+
             // Hiển thị phần thưởng trong modal
             rewardContent.innerHTML = "";
             rewards.forEach((r) => {
@@ -721,7 +736,9 @@ localStorage.setItem(`rewardInventory_${userId}`, JSON.stringify(rewards));
                 image: cakes[selectedCake].img,
             };
             sessionHistory.push(newSession);
-            localStorage.setItem("sessionHistory", JSON.stringify(sessionHistory));
+            
+            // Lưu dữ liệu theo user ID
+            saveUserData();
         }
 
         function addSessionToList(elapsedSeconds) {
@@ -737,8 +754,11 @@ localStorage.setItem(`rewardInventory_${userId}`, JSON.stringify(rewards));
                 durationMinutes: Math.floor(elapsedSeconds / 60),
                 image: cakes[selectedCake].img,
             };
-            const userId = googleUser ? googleUser.sub : "anonymous";
-localStorage.setItem(`sessionHistory_${userId}`, JSON.stringify(history));
+            sessionHistory.push(session);
+            
+            // Lưu dữ liệu theo user ID
+            saveUserData();
+            
             renderSessionList();
         }
 
@@ -939,10 +959,16 @@ localStorage.setItem(`sessionHistory_${userId}`, JSON.stringify(history));
             };
             
             localStorage.setItem("googleuser", JSON.stringify(userData));
-            console.log("User saved to localStorage:", userData);
+            googleUser = userData;
             
-            // Cập nhật giao diện ngay lập tức
+            // Tải dữ liệu cho user mới
+            rewardInventory = JSON.parse(localStorage.getItem(getStorageKey("rewardInventory"))) || [];
+            sessionHistory = JSON.parse(localStorage.getItem(getStorageKey("sessionHistory"))) || [];
+            
+            // Cập nhật giao diện
             updateLoginButtonUI();
+            renderSessionList(); // Cập nhật lại lịch sử hiển thị
+            updateMonthlyStats(); // Cập nhật lại thống kê
         }
 
         function updateLoginButtonUI() {
@@ -973,9 +999,21 @@ localStorage.setItem(`sessionHistory_${userId}`, JSON.stringify(history));
         }
 
         function handleLogout() {
+            // Lưu dữ liệu hiện tại trước khi đăng xuất
+            saveUserData();
+            
+            // Xóa thông tin user
             localStorage.removeItem("googleuser");
             googleUser = null;
+            
+            // Tải dữ liệu mặc định (cho trạng thái không đăng nhập)
+            rewardInventory = JSON.parse(localStorage.getItem(getStorageKey("rewardInventory"))) || [];
+            sessionHistory = JSON.parse(localStorage.getItem(getStorageKey("sessionHistory"))) || [];
+            
+            // Cập nhật giao diện
             updateLoginButtonUI();
+            renderSessionList();
+            updateMonthlyStats();
             
             // Đăng xuất khỏi Google
             if (typeof google !== 'undefined') {
