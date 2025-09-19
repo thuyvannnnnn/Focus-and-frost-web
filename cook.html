@@ -25,7 +25,6 @@
             border-radius: 3px;
         }
 
-        /* statistics-reward modal content: no grid, just images in a row wrapping naturally */
         #cake-list {
             list-style: none;
             padding: 0;
@@ -75,10 +74,8 @@
         }
 
         #googleSignInButton {
-            position: relative;
-            left: -15%;
-            width: 10rem !important;
-            height: 2.5rem !important;
+            width: 160px !important;
+            height: 40px !important;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -96,89 +93,6 @@
             transform: scale(1.1);
             outline: none;
             box-shadow: 0 0 8px rgba(0,0,0,0.4);
-        }
-        .chart-container {
-            width: 100%;
-            height: 300px;
-            margin-top: 20px;
-            position: relative;
-            overflow-x: auto;
-            overflow-y: hidden;
-        }
-        .chart-wrapper {
-            position: relative;
-            height: 100%;
-            min-width: 600px; /* Đảm bảo biểu đồ đủ rộng để scroll */
-        }
-        .chart-bar {
-            position: absolute;
-            bottom: 30px; /* Dành chỗ cho trục x */
-            background-color: #9BBA74;
-            width: 30px;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
-            transition: height 0.5s ease;
-            cursor: pointer;
-        }
-        .chart-bar:hover {
-            background-color: #8aa85a;
-        }
-        .chart-label {
-            position: absolute;
-            bottom: -25px;
-            text-align: center;
-            width: 30px;
-            font-size: 12px;
-        }
-        .chart-value {
-            position: absolute;
-            top: -20px;
-            text-align: center;
-            width: 30px;
-            font-size: 11px;
-        }
-        .y-axis {
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 10px 0;
-        }
-        .y-tick {
-            font-size: 10px;
-            color: #666;
-            text-align: right;
-            padding-right: 5px;
-        }
-        .x-axis {
-            position: absolute;
-            bottom: 0;
-            left: 30px;
-            width: calc(100% - 30px);
-            height: 20px;
-            border-top: 1px solid #ccc;
-        }
-        .stat-tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #9BBA74;
-        }
-        .stat-tab {
-            padding: 8px 16px;
-            cursor: pointer;
-            background: transparent;
-            border: none;
-            font-weight: bold;
-            color: #666;
-        }
-        .stat-tab.active {
-            color: #9BBA74;
-            border-bottom: 3px solid #9BBA74;
         }
         .monthly-stats {
             margin-top: 20px;
@@ -215,26 +129,20 @@
         #btn-start-stop {
             transition: all 0.3s ease;
         }
-        .tooltip {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            z-index: 100;
-            pointer-events: none;
-        }
         .g_id_signin iframe {
             width: 160px !important;
             height: 40px !important;
         }
-.scale-0 {
-    transform: scale(0);
-    opacity: 0;
-    pointer-events: none;
-}
-
+        .scale-0 {
+            transform: scale(0);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .header-auth {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
     </style>
 </head>
 <body class="relative min-h-screen flex flex-col items-center bg-[#f0f3e8]">
@@ -243,11 +151,13 @@
 
     <!-- Header với Google Login / Logout Button và Avatar -->
     <header class="w-full flex justify-end p-4 max-w-screen-md relative">
-        <div id="googleSignInButton" class="w-10 h-10"></div>
-        <button id="googleLogoutBtn" aria-label="Đăng xuất tài khoản Google" class="hidden flex items-center justify-center w-10 h-10 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] text-white font-semibold shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button" title="Đăng xuất tài khoản Google">
-            <i class="fas fa-arrow-right"></i>
-        </button>
-        <img id="userAvatar" src="" alt="Ảnh đại diện người dùng Google" class="hidden absolute top-4 left-4" tabindex="0" aria-label="Ảnh đại diện người dùng Google" draggable="false">
+        <div class="header-auth">
+            <div id="googleSignInButton"></div>
+            <button id="googleLogoutBtn" aria-label="Đăng xuất tài khoản Google" class="hidden flex items-center justify-center w-10 h-10 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] text-white font-semibold shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button" title="Đăng xuất tài khoản Google">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <img id="userAvatar" src="" alt="Ảnh đại diện người dùng Google" class="hidden" tabindex="0" aria-label="Ảnh đại diện người dùng Google" draggable="false">
+        </div>
     </header>
 
     <!-- Main Content -->
@@ -393,8 +303,6 @@
     <div class="bg-white rounded-lg max-w-4xl w-full p-6 flex flex-col space-y-4 shadow-lg max-h-[90vh] overflow-y-auto">
         <h2 id="statistics-title" class="text-2xl font-bold text-center text-gray-800 mb-4">Thống kê theo tháng</h2>
         
-        <!-- Bỏ phần biểu đồ -->
-
         <!-- Monthly statistics summary -->
         <div class="monthly-stats">
             <h3>Tổng quan tháng này</h3>
@@ -528,32 +436,30 @@
         const avgSessionEl = document.getElementById("avg-session");
         const successRateEl = document.getElementById("success-rate");
 
-function updateMonthlyStats() {
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
+        function updateMonthlyStats() {
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
 
-    // Lọc phiên trong tháng hiện tại
-    const sessionsThisMonth = sessionHistory.filter(session => {
-        const d = new Date(session.date);
-        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-    });
+            // Lọc phiên trong tháng hiện tại
+            const sessionsThisMonth = sessionHistory.filter(session => {
+                const d = new Date(session.date);
+                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+            });
 
-    const totalSessions = sessionsThisMonth.length;
-    const totalMinutes = sessionsThisMonth.reduce((sum, s) => sum + (s.durationMinutes || 0), 0);
-    const avgSession = totalSessions > 0 ? Math.round(totalMinutes / totalSessions) : 0;
+            const totalSessions = sessionsThisMonth.length;
+            const totalMinutes = sessionsThisMonth.reduce((sum, s) => sum + (s.durationMinutes || 0), 0);
+            const avgSession = totalSessions > 0 ? Math.round(totalMinutes / totalSessions) : 0;
 
-    // Giả sử tỷ lệ thành công là phiên có thời lượng >= 5 phút
-    const successCount = sessionsThisMonth.filter(s => s.durationMinutes >= 5).length;
-    const successRate = totalSessions > 0 ? Math.round((successCount / totalSessions) * 100) : 0;
+            // Giả sử tỷ lệ thành công là phiên có thời lượng >= 5 phút
+            const successCount = sessionsThisMonth.filter(s => s.durationMinutes >= 5).length;
+            const successRate = totalSessions > 0 ? Math.round((successCount / totalSessions) * 100) : 0;
 
-    totalSessionsEl.textContent = totalSessions;
-    totalMinutesEl.textContent = totalMinutes;
-    avgSessionEl.textContent = avgSession;
-    successRateEl.textContent = successRate + "%";
-}
-
-
+            totalSessionsEl.textContent = totalSessions;
+            totalMinutesEl.textContent = totalMinutes;
+            avgSessionEl.textContent = avgSession;
+            successRateEl.textContent = successRate + "%";
+        }
 
         // Các hàm chức năng
         function updateCakeDisplay() {
@@ -672,15 +578,6 @@ function updateMonthlyStats() {
             
             disableInputs(true);
         }
-function getSessionsLast3Months() {
-    const now = new Date();
-    const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, 1); // 3 tháng gần nhất, tính từ đầu tháng 3 tháng trước
-
-    return sessionHistory.filter(session => {
-        const sessionDate = new Date(session.date);
-        return sessionDate >= threeMonthsAgo && sessionDate <= now;
-    });
-}
 
         function stopTimer(finished = false) {
             if (!isRunning) return;
@@ -939,12 +836,13 @@ function getSessionsLast3Months() {
                 startTimer();
             }
         });
-btnStatistics.addEventListener('click', () => {
-    if (isRunning) return;
-    renderSessionList(); // nếu cần
-    updateMonthlyStats(); // cập nhật số liệu
-    statisticsModal.classList.remove("hidden");
-});
+
+        btnStatistics.addEventListener('click', () => {
+            if (isRunning) return;
+            renderSessionList();
+            updateMonthlyStats();
+            statisticsModal.classList.remove("hidden");
+        });
 
         circleCakeBtn.addEventListener("click", () => {
             if (isRunning) return;
@@ -954,8 +852,6 @@ btnStatistics.addEventListener('click', () => {
         rewardConfirmBtn.addEventListener("click", () => {
             rewardModal.classList.add("hidden");
         });
-
-
 
         rewardCloseBtn.addEventListener("click", () => {
             rewardModal.classList.add("hidden");
@@ -970,12 +866,6 @@ btnStatistics.addEventListener('click', () => {
             }
             feedbackMessage.value = message.trim();
             feedbackForm.submit();
-        });
-
-        btnStatistics.addEventListener('click', () => {
-            if (isRunning) return;
-            renderSessionList();
-            statisticsModal.classList.remove("hidden");
         });
 
         statisticsCloseBtn.addEventListener('click', () => {
@@ -1021,62 +911,65 @@ btnStatistics.addEventListener('click', () => {
             updateLoginButtonUI();
         }
 
-   function handleCredentialResponse(response) {
-    const responsePayload = parseJwt(response.credential);
-    console.log("Google login successful:", responsePayload);
-    
-    // Lưu thông tin người dùng
-    const userData = {
-        name: responsePayload.name,
-        email: responsePayload.email,
-        picture: responsePayload.picture,
-        sub: responsePayload.sub
-    };
-    
-    localStorage.setItem("googleuser", JSON.stringify(userData));
-    console.log("User saved to localStorage:", userData);
-    
-    // Cập nhật giao diện ngay lập tức
-    updateLoginButtonUI();
-}
-function updateLoginButtonUI() {
-    const userData = localStorage.getItem("googleuser");
-    let user = null;
-    
-    try {
-        user = userData ? JSON.parse(userData) : null;
-    } catch (e) {
-        console.error("Error parsing user data:", e);
-        user = null;
-    }
-    
-    console.log("Updating login UI, user:", user);
-    
-    if (user && user.picture) {
-        // Đã đăng nhập
-        googleSignInButton.style.display = "none";
-        googleLogoutBtn.classList.remove("hidden");
-        userAvatar.classList.remove("hidden");
-        userAvatar.src = user.picture;
-    } else {
-        // Chưa đăng nhập
-        googleSignInButton.style.display = "flex";
-        googleLogoutBtn.classList.add("hidden");
-        userAvatar.classList.add("hidden");
-    }
-}
-       function handleLogout() {
-    localStorage.removeItem("googleuser");
-    googleUser = null;
-    updateLoginButtonUI();
-    
-    // Đăng xuất khỏi Google
-    if (typeof google !== 'undefined') {
-        google.accounts.id.disableAutoSelect();
-    }
-    
-    console.log("User logged out");
-}
+        function handleCredentialResponse(response) {
+            const responsePayload = parseJwt(response.credential);
+            console.log("Google login successful:", responsePayload);
+            
+            // Lưu thông tin người dùng
+            const userData = {
+                name: responsePayload.name,
+                email: responsePayload.email,
+                picture: responsePayload.picture,
+                sub: responsePayload.sub
+            };
+            
+            localStorage.setItem("googleuser", JSON.stringify(userData));
+            console.log("User saved to localStorage:", userData);
+            
+            // Cập nhật giao diện ngay lập tức
+            updateLoginButtonUI();
+        }
+
+        function updateLoginButtonUI() {
+            const userData = localStorage.getItem("googleuser");
+            let user = null;
+            
+            try {
+                user = userData ? JSON.parse(userData) : null;
+            } catch (e) {
+                console.error("Error parsing user data:", e);
+                user = null;
+            }
+            
+            console.log("Updating login UI, user:", user);
+            
+            if (user && user.picture) {
+                // Đã đăng nhập
+                googleSignInButton.style.display = "none";
+                googleLogoutBtn.classList.remove("hidden");
+                userAvatar.classList.remove("hidden");
+                userAvatar.src = user.picture;
+            } else {
+                // Chưa đăng nhập
+                googleSignInButton.style.display = "block";
+                googleLogoutBtn.classList.add("hidden");
+                userAvatar.classList.add("hidden");
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem("googleuser");
+            googleUser = null;
+            updateLoginButtonUI();
+            
+            // Đăng xuất khỏi Google
+            if (typeof google !== 'undefined') {
+                google.accounts.id.disableAutoSelect();
+            }
+            
+            console.log("User logged out");
+        }
+
         // Xử lý sự kiện đăng xuất
         googleLogoutBtn.addEventListener('click', () => {
             logoutConfirmModal.classList.remove("hidden");
@@ -1094,61 +987,56 @@ function updateLoginButtonUI() {
         if (!localStorage.getItem('sessionHistory')) {
             localStorage.setItem('sessionHistory', JSON.stringify([]));
         }
- window.addEventListener("load", () => {
-    updateCakeDisplay();
-    updateStartButtonState();
-    renderCakeMenu();
-    timeProgressBar.style.width = "100%";
-    initializeGoogleSignIn();
-    updateLoginButtonUI();
 
-    // Thêm sự kiện mở/đóng info panel
-    infoToggleBtn.addEventListener("click", () => {
-        const isHidden = infoPanel.classList.contains("scale-0");
-        if (isHidden) {
-            infoPanel.classList.remove("scale-0");
-            infoPanel.setAttribute("aria-hidden", "false");
-            overlay.classList.remove("hidden");
-        } else {
-            infoPanel.classList.add("scale-0");
-            infoPanel.setAttribute("aria-hidden", "true");
-            overlay.classList.add("hidden");
+        window.addEventListener("load", () => {
+            updateCakeDisplay();
+            updateStartButtonState();
+            renderCakeMenu();
+            timeProgressBar.style.width = "100%";
+            initializeGoogleSignIn();
+            updateLoginButtonUI();
+
+            // Thêm sự kiện mở/đóng info panel
+            infoToggleBtn.addEventListener("click", () => {
+                const isHidden = infoPanel.classList.contains("scale-0");
+                if (isHidden) {
+                    infoPanel.classList.remove("scale-0");
+                    infoPanel.setAttribute("aria-hidden", "false");
+                    overlay.classList.remove("hidden");
+                } else {
+                    infoPanel.classList.add("scale-0");
+                    infoPanel.setAttribute("aria-hidden", "true");
+                    overlay.classList.add("hidden");
+                }
+            });
+
+            closeInfoBtn.addEventListener("click", () => {
+                infoPanel.classList.add("scale-0");
+                infoPanel.setAttribute("aria-hidden", "true");
+                overlay.classList.add("hidden");
+            });
+
+            // Ẩn info panel khi click ra ngoài (overlay)
+            overlay.addEventListener("click", () => {
+                infoPanel.classList.add("scale-0");
+                infoPanel.setAttribute("aria-hidden", "true");
+                overlay.classList.add("hidden");
+            });
+        });
+
+        // JWT parse helper
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch {
+                return {};
+            }
         }
-    });
-
-    closeInfoBtn.addEventListener("click", () => {
-        infoPanel.classList.add("scale-0");
-        infoPanel.setAttribute("aria-hidden", "true");
-        overlay.classList.add("hidden");
-    });
-
-    // Ẩn info panel khi click ra ngoài (overlay)
-    overlay.addEventListener("click", () => {
-        infoPanel.classList.add("scale-0");
-        infoPanel.setAttribute("aria-hidden", "true");
-        overlay.classList.add("hidden");
-    });
-});
-
-// JWT parse helper
-function parseJwt(token) {
-    try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        return JSON.parse(jsonPayload);
-    } catch {
-        return {};
-    }
-}
-
-
     </script>
 </body>
 </html>
-
-
-
-
