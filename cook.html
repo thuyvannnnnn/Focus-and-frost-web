@@ -676,9 +676,8 @@
                 };
                 rewardInventoryLocal.push(rewardWithDate);
             });
-            localStorage.setItem("rewardInventory", JSON.stringify(rewardInventoryLocal));
-            rewardInventory = rewardInventoryLocal;
-
+const userId = googleUser ? googleUser.sub : "anonymous";
+localStorage.setItem(`rewardInventory_${userId}`, JSON.stringify(rewards));
             // Hiển thị phần thưởng trong modal
             rewardContent.innerHTML = "";
             rewards.forEach((r) => {
@@ -738,8 +737,8 @@
                 durationMinutes: Math.floor(elapsedSeconds / 60),
                 image: cakes[selectedCake].img,
             };
-            sessionHistory.push(session);
-            localStorage.setItem("sessionHistory", JSON.stringify(sessionHistory));
+            const userId = googleUser ? googleUser.sub : "anonymous";
+localStorage.setItem(`sessionHistory_${userId}`, JSON.stringify(history));
             renderSessionList();
         }
 
