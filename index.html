@@ -29,7 +29,23 @@
     Bắt đầu
   </button>
 
+      <script>
+        // Lấy phần tử loading
+        const loadingElement = document.getElementById('loading');
+        
+        // Thiết lập hàm ẩn phần tử sau 2 giây( hiệu ứng nút loading)
+        setTimeout(() => {
+            loadingElement.style.opacity = '0';
+            
+            // Sau khi hoàn thành hiệu ứng mờ dần, ẩn hoàn toàn phần tử
+            setTimeout(() => {
+                loadingElement.style.display = 'none';
+            }, 200); // Thời gian này phải khớp với thời gian transition (0.2s = 200ms)
+        }, 2000); // 2000ms = 2 giây
+    
+      </script>
   <script>
+    
     setTimeout(() => {
       const btn = document.getElementById('startButton');
       btn.style.opacity = '1';
