@@ -1,65 +1,116 @@
-<html lang="en">
+<!DOCTYPE html>
+<html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Loading GIF with Delayed Button</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-  />
-  <style>
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Loading</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/515b09f6d1046f50eec450b708d8861d951ebb7a/loading.gif');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            width: 400px;
+        }
+        
+        .loading-text {
+            font-size: 32px;
+            color: #fff;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            transition: opacity 0.5s ease;
+        }
+        
+        #startButton {
+            display: none;
+            background: linear-gradient(to bottom, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-top: 20px;
+        }
+        
+        #startButton:hover {
+            background: linear-gradient(to bottom, #45a049, #4CAF50);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        #startButton:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dots::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
 </head>
-<body class="relative min-h-screen bg-gray-100 p-4 m-0 flex items-center justify-center">
-  <img
-    src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/515b09f6d1046f50eec450b708d8861d951ebb7a/loading.gif"
-    alt="Animated loading spinner with blue and white colors, circular shape, rotating smoothly"
-    class="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto object-contain"
-  />
-  <button
-    id="startButton"
-    class="absolute px-6 py-3 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 text-white rounded-lg text-lg font-semibold opacity-0 transition-opacity duration-500"
-    style="pointer-events: none; top: 60%; left: 50%; transform: translate(-50%, -50%);"
-  >
-    Bắt đầu
-  </button>
-     <div class="loading-container">
-        <div id="loading" class="loading-text">loading...</div>
+<body>
+    <div class="container">
+        <div id="loading" class="loading-text">loading<span class="dots"></span></div>
+        <button id="startButton">Bắt Đầu</button>
     </div>
 
-
-      <script>
-        // Lấy phần tử loading
+    <script>
+        // Lấy các phần tử
         const loadingElement = document.getElementById('loading');
+        const startButton = document.getElementById('startButton');
         
-        // Thiết lập hàm ẩn phần tử sau 2 giây( hiệu ứng nút loading)
+        // Sau 3 giây, ẩn chữ loading và hiện nút bắt đầu
         setTimeout(() => {
             loadingElement.style.opacity = '0';
             
-            // Sau khi hoàn thành hiệu ứng mờ dần, ẩn hoàn toàn phần tử
+            // Sau khi hoàn thành hiệu ứng mờ dần, ẩn hoàn toàn và hiện nút
             setTimeout(() => {
                 loadingElement.style.display = 'none';
-            }, 200); // Thời gian này phải khớp với thời gian transition (0.2s = 200ms)
-        }, 2000); // 2000ms = 2 giây
-    
-      </script>
-  <script>
-    
-    setTimeout(() => {
-      const btn = document.getElementById('startButton');
-      btn.style.opacity = '1';
-      btn.style.pointerEvents = 'auto';
-      btn.style.animation = 'fadeIn 1s forwards';
-    }, 3000);
-
-    document.getElementById('startButton').addEventListener('click', function() {
-      window.location.href = 'cook.html';
-    });
-  </script>
+                startButton.style.display = 'inline-block';
+                startButton.style.opacity = '0';
+                
+                // Hiệu ứng xuất hiện cho nút
+                setTimeout(() => {
+                    startButton.style.transition = 'opacity 0.5s ease';
+                    startButton.style.opacity = '1';
+                }, 10);
+            }, 500);
+        }, 3000);
+        
+        // Xử lý sự kiện khi nhấn nút bắt đầu
+        document.getElementById('startButton').addEventListener('click', function() {
+            window.location.href = 'cook.html';
+        });
+    </script>
 </body>
 </html>
