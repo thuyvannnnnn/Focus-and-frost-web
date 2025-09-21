@@ -23,11 +23,58 @@
             background-color: #9bba74;
             border-radius: 3px;
         }
+
+        #cake-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 70vh;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        #cake-list li {
+            background: transparent;
+            padding: 0;
+            cursor: pointer;
+            outline: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0.5rem;
+        }
+        #cake-list li:focus,
+        #cake-list li:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgb(0 0 0 / 0.2);
+            z-index: 10;
+        }
+        #cake-list li img {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            border-radius: 0.5rem;
+            user-select: none;
+            pointer-events: none;
+            display: block;
+        }
+        #cake-list li span {
+            display: none;
+        }
+        @media (max-width: 480px) {
+            #cake-list li img {
+                width: 48px;
+                height: 48px;
+            }
+        }
+
         #googleSignInButton {
-            position: relative;
-            left: -15%;
-            width: 10rem !important;
-            height: 2.5rem !important;
+            width: 160px !important;
+            height: 40px !important;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -45,53 +92,6 @@
             transform: scale(1.1);
             outline: none;
             box-shadow: 0 0 8px rgba(0,0,0,0.4);
-        }
-        .chart-container {
-            width: 100%;
-            height: 300px;
-            margin-top: 20px;
-            position: relative;
-        }
-        .chart-bar {
-            position: absolute;
-            bottom: 0;
-            background-color: #9BBA74;
-            width: 30px;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
-            transition: height 0.5s ease;
-        }
-        .chart-label {
-            position: absolute;
-            bottom: -25px;
-            text-align: center;
-            width: 30px;
-            font-size: 12px;
-        }
-        .chart-value {
-            position: absolute;
-            top: -20px;
-            text-align: center;
-            width: 30px;
-            font-size: 11px;
-        }
-        .stat-tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #9BBA74;
-        }
-        .stat-tab {
-            padding: 8px 16px;
-            cursor: pointer;
-            background: transparent;
-            border: none;
-            font-weight: bold;
-            color: #666;
-        }
-        .stat-tab.active {
-            color: #9BBA74;
-            border-bottom: 3px solid #9BBA74;
         }
         .monthly-stats {
             margin-top: 20px;
@@ -128,6 +128,31 @@
         #btn-start-stop {
             transition: all 0.3s ease;
         }
+        .g_id_signin iframe {
+            width: 160px !important;
+            height: 40px !important;
+        }
+        .scale-0 {
+            transform: scale(0);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .header-auth {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .data-info {
+            background-color: #edf2f7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #9BBA74;
+        }
+        .account-data-info {
+            background-color: #e6f7ff;
+            border-left: 4px solid #1890ff;
+        }
     </style>
 </head>
 <body class="relative min-h-screen flex flex-col items-center bg-[#f0f3e8]">
@@ -136,11 +161,13 @@
 
     <!-- Header với Google Login / Logout Button và Avatar -->
     <header class="w-full flex justify-end p-4 max-w-screen-md relative">
-        <div id="googleSignInButton" class="w-10 h-10"></div>
-        <button id="googleLogoutBtn" aria-label="Đăng xuất tài khoản Google" class="hidden flex items-center justify-center w-10 h-10 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] text-white font-semibold shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button" title="Đăng xuất tài khoản Google">
-            <i class="fas fa-arrow-right"></i>
-        </button>
-        <img id="userAvatar" src="" alt="Ảnh đại diện người dùng Google" class="hidden absolute top-4 left-4" tabindex="0" aria-label="Ảnh đại diện người dùng Google" draggable="false">
+        <div class="header-auth">
+            <div id="googleSignInButton"></div>
+            <button id="googleLogoutBtn" aria-label="Đăng xuất tài khoản Google" class="hidden flex items-center justify-center w-10 h-10 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] text-white font-semibold shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button" title="Đăng xuất tài khoản Google">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <img id="userAvatar" src="" alt="Ảnh đại diện người dùng Google" class="hidden" tabindex="0" aria-label="Ảnh đại diện người dùng Google" draggable="false">
+        </div>
     </header>
 
     <!-- Main Content -->
@@ -148,7 +175,7 @@
         <!-- Time selector rectangle above circle with progress bar -->
         <div id="time-selector" class="mb-6 w-full max-w-xs rounded-lg border-4 border-[#9BBA74] bg-white bg-opacity-90 p-4 flex flex-col select-none" aria-label="Chọn thời gian giờ phút giây">
             <div class="relative w-full h-10 rounded bg-gray-200 overflow-hidden mb-2" aria-hidden="true">
-                <div id="time-progress-bar" class="absolute left-0 top-0 h-10 bg-[#9BBA74] transition-all duration-500 ease-linear" style="width: 100%;"></div>
+                <div id="time-progress-bar" class="absolute left-0 top-0 h-10 bg-[#9BBA74] transition-all duration-500 ease-linear" style="width: 0%;"></div>
             </div>
             <div class="flex justify-center space-x-2 z-10 relative">
                 <input type="number" id="input-hour" min="0" max="23" placeholder="Giờ" class="w-16 text-center rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#9BBA74] text-lg font-semibold bg-transparent" aria-label="Giờ">
@@ -187,13 +214,13 @@
             
             <!-- Right side buttons -->
             <div class="flex space-x-4">
-                <button id="btn-use-reward" aria-label="Sử dụng phần thưởng" class="w-11 h-11 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] flex items-center justify-center text-white shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button">
+                <button id="btn-statistics-reward" aria-label="Sử dụng phần thưởng" class="w-11 h-11 rounded-full bg-[#9BBA74] hover:bg-[#8aa85a] flex items-center justify-center text-white shadow focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button">
                     <i class="fas fa-gift text-lg"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Hidden feedback form for submission -->
+             <!-- Hidden feedback form for submission -->
         <form id="feedback-form" action="https://formspree.io/f/mzzvylbg" method="POST" class="hidden">
             <label>
                 <input type="email" name="thuyvan01012008@gmail.com" value="madebyvann">
@@ -209,6 +236,49 @@
     <button id="infoToggleBtn" aria-label="Toggle information panel" class="absolute top-4 left-4 p-3 bg-green-600 text-white rounded-full shadow-md hover:bg-green-700 bg-opacity-50 focus:outline-none focus:ring-2 focus:ring-green-400 flex items-center justify-center w-12 h-12">
         <i class="fas fa-question text-lg"></i>
     </button>
+
+    <!-- statistics-reward modal with scrollable images -->
+    <div
+        id="statistics-reward-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="statistics-reward-title"
+    >
+        <div class="bg-white rounded-lg max-w-md w-full p-6 flex flex-col space-y-4 shadow-lg max-h-[90vh] overflow-y-auto">
+            <h2 id="statistics-reward-title" class="text-2xl font-bold text-center text-gray-800 mb-4">
+                Lịch sử
+            </h2>
+            <ul id="cake-list" tabindex="0" aria-label="lịch sử tập trung">
+                <li tabindex="0" role="button" aria-label="Phần thưởng: bánh mâm xôi, ngày nhận: 2024-06-14, thời gian nhận: 21:30, thời lượng: 18 phút" class="cursor-pointer rounded">
+                    <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/IMG_7293.png" alt="Hình ảnh quả cà tím tím tươi, bóng mượt, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
+                </li>
+                <li tabindex="0" role="button" aria-label="Phần thưởng: bánh cherry, ngày nhận: 2024-06-15, thời gian nhận: 22:45, thời lượng: 22 phút" class="cursor-pointer rounded">
+                    <img src="https://raw.githubusercontent.com/thuyvannnnnn/Focus-and-frost/main/B89384A0-0587-48F6-BBCB-4EC98C592F1C.png" alt="Hình ảnh bánh cherry màu đỏ tươi, bánh tròn nhỏ, nền trắng" class="w-16 h-16 object-contain rounded" draggable="false" />
+                </li>
+            </ul>
+            <div id="session-info" class="mt-4 p-4 bg-gray-100 rounded-lg text-center text-gray-700 min-h-[4rem] select-none" aria-live="polite" aria-atomic="true"></div>
+            <button
+                id="statistics-reward-close"
+                class="mt-4 px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto focus:outline-none focus:ring-2 focus:ring-[#b0102a]"
+                type="button"
+            >
+                Đóng
+            </button>
+        </div>
+    </div>
+
+    <!-- Reward modal -->
+    <div id="reward-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="reward-title">
+        <div class="bg-white rounded-lg max-w-sm w-full p-6 flex flex-col space-y-4 shadow-lg">
+            <h2 id="reward-title" class="text-xl font-semibold text-gray-800 text-center">Phần thưởng</h2>
+            <div id="reward-content" class="flex flex-col items-center space-y-2"></div>
+            <div class="flex justify-center space-x-4">
+                <button id="reward-confirm" class="px-6 py-2 rounded bg-[#9BBA74] hover:bg-[#8aa85a] text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#8aa85a]" type="button">OK</button>
+                <button id="reward-close" class="px-6 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold focus:outline-none focus:ring-2 focus:ring-gray-400" type="button">Đóng</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Logout Confirmation Modal -->
     <div id="logout-confirm-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="logout-confirm-title">
@@ -239,54 +309,36 @@
         </div>
     </div>
 
-    <!-- Reward modal -->
-    <div id="reward-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="reward-title">
-        <div class="bg-white rounded-lg max-w-md w-full p-6 flex flex-col space-y-4 shadow-lg relative">
-            <h2 id="reward-title" class="text-xl font-semibold text-gray-800 text-center">Hoan hô! Bạn đã nhận được</h2>
-            <div id="reward-content" class="flex flex-row items-center justify-center space-x-4 flex-wrap" aria-live="polite" aria-atomic="true"></div>
-            <button id="reward-confirm" class="mt-4 px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto focus:outline-none focus:ring-2 focus:ring-[#b0102a]" type="button">Xác nhận</button>
-            <button id="reward-close" aria-label="Đóng bảng hoan hô" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#b0102a] rounded" type="button">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-        </div>
-    </div>
-
-    <!-- Statistics modal with monthly chart only -->
-    <div id="statistics-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="statistics-title">
-        <div class="bg-white rounded-lg max-w-md w-full p-6 flex flex-col space-y-4 shadow-lg max-h-[90vh] overflow-y-auto">
-            <h2 id="statistics-title" class="text-2xl font-bold text-center text-gray-800 mb-4">Thống kê theo tháng</h2>
-            
-            <!-- Chart view -->
-            <div id="chart-view">
-                <div class="chart-container" id="monthly-chart"></div>
-            </div>
-            
-            <!-- Monthly statistics summary -->
-            <div class="monthly-stats">
-                <h3>Tổng quan tháng này</h3>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value" id="total-sessions">0</div>
-                        <div class="stat-label">Phiên tập trung</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="total-minutes">0</div>
-                        <div class="stat-label">Phút tập trung</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="avg-session">0</div>
-                        <div class="stat-label">Phút/phiên</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="success-rate">0%</div>
-                        <div class="stat-label">Tỷ lệ thành công</div>
-                    </div>
+   <div id="statistics-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="statistics-title">
+    <div class="bg-white rounded-lg max-w-4xl w-full p-6 flex flex-col space-y-4 shadow-lg max-h-[90vh] overflow-y-auto">
+        <h2 id="statistics-title" class="text-2xl font-bold text-center text-gray-800 mb-4">Thống kê theo tháng</h2>
+        
+        <!-- Monthly statistics summary -->
+        <div class="monthly-stats">
+            <h3>Tổng quan tháng này</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="total-sessions">0</div>
+                    <div class="stat-label">Phiên tập trung</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="total-minutes">0</div>
+                    <div class="stat-label">Phút tập trung</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="avg-session">0</div>
+                    <div class="stat-label">Phút/phiên</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="success-rate">0%</div>
+                    <div class="stat-label">Tỷ lệ thành công</div>
                 </div>
             </div>
-            
-            <button id="statistics-close" class="mt-4 px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto focus:outline-none focus:ring-2 focus:ring-[#b0102a]" type="button">Đóng</button>
         </div>
+        
+        <button id="statistics-close" class="mt-4 px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto focus:outline-none focus:ring-2 focus:ring-[#b0102a]" type="button">Đóng</button>
     </div>
+</div>
 
     <!-- Overlay -->
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
@@ -306,7 +358,9 @@
         <button id="closeInfoBtn" class="mt-2 px-6 py-2 rounded bg-[#DC143C] hover:bg-[#b0102a] text-white font-semibold mx-auto block focus:outline-none focus:ring-2 focus:ring-[#b0102a]" type="button">Đóng</button>
     </aside>
 
-    <audio id="background-music" loop preload="auto" src="https://github.com/thuyvannnnnn/Focus-and-frost/raw/refs/heads/main/45.audio.mp3"></audio>
+    <audio id="background-music" loop preload="auto">
+        <source src="https://github.com/thuyvannnnnn/Focus-and-frost/raw/refs/heads/main/45.audio.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- Script Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client"></script>
@@ -343,9 +397,25 @@
         let isRunning = false;
         let remainingSeconds = 0;
         let elapsedSeconds = 0;
-        let rewardInventory = JSON.parse(localStorage.getItem("rewardInventory")) || [];
-        let sessionHistory = JSON.parse(localStorage.getItem("sessionHistory")) || [];
+        
+        // Hàm lấy khóa lưu trữ theo user ID
+        function getStorageKey(key) {
+            if (googleUser && googleUser.sub) {
+                return `${key}_${googleUser.sub}`;
+            }
+            return key; // Fallback nếu chưa đăng nhập
+        }
+
+        // Lấy dữ liệu từ localStorage theo user ID
         let googleUser = JSON.parse(localStorage.getItem("googleuser")) || null;
+        let rewardInventory = JSON.parse(localStorage.getItem(getStorageKey("rewardInventory"))) || [];
+        let sessionHistory = JSON.parse(localStorage.getItem(getStorageKey("sessionHistory"))) || [];
+
+        // Hàm lưu dữ liệu vào localStorage theo user ID
+        function saveUserData() {
+            localStorage.setItem(getStorageKey("rewardInventory"), JSON.stringify(rewardInventory));
+            localStorage.setItem(getStorageKey("sessionHistory"), JSON.stringify(sessionHistory));
+        }
 
         // Lấy các phần tử DOM
         const cakeImageEl = document.getElementById("cake-image");
@@ -368,7 +438,7 @@
         const timeProgressBar = document.getElementById("time-progress-bar");
         const statisticsModal = document.getElementById("statistics-modal");
         const statisticsCloseBtn = document.getElementById("statistics-close");
-        const monthlyChart = document.getElementById("monthly-chart");
+       
         const infoToggleBtn = document.getElementById("infoToggleBtn");
         const infoPanel = document.getElementById("infoPanel");
         const closeInfoBtn = document.getElementById("closeInfoBtn");
@@ -379,14 +449,43 @@
         const logoutConfirmModal = document.getElementById("logout-confirm-modal");
         const logoutYesBtn = document.getElementById("logout-yes-btn");
         const logoutNoBtn = document.getElementById("logout-no-btn");
-        const btnUseReward = document.getElementById("btn-use-reward");
+        const btnStatisticsReward = document.getElementById("btn-statistics-reward");
         const btnStatistics = document.getElementById("btn-statistics");
-        
+        const cakeListEl = document.getElementById("cake-list");
+        const sessionInfoEl = document.getElementById("session-info");
+        const statisticsRewardModal = document.getElementById("statistics-reward-modal");
+        const statisticsRewardCloseBtn = document.getElementById("statistics-reward-close");
+
         // Các phần tử thống kê
         const totalSessionsEl = document.getElementById("total-sessions");
         const totalMinutesEl = document.getElementById("total-minutes");
         const avgSessionEl = document.getElementById("avg-session");
         const successRateEl = document.getElementById("success-rate");
+
+        function updateMonthlyStats() {
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            // Lọc phiên trong tháng hiện tại
+            const sessionsThisMonth = sessionHistory.filter(session => {
+                const d = new Date(session.date);
+                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+            });
+
+            const totalSessions = sessionsThisMonth.length;
+            const totalMinutes = sessionsThisMonth.reduce((sum, s) => sum + (s.durationMinutes || 0), 0);
+            const avgSession = totalSessions > 0 ? Math.round(totalMinutes / totalSessions) : 0;
+
+            // Giả sử tỷ lệ thành công là phiên có thời lượng >= 5 phút
+            const successCount = sessionsThisMonth.filter(s => s.durationMinutes >= 5).length;
+            const successRate = totalSessions > 0 ? Math.round((successCount / totalSessions) * 100) : 0;
+
+            totalSessionsEl.textContent = totalSessions;
+            totalMinutesEl.textContent = totalMinutes;
+            avgSessionEl.textContent = avgSession;
+            successRateEl.textContent = successRate + "%";
+        }
 
         // Các hàm chức năng
         function updateCakeDisplay() {
@@ -461,30 +560,48 @@
         let selectedTimeTotalSeconds = 0;
         function startTimer() {
             if (isRunning) return;
+            
+            // Nếu chưa có thời gian đã đặt, lấy từ input
             if (elapsedSeconds === 0) {
                 selectedTime = parseTimeInputs();
                 selectedTimeTotalSeconds = totalSeconds(selectedTime);
                 remainingSeconds = selectedTimeTotalSeconds;
+                
+                // Kiểm tra nếu không có thời gian hợp lệ
+                if (selectedTimeTotalSeconds <= 0) {
+                    alert("Vui lòng nhập thời gian hợp lệ!");
+                    return;
+                }
             } else { 
                 remainingSeconds = selectedTimeTotalSeconds - elapsedSeconds;
             }
+            
             if (remainingSeconds <= 0) return;
+            
             isRunning = true;
             updateStartButtonState();
             cookingGif.classList.remove("hidden");
             cakeImageEl.classList.add("hidden");
-            backgroundMusic.play().catch(() => {});
+            
+            // Thử phát nhạc nền
+            backgroundMusic.play().catch((error) => {
+                console.log("Không thể phát nhạc nền:", error);
+            });
+            
             updateTimeInputsFromRemaining();
             updateProgressBar();
+            
             timerInterval = setInterval(() => {
                 remainingSeconds--;
                 elapsedSeconds++;
                 updateTimeInputsFromRemaining();
                 updateProgressBar();
+                
                 if (remainingSeconds <= 0) {
                     stopTimer(true);
                 }
             }, 1000);
+            
             disableInputs(true);
         }
 
@@ -498,6 +615,7 @@
             backgroundMusic.pause();
             backgroundMusic.currentTime = 0;
             disableInputs(false);
+            
             if (finished) {
                 saveSessionHistory(elapsedSeconds);
                 showReward(elapsedSeconds);
@@ -513,7 +631,7 @@
             inputHour.value = "";
             inputMinute.value = "";
             inputSecond.value = "";
-            timeProgressBar.style.width = "100%";
+            timeProgressBar.style.width = "0%";
             updateStartButtonState();
         }
 
@@ -523,13 +641,16 @@
             inputSecond.disabled = disable;
             circleCakeBtn.disabled = disable;
             document.getElementById("btn-statistics").disabled = disable;
+            document.getElementById("btn-statistics-reward").disabled = disable;
         }
 
         function showReward(elapsed) {
             const timeMinutes = elapsed / 60;
             let rewards = [];
             let rewardName = "";
+
             if (timeMinutes < 3) {
+                // Dưới 3 phút: phần thưởng bánh nướng bóng đêm
                 rewards = [{
                     type: "cake",
                     name: "bánh nướng bóng đêm",
@@ -538,6 +659,7 @@
                 }];
                 rewardName = "bánh nướng bóng đêm";
             } else {
+                // Từ 3 phút trở lên: phần thưởng bánh đã chọn
                 rewards = [{
                     type: "cake",
                     name: selectedCake,
@@ -547,24 +669,23 @@
                 rewardName = selectedCake;
             }
 
-            let rewardInventoryLocal = JSON.parse(localStorage.getItem("rewardInventory")) || [];
-            const now = new Date();
-            const dateStr = now.toISOString().slice(0, 10);
-            const timeStr = now.toTimeString().slice(0, 5);
-
+            // Lấy dữ liệu phần thưởng hiện tại từ localStorage
             rewards.forEach(r => {
+                // Lưu phần thưởng kèm ngày giờ và thời lượng
                 const rewardWithDate = {
                     ...r,
-                    date: dateStr,
-                    time: timeStr,
+                    date: new Date().toISOString().slice(0, 10),
+                    time: new Date().toTimeString().slice(0, 5),
                     durationMinutes: Math.floor(elapsed / 60),
-                    id: Date.now() + Math.random(),
+                    id: Date.now() + Math.random(), // id duy nhất
                 };
-                rewardInventoryLocal.push(rewardWithDate);
+                rewardInventory.push(rewardWithDate);
             });
-            localStorage.setItem("rewardInventory", JSON.stringify(rewardInventoryLocal));
-            rewardInventory = rewardInventoryLocal;
+            
+            // Lưu dữ liệu theo user ID
+            saveUserData();
 
+            // Hiển thị phần thưởng trong modal
             rewardContent.innerHTML = "";
             rewards.forEach((r) => {
                 const div = document.createElement("div");
@@ -583,7 +704,10 @@
             });
             const textLine = document.createElement("p");
             textLine.className = "text-center font-semibold text-lg text-gray-900 mt-2";
-            textLine.textContent = "Hoan hô! Bạn đã nhận được " + rewards.map((r) => r.name).join(", ") + ".";
+            textLine.textContent =
+                "Hoan hô! Bạn đã nhận được " +
+                rewards.map((r) => r.name).join(", ") +
+                ".";
             rewardContent.appendChild(textLine);
 
             rewardModal.classList.remove("hidden");
@@ -604,14 +728,87 @@
                 image: cakes[selectedCake].img,
             };
             sessionHistory.push(newSession);
-            localStorage.setItem("sessionHistory", JSON.stringify(sessionHistory));
+            
+            // Lưu dữ liệu theo user ID
+            saveUserData();
+        }
+
+        function addSessionToList(elapsedSeconds) {
+            const now = new Date();
+            const dateStr = now.toISOString().slice(0, 10);
+            const timeStr = now.toTimeString().slice(0, 5);
+            const session = {
+                id: Date.now(),
+                name: selectedCake,
+                time: timeStr,
+                date: dateStr,
+                timeSeconds: elapsedSeconds,
+                durationMinutes: Math.floor(elapsedSeconds / 60),
+                image: cakes[selectedCake].img,
+            };
+            sessionHistory.push(session);
+            
+            // Lưu dữ liệu theo user ID
+            saveUserData();
+            
+            renderSessionList();
+        }
+
+        function renderSessionList() {
+            cakeListEl.innerHTML = "";
+            if (!sessionHistory.length && rewardInventory.length === 0) {
+                const emptyMsg = document.createElement("p");
+                emptyMsg.className = "text-center text-gray-500 w-full";
+                emptyMsg.textContent = "Chưa có lịch sử tập trung hoặc phần thưởng nào.";
+                cakeListEl.appendChild(emptyMsg);
+                sessionInfoEl.textContent = "";
+                return;
+            }
+            // Show all rewardInventory items (with images, duplicates allowed)
+            rewardInventory.forEach(item => {
+                if (item.name === "Kem 1" || item.name === "Xanh lá") return;
+
+                const li = document.createElement("li");
+                li.className = "cursor-pointer rounded";
+                li.setAttribute("tabindex", "0");
+                li.setAttribute("role", "button");
+                li.setAttribute("aria-label", `${item.name}, ngày: ${item.date}, thời gian nhận: ${item.time}, thời lượng: ${item.durationMinutes} phút`);
+                li.dataset.name = item.name;
+                li.dataset.date = item.date;
+                li.dataset.time = item.time;
+                li.dataset.durationMinutes = item.durationMinutes;
+
+                const img = document.createElement("img");
+                img.src = item.img;
+                img.alt = item.alt;
+                img.className = "w-16 h-16 object-contain rounded";
+                img.draggable = false;
+
+                li.appendChild(img);
+                cakeListEl.appendChild(li);
+
+                li.addEventListener("click", () => {
+                    showSessionInfoByNameDateTime(item.name, item.date, item.time, item.durationMinutes);
+                });
+                li.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        showSessionInfoByNameDateTime(item.name, item.date, item.time, item.durationMinutes);
+                    }
+                });
+            });
+            sessionInfoEl.textContent = "";
+        }
+
+        function showSessionInfoByNameDateTime(name, date, time, duration) {
+            sessionInfoEl.textContent = `Phần thưởng: ${name} | Ngày: ${date} | ${time} | Thời lượng: ${duration} phút`;
         }
 
         function renderCakeMenu() {
             const menuCakeList = document.getElementById("menu-cake-list");
             menuCakeList.innerHTML = "";
             Object.keys(cakes).forEach(cakeName => {
-                if (cakeName.trim() === "bánh nướng bóng đêm") return;
+                if (cakeName.trim() === "bánh nướng bóng đêm") return; // Bỏ bánh nướng bóng đêm khỏi menu nếu muốn
                 const cake = cakes[cakeName];
 
                 const btn = document.createElement("button");
@@ -645,185 +842,7 @@
             });
         }
 
-        function renderMonthlyChart() {
-            monthlyChart.innerHTML = '';
-            
-            const sessionHistory = JSON.parse(localStorage.getItem('sessionHistory')) || [];
-            
-            if (sessionHistory.length === 0) {
-                monthlyChart.innerHTML = '<p class="text-center text-gray-500">Chưa có dữ liệu thống kê theo tháng</p>';
-                updateMonthlyStats(0, 0, 0, 0);
-                return;
-            }
-            
-            const monthlyData = {};
-            const currentDate = new Date();
-            const currentMonth = currentDate.getMonth();
-            const currentYear = currentDate.getFullYear();
-            
-            let totalSessions = 0;
-            let totalMinutes = 0;
-            let successfulSessions = 0;
-            
-            // Lọc dữ liệu trong 6 tháng gần đây
-            for (let i = 5; i >= 0; i--) {
-                const date = new Date(currentYear, currentMonth - i, 1);
-                const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
-                monthlyData[monthYear] = 0;
-            }
-            
-            // Tính tổng thời gian theo tháng
-            sessionHistory.forEach(session => {
-                const sessionDate = new Date(session.date);
-                const monthYear = `${sessionDate.getMonth() + 1}/${sessionDate.getFullYear()}`;
-                
-                if (!monthlyData[monthYear]) {
-                    monthlyData[monthYear] = 0;
-                }
-                
-                monthlyData[monthYear] += session.durationMinutes || 0;
-                
-                // Tính tổng số cho tháng hiện tại
-                if (sessionDate.getMonth() === currentMonth && sessionDate.getFullYear() === currentYear) {
-                    totalSessions++;
-                    totalMinutes += session.durationMinutes || 0;
-                    if (session.durationMinutes >= 5) {
-                        successfulSessions++;
-                    }
-                }
-            });
-            
-            const months = Object.keys(monthlyData);
-            const values = Object.values(monthlyData);
-            
-            if (months.length === 0) {
-                monthlyChart.innerHTML = '<p class="text-center text-gray-500">Chưa có dữ liệu thống kê theo tháng</p>';
-                return;
-            }
-            
-            const maxValue = Math.max(...values);
-            const chartHeight = 200;
-            const barWidth = 30;
-            const spacing = 40;
-            const chartWidth = months.length * (barWidth + spacing);
-            
-            monthlyChart.style.width = `${chartWidth}px`;
-            
-            months.forEach((month, index) => {
-                const value = values[index];
-                const barHeight = maxValue > 0 ? (value / maxValue) * chartHeight : 0;
-                
-                const barContainer = document.createElement('div');
-                barContainer.className = 'chart-bar-container';
-                barContainer.style.position = 'absolute';
-                barContainer.style.left = `${index * (barWidth + spacing)}px`;
-                barContainer.style.width = `${barWidth}px`;
-                barContainer.style.height = `${chartHeight}px`;
-                
-                const bar = document.createElement('div');
-                bar.className = 'chart-bar';
-                bar.style.height = `${barHeight}px`;
-                bar.style.backgroundColor = '#9BBA74';
-                bar.title = `${month}: ${value} phút`;
-                
-                const valueLabel = document.createElement('div');
-                valueLabel.className = 'chart-value';
-                valueLabel.textContent = value;
-                
-                const monthLabel = document.createElement('div');
-                monthLabel.className = 'chart-label';
-                monthLabel.textContent = month;
-                
-                barContainer.appendChild(bar);
-                barContainer.appendChild(valueLabel);
-                barContainer.appendChild(monthLabel);
-                
-                monthlyChart.appendChild(barContainer);
-            });
-            
-            // Cập nhật thống kê tháng
-            const avgSession = totalSessions > 0 ? Math.round(totalMinutes / totalSessions) : 0;
-            const successRate = totalSessions > 0 ? Math.round((successfulSessions / totalSessions) * 100) : 0;
-            
-            updateMonthlyStats(totalSessions, totalMinutes, avgSession, successRate);
-        }
-        
-        function updateMonthlyStats(sessions, minutes, avg, rate) {
-            totalSessionsEl.textContent = sessions;
-            totalMinutesEl.textContent = minutes;
-            avgSessionEl.textContent = avg;
-            successRateEl.textContent = `${rate}%`;
-        }
-
-        function updateLoginButtonUI() {
-            if (googleUser) {
-                googleSignInButton.style.display = "none";
-                googleLogoutBtn.style.display = "flex";
-                userAvatar.src = googleUser.picture;
-                userAvatar.alt = `Ảnh đại diện của ${googleUser.name}`;
-                userAvatar.classList.remove("hidden");
-                googleLogoutBtn.title = "Đăng xuất tài khoản Google";
-            } else {
-                googleSignInButton.style.display = "flex";
-                googleLogoutBtn.style.display = "none";
-                userAvatar.classList.add("hidden");
-                userAvatar.src = "";
-                userAvatar.alt = "";
-            }
-        }
-
-        function initializeGoogleSignIn() {
-            google.accounts.id.initialize({
-                client_id: "854945467513-gvec4958ef17nqjsoauvk9dcqinceeel.apps.googleusercontent.com",
-                callback: handleCredentialResponse,
-                auto_select: false,
-                cancel_on_tap_outside: false
-            });
-            google.accounts.id.renderButton(
-                googleSignInButton,
-                { theme: "filled_green", size: "medium", width: 160, height: 40 }
-            );
-        }
-
-        function handleCredentialResponse(response) {
-            const data = parseJwt(response.credential);
-            googleUser = {
-                id: data.sub,
-                name: data.name,
-                email: data.email,
-                picture: data.picture
-            };
-            localStorage.setItem("googleuser", JSON.stringify(googleUser));
-            updateLoginButtonUI();
-            alert("Bạn đã đăng nhập thành công: " + googleUser.name);
-        }
-
-        function parseJwt(token) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                return JSON.parse(jsonPayload);
-            } catch {
-                return {};
-            }
-        }
-
-        function openPanel() {
-            infoPanel.classList.remove("scale-0");
-            infoPanel.setAttribute("aria-hidden", "false");
-            overlay.classList.remove("hidden");
-        }
-
-        function closePanel() {
-            infoPanel.classList.add("scale-0");
-            infoPanel.setAttribute("aria-hidden", "true");
-            overlay.classList.add("hidden");
-        }
-
-        // Gán sự kiện
+        // Xử lý sự kiện
         inputHour.addEventListener("input", () => {
             if (inputHour.value.length > 2) inputHour.value = inputHour.value.slice(0, 2);
             updateStartButtonState();
@@ -843,6 +862,13 @@
             } else {
                 startTimer();
             }
+        });
+
+        btnStatistics.addEventListener('click', () => {
+            if (isRunning) return;
+            renderSessionList();
+            updateMonthlyStats();
+            statisticsModal.classList.remove("hidden");
         });
 
         circleCakeBtn.addEventListener("click", () => {
@@ -869,68 +895,193 @@
             feedbackForm.submit();
         });
 
-        btnStatistics.addEventListener('click', () => {
-            if (isRunning) return;
-            renderMonthlyChart();
-            statisticsModal.classList.remove("hidden");
-        });
-
         statisticsCloseBtn.addEventListener('click', () => {
             statisticsModal.classList.add("hidden");
         });
 
-        infoToggleBtn.addEventListener("click", () => {
-            if (infoPanel.classList.contains("scale-0")) {
-                openPanel();
-            } else {
-                closePanel();
-            }
+        btnStatisticsReward.addEventListener('click', () => {
+            if (isRunning) return;
+            renderSessionList();
+            statisticsRewardModal.classList.remove("hidden");
         });
 
-        closeInfoBtn.addEventListener("click", closePanel);
+        statisticsRewardCloseBtn.addEventListener('click', () => {
+            statisticsRewardModal.classList.add("hidden");
+        });
 
-        overlay.addEventListener("click", closePanel);
+        // Xử lý đăng nhập Google
+        function initializeGoogleSignIn() {
+            if (typeof google === 'undefined') {
+                console.error("Google Identity Services script not loaded");
+                return;
+            }
+            
+            google.accounts.id.initialize({
+                client_id: "854945467513-gvec4958ef17nqjsoauvk9dcqinceeel.apps.googleusercontent.com",
+                callback: handleCredentialResponse,
+                auto_select: false,
+                cancel_on_tap_outside: true
+            });
+            
+            google.accounts.id.renderButton(
+                document.getElementById("googleSignInButton"),
+                { 
+                    theme: "outline", 
+                    size: "large",
+                    width: 160,
+                    text: "signin_with",
+                    shape: "pill"
+                }
+            );
+            
+            // Kiểm tra nếu đã đăng nhập trước đó
+            updateLoginButtonUI();
+        }
 
-        googleLogoutBtn.addEventListener("click", () => {
+        function handleCredentialResponse(response) {
+            const responsePayload = parseJwt(response.credential);
+            console.log("Google login successful:", responsePayload);
+            
+            // Lưu thông tin người dùng
+            const userData = {
+                name: responsePayload.name,
+                email: responsePayload.email,
+                picture: responsePayload.picture,
+                sub: responsePayload.sub
+            };
+            
+            localStorage.setItem("googleuser", JSON.stringify(userData));
+            googleUser = userData;
+            
+            // Tải dữ liệu cho user mới
+            rewardInventory = JSON.parse(localStorage.getItem(getStorageKey("rewardInventory"))) || [];
+            sessionHistory = JSON.parse(localStorage.getItem(getStorageKey("sessionHistory"))) || [];
+            
+            // Cập nhật giao diện
+            updateLoginButtonUI();
+            renderSessionList(); // Cập nhật lại lịch sử hiển thị
+            updateMonthlyStats(); // Cập nhật lại thống kê
+        }
+
+        function updateLoginButtonUI() {
+            const userData = localStorage.getItem("googleuser");
+            let user = null;
+            
+            try {
+                user = userData ? JSON.parse(userData) : null;
+            } catch (e) {
+                console.error("Error parsing user data:", e);
+                user = null;
+            }
+            
+            console.log("Updating login UI, user:", user);
+            
+            if (user && user.picture) {
+                // Đã đăng nhập
+                googleSignInButton.style.display = "none";
+                googleLogoutBtn.classList.remove("hidden");
+                userAvatar.classList.remove("hidden");
+                userAvatar.src = user.picture;
+            } else {
+                // Chưa đăng nhập
+                googleSignInButton.style.display = "block";
+                googleLogoutBtn.classList.add("hidden");
+                userAvatar.classList.add("hidden");
+            }
+        }
+
+        function handleLogout() {
+            // Lưu dữ liệu hiện tại trước khi đăng xuất
+            saveUserData();
+            
+            // Xóa thông tin user
+            localStorage.removeItem("googleuser");
+            googleUser = null;
+            
+            // Tải dữ liệu mặc định (cho trạng thái không đăng nhập)
+            rewardInventory = JSON.parse(localStorage.getItem(getStorageKey("rewardInventory"))) || [];
+            sessionHistory = JSON.parse(localStorage.getItem(getStorageKey("sessionHistory"))) || [];
+            
+            // Cập nhật giao diện
+            updateLoginButtonUI();
+            renderSessionList();
+            updateMonthlyStats();
+            
+            // Đăng xuất khỏi Google
+            if (typeof google !== 'undefined') {
+                google.accounts.id.disableAutoSelect();
+            }
+            
+            console.log("User logged out");
+        }
+
+        // Xử lý sự kiện đăng xuất
+        googleLogoutBtn.addEventListener('click', () => {
             logoutConfirmModal.classList.remove("hidden");
         });
 
-        logoutYesBtn.addEventListener("click", () => {
-            googleUser = null;
-            localStorage.removeItem("googleuser");
-            updateLoginButtonUI();
-            logoutConfirmModal.classList.add("hidden");
-            alert("Bạn đã đăng xuất.");
-        });
-
-        logoutNoBtn.addEventListener("click", () => {
+        logoutYesBtn.addEventListener('click', () => {
+            handleLogout();
             logoutConfirmModal.classList.add("hidden");
         });
 
-        btnUseReward.addEventListener("click", () => {
-            alert("Tính năng sử dụng phần thưởng đang được phát triển!");
+        logoutNoBtn.addEventListener('click', () => {
+            logoutConfirmModal.classList.add("hidden");
         });
 
-        // Khởi tạo ứng dụng
+        if (!localStorage.getItem('sessionHistory')) {
+            localStorage.setItem('sessionHistory', JSON.stringify([]));
+        }
+
         window.addEventListener("load", () => {
             updateCakeDisplay();
             updateStartButtonState();
             renderCakeMenu();
-            updateLoginButtonUI();
             timeProgressBar.style.width = "100%";
             initializeGoogleSignIn();
-            
-            // Đảm bảo sessionHistory tồn tại trong localStorage
-            if (!localStorage.getItem('sessionHistory')) {
-                localStorage.setItem('sessionHistory', JSON.stringify([]));
-            }
-            
-            // Xóa các inventory không cần thiết
-            localStorage.removeItem('cakeinventory');
-            localStorage.removeItem('plateinventory');
-            localStorage.removeItem('decorinventory');
+            updateLoginButtonUI();
+
+            // Thêm sự kiện mở/đóng info panel
+            infoToggleBtn.addEventListener("click", () => {
+                const isHidden = infoPanel.classList.contains("scale-0");
+                if (isHidden) {
+                    infoPanel.classList.remove("scale-0");
+                    infoPanel.setAttribute("aria-hidden", "false");
+                    overlay.classList.remove("hidden");
+                } else {
+                    infoPanel.classList.add("scale-0");
+                    infoPanel.setAttribute("aria-hidden", "true");
+                    overlay.classList.add("hidden");
+                }
+            });
+
+            closeInfoBtn.addEventListener("click", () => {
+                infoPanel.classList.add("scale-0");
+                infoPanel.setAttribute("aria-hidden", "true");
+                overlay.classList.add("hidden");
+            });
+
+            // Ẩn info panel khi click ra ngoài (overlay)
+            overlay.addEventListener("click", () => {
+                infoPanel.classList.add("scale-0");
+                infoPanel.setAttribute("aria-hidden", "true");
+                overlay.classList.add("hidden");
+            });
         });
+
+        // JWT parse helper
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch {
+                return {};
+            }
+        }
     </script>
 </body>
 </html>
-
